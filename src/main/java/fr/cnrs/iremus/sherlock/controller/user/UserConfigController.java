@@ -1,6 +1,7 @@
 package fr.cnrs.iremus.sherlock.controller.user;
 
 import fr.cnrs.iremus.sherlock.common.Sherlock;
+import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfig;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfigEdit;
 import fr.cnrs.iremus.sherlock.service.UserService;
 import io.micronaut.context.annotation.Property;
@@ -43,5 +44,12 @@ public class UserConfigController {
         if (body.getEmoji() != null) userService.editEmoji(authenticatedUser, body.getEmoji());
         if (body.getColor() != null) userService.editHexColor(authenticatedUser, body.getColor());
         return HttpResponse.ok("User updated");
+    }
+
+    @Get
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<UserConfig> get(Authentication authentication) throws HttpException, ParseException {
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        return HttpResponse.ok(userService.getUserConfigByUuid(authenticatedUserUuid));
     }
 }

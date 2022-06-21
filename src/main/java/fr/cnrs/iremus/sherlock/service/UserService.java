@@ -2,6 +2,7 @@ package fr.cnrs.iremus.sherlock.service;
 
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
+import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfig;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -13,6 +14,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
+import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.resultset.ResultSetMem;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
@@ -139,6 +141,36 @@ public class UserService {
         }
     }
 
+
+    public UserConfig getUserConfigByUuid(String uuid) {
+        Model model = ModelFactory.createDefaultModel();
+        UserConfig userConfig = new UserConfig();
+        Resource e55Emoji = model.createResource(sherlock.makeIri(e55EmojiUuid));
+        Resource e55HexColor = model.createResource(sherlock.makeIri(e55HexColorUuid));
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        Resource user = model.createResource(sherlock.makeIri(uuid));
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+            // WRITE
+            SelectBuilder cb = new SelectBuilder()
+                    .addVar( "?type ?literal" )
+                    .addGraph(sherlock.getUserGraph(), user, CIDOCCRM.P1_is_identified_by, "?e41")
+                    .addGraph(sherlock.getUserGraph(), "?e41", RDF.type, CIDOCCRM.E41_Appellation)
+                    .addGraph(sherlock.getUserGraph(), "?e41", CIDOCCRM.P2_has_type, "?type")
+                    .addGraph(sherlock.getUserGraph(), "?e41", CIDOCCRM.P190_has_symbolic_content, "?literal");
+            Query q = cb.build();
+            QueryExecution qe = conn.query(q);
+            ResultSetMem results = (ResultSetMem) ResultSetFactory.copyResults(qe.execSelect());
+            while (results.hasNext()) {
+                Binding results1 = results.peekBinding();
+                if (results1.get("type").toString().equals(e55Emoji.getURI())) userConfig.setUnicodeChar(results1.get("literal").toString(false));
+                if (results1.get("type").toString().equals(e55HexColor.getURI())) userConfig.setHexColor(results1.get("literal").toString(false));
+                results.next();
+            }
+            return userConfig;
+        }
+    }
+
     private void linkUserToEmoji(Model model, Resource e21_user, Resource e41_emoji, String emoji) {
         String e55EmojiIri = sherlock.makeIri(e55EmojiUuid);
         Resource e55Emoji = model.createResource(e55EmojiIri);
@@ -158,4 +190,5 @@ public class UserService {
         model.add(e41, CIDOCCRM.P190_has_symbolic_content, literal);
         model.add(e41, CIDOCCRM.P2_has_type, e55);
     }
+
 }
