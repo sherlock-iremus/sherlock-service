@@ -47,6 +47,7 @@ public class SelectionController {
     public String create(@Valid @Body SelectionCreate body, Authentication authentication) throws HttpException {
         // CREATE/GET IRIS
         List<String> children = body.getChildren().stream().map(child -> sherlock.resolvePrefix(child)).toList();
+        List<String> documents = body.getDocument_contexts().stream().map(document -> sherlock.resolvePrefix(document)).toList();
         String selectionIri = sherlock.makeIri();
         String now = dateService.getNow();
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
@@ -58,9 +59,14 @@ public class SelectionController {
         m.add(selection, RDF.type, CIDOCCRM.E28_Conceptual_Object);
         m.add(selection, DCTerms.created, now);
         m.add(selection, DCTerms.creator, authenticatedUser);
+        m.add(selection, CIDOCCRM.P2_has_type, m.createResource(SelectionCreate.e55SelectionTypeIri));
         children.forEach(child -> {
             Resource childResource = m.getResource(child);
             m.add(selection, CIDOCCRM.P106_is_composed_of, childResource);
+        });
+        documents.forEach(document -> {
+            Resource documentResource = m.getResource(document);
+            m.add(selection, Sherlock.sheP_has_document_context, documentResource);
         });
 
         String updateWithModel = sherlock.makeUpdateQuery(m);
