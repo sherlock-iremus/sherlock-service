@@ -36,35 +36,32 @@ micronaut:
           refresh-token:
             secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:m2hm9T3VdnQK9hGpbarULdDQ5DCZcq30}"'
     intercept-url-map:
-      - pattern: /swagger/**
+      - pattern: /sherlock/swagger/**
         access:
           - isAnonymous()
-      - pattern: /swagger-ui/**
+      - pattern: /sherlock/swagger-ui/**
         access:
           - isAnonymous()
-      - pattern: /rapidoc/**
+      - pattern: /sherlock/rapidoc/**
         access:
           - isAnonymous()
-      - pattern: /redoc/**
+      - pattern: /sherlock/redoc/**
         access:
           - isAnonymous()
   router:
     static-resources:
       swagger:
         paths: classpath:META-INF/swagger
-        mapping: /swagger/**
+        mapping: /sherlock/swagger/**
       redoc:
         paths: classpath:META-INF/swagger/views/redoc
-        mapping: /redoc/**
+        mapping: /sherlock/redoc/**
       rapidoc:
         paths: classpath:META-INF/swagger/views/rapidoc
-        mapping: /rapidoc/**
+        mapping: /sherlock/rapidoc/**
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
-        mapping: /swagger-ui/**
-  openapi:
-    server:
-      context-path: /sherlock
+        mapping: /sherlock/swagger-ui/**
 netty:
   default:
     allocator:

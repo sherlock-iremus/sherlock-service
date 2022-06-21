@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.info.License;
                 version = "0.0",
                 description = "SHERLOCK API",
                 license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0.html"),
-                contact = @Contact(url = "http://iremus.cnrs.fr", name = "Thomas Bottini", email = "thomas.bottini•cnrs.fr")
+                contact = @Contact(url = "http://iremus.cnrs.fr", name = "Thomas Bottini", email = "thomas.bottini@cnrs.fr")
         )
 )
 public class Application {
