@@ -66,7 +66,7 @@ public class SelectionController {
         });
         documents.forEach(document -> {
             Resource documentResource = m.getResource(document);
-            m.add(selection, Sherlock.sheP_has_document_context, documentResource);
+            m.add(selection, Sherlock.has_document_context, documentResource);
         });
 
         String updateWithModel = sherlock.makeUpdateQuery(m);
