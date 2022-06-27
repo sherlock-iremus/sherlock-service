@@ -9,8 +9,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -67,7 +66,7 @@ public class Sherlock {
 
     public String modelToString(Model m) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        m.write(baos, "Turtle");
+        m.clearNsPrefixMap().write(baos, "Turtle");
 
         return baos.toString();
     }
