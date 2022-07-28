@@ -23,14 +23,21 @@ public class E13Service {
     public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Model m, Authentication authentication) {
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
+        insertNewE13(e13, p140, p141, p177, m, authenticatedUser);
+
+    }
+
+    public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Model m, Resource user) {
+        if (e13 == null) {
+            e13 = m.createResource(sherlock.makeIri());
+        }
         String now = dateService.getNow();
 
         m.add(e13, RDF.type, CIDOCCRM.E13_Attribute_Assignment);
-        m.add(e13, CIDOCCRM.P14_carried_out_by, authenticatedUser);
+        m.add(e13, CIDOCCRM.P14_carried_out_by, user);
         m.add(e13, CIDOCCRM.P140_assigned_attribute_to, p140);
         m.add(e13, CIDOCCRM.P141_assigned, p141);
         m.add(e13, CIDOCCRM.P177_assigned_property_of_type, p177);
         m.add(e13, DCTerms.created, now);
-
     }
 }

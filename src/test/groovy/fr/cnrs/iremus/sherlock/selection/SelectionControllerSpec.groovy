@@ -59,9 +59,11 @@ class SelectionControllerSpec extends Specification {
         common.eraseall()
         String child1Iri = sherlock.makeIri()
         String child2Iri = sherlock.makeIri()
+        String document_contextsIri = sherlock.makeIri()
 
         def response = common.patch('/sherlock/api/selection/mySelectionWhichDoesNotExist', [
                 'children': [child1Iri, child2Iri],
+                'document_contexts': document_contextsIri
         ])
 
         then:
@@ -74,9 +76,11 @@ class SelectionControllerSpec extends Specification {
         common.eraseall()
         String child1Iri = sherlock.makeIri()
         String child2Iri = sherlock.makeIri()
+        String document_contextsIri = sherlock.makeIri()
 
         def postResponse = common.post('/sherlock/api/selection/', [
                 'children': [child1Iri],
+                'document_contexts': document_contextsIri
         ])
 
         def selectionIri = postResponse[0]["@id"] as String
@@ -84,6 +88,7 @@ class SelectionControllerSpec extends Specification {
 
         def response = common.patch("/sherlock/api/selection/${selectionUuid}", [
                 'children': [child2Iri],
+                'document_contexts': document_contextsIri
         ])
 
         then:

@@ -47,7 +47,7 @@ public class E13LinkedResourceController {
     @Inject
     DateService dateService;
 
-    @Post
+    // @Post (Keep this annotation commented until this route get used)
     @Produces(MediaType.APPLICATION_JSON)
     public String createLinkedResource(@Valid @Body E13LinkedResource body, Authentication authentication) throws ParseException {
         Model m = ModelFactory.createDefaultModel();

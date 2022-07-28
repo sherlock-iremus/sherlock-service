@@ -12,6 +12,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import org.apache.http.HttpException;
 import org.apache.jena.rdf.model.Model;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 
 @Controller("/api/user/config")
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Tag(name = "2. User Configuration")
 public class UserConfigController {
     @Property(name = "jena")
     protected String jena;

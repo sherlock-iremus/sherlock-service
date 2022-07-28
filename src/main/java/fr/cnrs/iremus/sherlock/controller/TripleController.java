@@ -10,6 +10,7 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import org.apache.http.HttpException;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
@@ -28,6 +29,7 @@ import org.apache.jena.update.Update;
 import javax.validation.Valid;
 
 @Controller("/api/triple")
+@Tag(name = "3. Triples")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class TripleController {
 

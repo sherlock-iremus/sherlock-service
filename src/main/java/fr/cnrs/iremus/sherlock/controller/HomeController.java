@@ -8,8 +8,10 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller("/api/")
+@Tag(name = "1. Home")
 @Secured(SecurityRule.IS_ANONYMOUS)
 public class HomeController {
 

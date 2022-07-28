@@ -10,6 +10,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.security.authentication.Authentication;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -28,6 +29,7 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
+@Tag(name = "4. Selection")
 @Controller("/api/selection")
 public class SelectionController {
     @io.micronaut.context.annotation.Property(name = "jena")
@@ -42,6 +44,7 @@ public class SelectionController {
     @Inject
     SelectionService selectionService;
 
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     public String create(@Valid @Body SelectionCreate body, Authentication authentication) throws HttpException {
@@ -81,6 +84,7 @@ public class SelectionController {
         }
     }
 
+    @Secured(SecurityRule.IS_AUTHENTICATED)
     @Patch("/{selectionUuid}")
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> edit(@Valid @Body SelectionCreate body, @PathVariable String selectionUuid, Authentication authentication) throws HttpException {

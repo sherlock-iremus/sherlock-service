@@ -43,7 +43,7 @@ public class ResourceController {
     @Inject
     Sherlock sherlock;
 
-    @Post
+    // @Post (Keep this annotation commented until this route get used)
     @Produces(MediaType.APPLICATION_JSON)
     public String create(@Valid @Body NewResource body, Authentication authentication) throws ParseException {
         Model m = ModelFactory.createDefaultModel();

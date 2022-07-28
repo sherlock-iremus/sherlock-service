@@ -11,9 +11,11 @@ import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.apache.jena.vocabulary.DCTerms
+import spock.lang.Ignore
 import spock.lang.Specification
 
 @MicronautTest
+@Ignore("Controller is disabled")
 class ResourceControllerSpec extends Specification {
     @Inject
     @Client("/")
