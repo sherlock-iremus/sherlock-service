@@ -5,8 +5,12 @@ import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.pojo.selection.SelectionCreate
 import fr.cnrs.iremus.sherlock.service.DateService
+import fr.cnrs.iremus.sherlock.service.SelectionService
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
+import org.apache.jena.rdf.model.Model
+import org.apache.jena.rdf.model.ModelFactory
+import org.apache.jena.rdf.model.Resource
 import org.apache.jena.vocabulary.DCTerms
 import spock.lang.Specification
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -29,6 +33,9 @@ class SelectionControllerSpec extends Specification {
 
     @Inject
     Sherlock sherlock
+
+    @Inject
+    SelectionService selectionService
 
     void 'test post selection creates triples'() {
         when:
@@ -94,6 +101,39 @@ class SelectionControllerSpec extends Specification {
         then:
         !response[0][CIDOCCRM.P106_is_composed_of.URI].find(child -> child["@id"] == child1Iri)
         response[0][CIDOCCRM.P106_is_composed_of.URI].find(child -> child["@id"] == child2Iri)
+    }
+
+    void 'test delete selection erase it'() {
+        when:
+        common.eraseall()
+        Model m = ModelFactory.createDefaultModel();
+        String child1Iri = sherlock.makeIri()
+        String document_contextsIri = sherlock.makeIri()
+
+        def postResponse = common.post('/sherlock/api/selection/', [
+                'children': [child1Iri],
+                'document_contexts': document_contextsIri
+        ])
+
+        def selectionIri = postResponse[0]["@id"] as String
+        def selectionUuid = selectionIri.split("/").last()
+        Resource selection = m.createResource(selectionIri)
+
+        common.delete("/sherlock/api/selection/${selectionUuid}")
+
+        then:
+        Model currentModel = selectionService.getSelectionTriplesByResource(selection);
+        currentModel.empty
+    }
+
+    void 'test deleting not existing selection returns 404'() {
+        when:
+        common.eraseall()
+        common.delete("/sherlock/api/selection/my-not-existing-selection")
+
+        then:
+        HttpClientResponseException e = thrown()
+        e.getStatus().getCode() == 404
     }
 
 }

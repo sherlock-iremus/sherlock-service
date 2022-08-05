@@ -80,6 +80,13 @@ class Common {
         return parse(response)
     }
 
+    Object delete(String route) {
+        HttpRequest request = HttpRequest.DELETE(route)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+        String response = client.toBlocking().retrieve(request)
+        return parse(response)
+    }
+
     Object put(String route, Map body) {
         HttpRequest request = HttpRequest.PUT(route, body)
                 .accept(MediaType.APPLICATION_JSON_TYPE)

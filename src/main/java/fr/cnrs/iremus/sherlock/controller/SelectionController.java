@@ -123,6 +123,28 @@ public class SelectionController {
 
             return HttpResponse.ok(sherlock.modelToJson(selectionService.getSelectionTriplesByResource(selection)));
         }
+    }
 
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Delete("/{selectionUuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<String> delete(@PathVariable String selectionUuid, Authentication authentication) throws HttpException  {
+        Model m = ModelFactory.createDefaultModel();
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
+        Resource selection = m.getResource(sherlock.makeIri(selectionUuid));
+
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            Model currentModel = selectionService.getSelectionTriplesByResource(selection);
+            if (!currentModel.containsResource(selection))
+                return HttpResponse.notFound("This selection does not exist.");
+            if (!currentModel.contains(selection, DCTerms.creator, authenticatedUser))
+                return HttpResponse.unauthorized();
+
+            conn.update(sherlock.makeDeleteQuery(currentModel));
+
+            return HttpResponse.ok(sherlock.modelToJson(currentModel));
+        }
     }
 }
