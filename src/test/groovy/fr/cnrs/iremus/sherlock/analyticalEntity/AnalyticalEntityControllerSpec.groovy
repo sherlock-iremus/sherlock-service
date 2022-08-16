@@ -72,7 +72,7 @@ class AnalyticalEntityControllerSpec extends Specification {
         response[0][CIDOCCRM.P2_has_type.URI][0]["@id"] == AnalyticalEntityController.e55analyticalEntityIri
     }
 
-    void 'test delete analytical entity'() {
+    void 'test delete analytical entity without annotations, no more old triples left'() {
         when:
         common.eraseall()
         Model m = ModelFactory.createDefaultModel();
@@ -87,13 +87,43 @@ class AnalyticalEntityControllerSpec extends Specification {
 
         def analyticalEntityIri = postResponse[0]["@id"] as String
         def analyticalEntityUuid = analyticalEntityIri.split("/").last()
-        Resource analyticalEntity = m.createResource(analyticalEntityIri)
 
         common.delete("/sherlock/api/analytical-entity/${analyticalEntityUuid}")
 
         then:
 
-        Model currentModel = analyticalEntityService.getModelByAnalyticalEntity(analyticalEntity)
+        Model currentModel = common.getAllTriples()
+        currentModel.empty
+    }
+
+    void 'test delete analytical entity with annotations, no more old triples left'() {
+        when:
+        common.eraseall()
+        Model m = ModelFactory.createDefaultModel();
+
+        String p177Iri = sherlock.makeIri()
+        String p140Iri = sherlock.makeIri()
+        String annotationP177Iri = sherlock.makeIri()
+        String annotationP141Iri = sherlock.makeIri()
+
+        def postResponse = common.post('/sherlock/api/analytical-entity', [
+                'p177': p177Iri,
+                'p140': p140Iri,
+                'e13s': [
+                        'p177': annotationP177Iri,
+                        'p141': annotationP141Iri,
+                        'p141_type': 'uri'
+                ]
+        ])
+
+        def analyticalEntityIri = postResponse[0]["@id"] as String
+        def analyticalEntityUuid = analyticalEntityIri.split("/").last()
+
+        common.delete("/sherlock/api/analytical-entity/${analyticalEntityUuid}")
+
+        then:
+
+        Model currentModel = common.getAllTriples()
         currentModel.empty
     }
 
