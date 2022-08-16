@@ -5,6 +5,7 @@ import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.analyticalEntity.NewAnalyticalEntity;
 import fr.cnrs.iremus.sherlock.pojo.e13.E13AsLinkToP141;
+import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
@@ -12,10 +13,10 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.http.exceptions.HttpException;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
@@ -45,6 +46,9 @@ public class AnalyticalEntityController {
 
     @Inject
     E13Service e13Service;
+
+    @Inject
+    AnalyticalEntityService analyticalEntityService;
 
     @Property(name = "jena")
     protected String jena;
@@ -112,5 +116,29 @@ public class AnalyticalEntityController {
 
             return HttpResponse.ok(sherlock.modelToJson(res));
         }
+    }
+
+    @ApiResponse(responseCode = "200", description = "model deleted")
+    @Delete("/{analyticalEntityUuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<String> delete(@PathVariable String analyticalEntityUuid, Authentication authentication) throws HttpException {
+        Model m = ModelFactory.createDefaultModel();
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
+        Resource analyticalEntity = m.getResource(sherlock.makeIri(analyticalEntityUuid));
+
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            Model currentModel = analyticalEntityService.getModelByAnalyticalEntity(analyticalEntity);
+            if (!currentModel.containsResource(analyticalEntity))
+                return HttpResponse.notFound("This analytical entity does not exist.");
+            if (!currentModel.contains(analyticalEntity, DCTerms.creator, authenticatedUser))
+                return HttpResponse.unauthorized();
+
+            conn.update(sherlock.makeDeleteQuery(currentModel));
+
+            return HttpResponse.ok(sherlock.modelToJson(currentModel));
+        }
+
     }
 }
