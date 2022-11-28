@@ -18,7 +18,6 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.resultset.ResultSetMem;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
 
 @Singleton
 public class UserService {
@@ -60,7 +59,7 @@ public class UserService {
         m.add(e21_user, RDF.type, CIDOCCRM.E21_Person);
         m.add(e21_user, DCTerms.created, now);
         m.add(e42_identifier, RDF.type, CIDOCCRM.E42_Identifier);
-        m.add(e42_identifier, RDFS.label, orcid);
+        m.add(e42_identifier, CIDOCCRM.P190_has_symbolic_content, orcid);
         m.add(e42_identifier, CIDOCCRM.P2_has_type, e55_orcid);
 
         linkUserToEmoji(m, e21_user, null, "D"); // Assign default emoji and color to new users
@@ -82,7 +81,7 @@ public class UserService {
             // WRITE
             SelectBuilder cb = new SelectBuilder()
                     .addVar( "*" )
-                    .addGraph(sherlock.getUserGraph(),"?E42_Identifier", RDFS.label, orcid)
+                    .addGraph(sherlock.getUserGraph(),"?E42_Identifier", CIDOCCRM.P190_has_symbolic_content, orcid)
                     .addGraph(sherlock.getUserGraph(),"?E42_Identifier", RDF.type, CIDOCCRM.E42_Identifier)
                     .addGraph(sherlock.getUserGraph(),"?E21_Person", CIDOCCRM.P1_is_identified_by, "?E42_Identifier")
                     .addGraph(sherlock.getUserGraph(),"?E21_Person", RDF.type, CIDOCCRM.E21_Person);
