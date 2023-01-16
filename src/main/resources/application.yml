@@ -6,6 +6,10 @@ micronaut:
     port: 5555
     cors:
       enabled: true
+      configurations:
+        all:
+          allowedOrigins:
+            - http://localhost:3000
   security:
     authentication: cookie
     redirect:
@@ -35,6 +39,9 @@ micronaut:
             expiration: 3600
           refresh-token:
             secret: '"${JWT_GENERATOR_SIGNATURE_SECRET:m2hm9T3VdnQK9hGpbarULdDQ5DCZcq30}"'
+      refresh:
+        cookie:
+          cookie-path: /
     intercept-url-map:
       - pattern: /sherlock/swagger/**
         access:

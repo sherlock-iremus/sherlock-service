@@ -9,6 +9,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static io.micronaut.security.errors.IssuingAnAccessTokenErrorCode.INVALID_GRANT;
@@ -29,7 +30,7 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
                 event.getAuthentication() != null &&
                 event.getAuthentication().getName() != null) {
             String payload = event.getRefreshToken();
-            refreshTokenRepository.save(event.getAuthentication().getName(), payload, false);
+            refreshTokenRepository.save(event.getAuthentication().getName(), (String) event.getAuthentication().getAttributes().get("orcid"), (String) event.getAuthentication().getAttributes().get("uuid"), payload, false);
         }
     }
 
@@ -42,7 +43,10 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
                 if (token.getRevoked()) {
                     emitter.error(new OauthErrorResponseException(INVALID_GRANT, "refresh token revoked", null));
                 } else {
-                    emitter.next(Authentication.build(token.getUsername()));
+                    emitter.next(Authentication.build(token.getUsername(), Map.ofEntries(
+                            Map.entry("orcid",token.getOrcid()),
+                            Map.entry("uuid", token.getUuid())
+                    )));
                     emitter.complete();
                 }
             } else {

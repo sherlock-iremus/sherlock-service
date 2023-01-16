@@ -15,11 +15,15 @@ public interface RefreshTokenRepository extends CrudRepository<RefreshTokenEntit
 
     @Transactional
     RefreshTokenEntity save(@NonNull @NotBlank String username,
+                            @NonNull @NotBlank String orcid,
+                            @NonNull @NotBlank String uuid,
                             @NonNull @NotBlank String refreshToken,
                             @NonNull @NotNull Boolean revoked);
 
     Optional<RefreshTokenEntity> findByRefreshToken(@NonNull @NotBlank String refreshToken);
 
     long updateByUsername(@NonNull @NotBlank String username,
+                          @NonNull @NotBlank String orcid,
+                          @NonNull @NotBlank String uuid,
                           @NonNull @NotNull Boolean revoked);
 }

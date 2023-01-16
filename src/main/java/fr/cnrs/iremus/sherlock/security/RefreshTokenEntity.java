@@ -24,6 +24,14 @@ public class RefreshTokenEntity {
 
     @NonNull
     @NotBlank
+    private String uuid;
+
+    @NonNull
+    @NotBlank
+    private String orcid;
+
+    @NonNull
+    @NotBlank
     private String refreshToken;
 
     @NonNull
@@ -54,6 +62,25 @@ public class RefreshTokenEntity {
 
     public void setUsername(@NonNull String username) {
         this.username = username;
+    }
+
+
+    @NonNull
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(@NonNull String uuid) {
+        this.uuid = uuid;
+    }
+
+    @NonNull
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(@NonNull String orcid) {
+        this.orcid = orcid;
     }
 
     @NonNull

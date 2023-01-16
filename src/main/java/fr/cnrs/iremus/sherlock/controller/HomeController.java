@@ -1,7 +1,8 @@
 package fr.cnrs.iremus.sherlock.controller;
 
-import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
@@ -10,16 +11,16 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import javax.validation.constraints.NotNull;
+
 @Controller("/api/")
 @Tag(name = "1. Home")
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 public class HomeController {
 
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.TEXT_PLAIN)
     @Get
-    public String index(@Nullable Authentication authentication) {
-        return authentication != null
-                ? (String) authentication.getAttributes().get("uuid")
-                : "<a href='/oauth/login/orcid'> Please connect</a>";
+    public MutableHttpResponse<Object> index(@NotNull Authentication authentication) {
+        return HttpResponse.ok(authentication.getAttributes().get("uuid"));
     }
 }
