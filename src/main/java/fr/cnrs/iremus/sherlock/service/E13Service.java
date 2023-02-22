@@ -20,14 +20,14 @@ public class E13Service {
     @Inject
     DateService dateService;
 
-    public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Model m, Authentication authentication) {
+    public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Resource documentContext, Resource analyticalProject, Model m, Authentication authentication) {
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
-        insertNewE13(e13, p140, p141, p177, m, authenticatedUser);
+        insertNewE13(e13, p140, p141, p177, documentContext, analyticalProject, m, authenticatedUser);
 
     }
 
-    public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Model m, Resource user) {
+    public void insertNewE13(Resource e13, Resource p140, RDFNode p141, Resource p177, Resource documentContext, Resource analyticalProject, Model m, Resource user) {
         if (e13 == null) {
             e13 = m.createResource(sherlock.makeIri());
         }
@@ -38,6 +38,9 @@ public class E13Service {
         m.add(e13, CIDOCCRM.P140_assigned_attribute_to, p140);
         m.add(e13, CIDOCCRM.P141_assigned, p141);
         m.add(e13, CIDOCCRM.P177_assigned_property_of_type, p177);
+        m.add(e13, Sherlock.has_document_context, documentContext);
+        m.add(analyticalProject, CIDOCCRM.P9_consists_of, e13);
         m.add(e13, DCTerms.created, now);
     }
+
 }

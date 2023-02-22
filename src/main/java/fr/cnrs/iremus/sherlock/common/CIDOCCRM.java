@@ -18,12 +18,14 @@ public class CIDOCCRM {
     public static final Resource E42_Identifier = m_model.createResource(NS + "E42_Identifier");
     public static final Property P1_is_identified_by = m_model.createProperty(NS + "P1_is_identified_by");
     public static final Property P2_has_type = m_model.createProperty(NS + "P2_has_type");
+    public static final Property P9_consists_of = m_model.createProperty(NS + "P9_consists_of");
     public static final Property P14_carried_out_by = m_model.createProperty(NS + "P14_carried_out_by");
     public static final Property P71_lists = m_model.createProperty(NS + "P71_lists");
     public static final Property P106_is_composed_of = m_model.createProperty(NS + "P106_is_composed_of");
     public static final Property P127_has_broader_term = m_model.createProperty(NS + "P127_has_broader_term");
     public static final Property P140_assigned_attribute_to = m_model.createProperty(NS + "P140_assigned_attribute_to");
     public static final Property P141_assigned = m_model.createProperty(NS + "P141_assigned");
+    public static final Property P148_has_component = m_model.createProperty(NS + "P148_has_component");
     public static final Property P150_defines_typical_parts_of = m_model.createProperty(NS + "P150_defines_typical_parts_of");
     public static final Property P177_assigned_property_of_type = m_model.createProperty(NS + "P177_assigned_property_of_type");
     public static final Property P190_has_symbolic_content = m_model.createProperty(NS + "P190_has_symbolic_content");

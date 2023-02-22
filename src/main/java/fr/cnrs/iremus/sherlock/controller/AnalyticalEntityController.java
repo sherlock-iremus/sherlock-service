@@ -79,6 +79,7 @@ public class AnalyticalEntityController {
         Resource e13AnalyticalEntityCreation = m.createResource(sherlock.makeIri());
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P141_assigned, e28);
         m.add(e13AnalyticalEntityCreation, RDF.type, CIDOCCRM.E13_Attribute_Assignment);
+        // TODO: Forcer l'objet du P177 : P67 refers to ??
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P177_assigned_property_of_type, m.createResource(body.getP177()));
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P140_assigned_attribute_to, m.createResource(body.getP140()));
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P14_carried_out_by, authenticatedUser);
@@ -90,9 +91,27 @@ public class AnalyticalEntityController {
         if (body.getE13s() != null) {
             for (E13AsLinkToP141 e13AsLinkToP141: body.getE13s()) {
                 if (e13AsLinkToP141.getP141_type() == ResourceType.LITERAL) {
-                    e13Service.insertNewE13(null, e28, m.createLiteral(e13AsLinkToP141.getP141()), m.createResource(e13AsLinkToP141.getP177()), m, authenticatedUser);
+                    e13Service.insertNewE13(
+                            null,
+                            e28,
+                            m.createLiteral(e13AsLinkToP141.getP141()),
+                            m.createResource(e13AsLinkToP141.getP177()),
+                            m.createResource(e13AsLinkToP141.getDocument_context()),
+                            m.createResource(e13AsLinkToP141.getAnalytical_project()),
+                            m,
+                            authenticatedUser
+                    );
                 } else {
-                    e13Service.insertNewE13(null, e28, m.createResource(e13AsLinkToP141.getP141()), m.createResource(e13AsLinkToP141.getP177()), m, authenticatedUser);
+                    e13Service.insertNewE13(
+                            null,
+                            e28,
+                            m.createResource(e13AsLinkToP141.getP141()),
+                            m.createResource(e13AsLinkToP141.getP177()),
+                            m.createResource(e13AsLinkToP141.getDocument_context()),
+                            m.createResource(e13AsLinkToP141.getAnalytical_project()),
+                            m,
+                            authenticatedUser
+                    );
                 }
             }
         }
@@ -135,6 +154,7 @@ public class AnalyticalEntityController {
             if (!currentModel.contains(analyticalEntity, DCTerms.creator, authenticatedUser))
                 return HttpResponse.unauthorized();
 
+            System.out.println(sherlock.makeDeleteQuery(currentModel));
             conn.update(sherlock.makeDeleteQuery(currentModel));
 
             return HttpResponse.ok(sherlock.modelToJson(currentModel));

@@ -12,7 +12,10 @@ public class E13AsLink {
     private String p177;
     private String p141;
     private ResourceType p141_type;
-
+    @NotBlank
+    private String document_context;
+    @NotBlank
+    private String analytical_project;
     public ResourceType getP141_type() {
         return p141_type;
     }
@@ -43,5 +46,21 @@ public class E13AsLink {
 
     public void setP141(String p141) {
         this.p141 = p141;
+    }
+
+    public String getDocument_context() {
+        return document_context;
+    }
+
+    public void setDocument_context(String document_context) {
+        this.document_context = document_context;
+    }
+
+    public String getAnalytical_project() {
+        return analytical_project;
+    }
+
+    public void setAnalytical_project(String analytical_project) {
+        this.analytical_project = analytical_project;
     }
 }

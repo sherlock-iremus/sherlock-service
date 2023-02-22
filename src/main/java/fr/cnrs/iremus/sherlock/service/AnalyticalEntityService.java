@@ -26,6 +26,7 @@ public class AnalyticalEntityService {
                     .addConstruct(analyticalEntity, "?analyticalEntity_p", "?analyticalEntity_o")
                     .addConstruct("?analyticalEntity_e13", CIDOCCRM.P140_assigned_attribute_to, analyticalEntity)
                     .addConstruct("?analyticalEntity_e13", "?analyticalEntity_e13_p", "?analyticalEntity_e13_o")
+                    .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, "?analyticalEntity_e13")
                     .addConstruct("?e13", CIDOCCRM.P141_assigned, analyticalEntity)
                     .addConstruct("?e13", "?e13_p", "?e13_o")
                     .addGraph(sherlock.getGraph(),
@@ -35,6 +36,7 @@ public class AnalyticalEntityService {
                                             new WhereBuilder()
                                                     .addWhere("?analyticalEntity_e13", CIDOCCRM.P140_assigned_attribute_to, analyticalEntity)
                                                     .addWhere("?analyticalEntity_e13", "?analyticalEntity_e13_p", "?analyticalEntity_e13_o")
+                                                    .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, "?analyticalEntity_e13")
                                     )
                                     .addWhere("?e13", CIDOCCRM.P141_assigned, analyticalEntity)
                                     .addWhere("?e13", "?e13_p", "?e13_o")

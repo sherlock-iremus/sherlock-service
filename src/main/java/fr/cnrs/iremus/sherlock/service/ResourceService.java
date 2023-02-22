@@ -69,7 +69,16 @@ public class ResourceService {
             Resource e13 = m.createResource(e13Iri);
             if (e13AsLink.getP141() == null) {
                 Resource p140 = m.createResource(e13AsLink.getP140());
-                e13Service.insertNewE13(e13, p140, newResource, m.createResource(e13AsLink.getP177()), m, authentication);
+                e13Service.insertNewE13(
+                        e13,
+                        p140,
+                        newResource,
+                        m.createResource(e13AsLink.getP177()),
+                        m.createResource(e13AsLink.getDocument_context()),
+                        m.createResource(e13AsLink.getAnalytical_project()),
+                        m,
+                        authentication
+                );
             } else {
                 RDFNode p141 = null;
                 if (e13AsLink.getP141_type().equals(ResourceType.URI)) {
@@ -77,7 +86,16 @@ public class ResourceService {
                 } else if (e13AsLink.getP141_type().equals(ResourceType.LITERAL)) {
                     p141 = m.createLiteral(e13AsLink.getP141());
                 }
-                e13Service.insertNewE13(e13, newResource, p141, m.createResource(e13AsLink.getP177()), m, authentication);
+                e13Service.insertNewE13(
+                        e13,
+                        newResource,
+                        p141,
+                        m.createResource(e13AsLink.getP177()),
+                        m.createResource(e13AsLink.getDocument_context()),
+                        m.createResource(e13AsLink.getAnalytical_project()),
+                        m,
+                        authentication
+                );
             }
         });
 

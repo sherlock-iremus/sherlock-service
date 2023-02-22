@@ -105,6 +105,8 @@ class AnalyticalEntityControllerSpec extends Specification {
         String p140Iri = sherlock.makeIri()
         String annotationP177Iri = sherlock.makeIri()
         String annotationP141Iri = sherlock.makeIri()
+        String documentContext = sherlock.makeIri()
+        String analyticalProject = sherlock.makeIri()
 
         def postResponse = common.post('/sherlock/api/analytical-entity', [
                 'p177': p177Iri,
@@ -112,7 +114,9 @@ class AnalyticalEntityControllerSpec extends Specification {
                 'e13s': [
                         'p177': annotationP177Iri,
                         'p141': annotationP141Iri,
-                        'p141_type': 'uri'
+                        'p141_type': 'uri',
+                        'document_context': documentContext,
+                        'analytical_project': analyticalProject
                 ]
         ])
 

@@ -5,6 +5,7 @@ import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.service.DateService;
+import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -41,34 +42,36 @@ public class E13Controller {
     @Inject
     Sherlock sherlock;
 
+    @Inject
+    E13Service e13Service;
+
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     public String create(@Valid @Body NewE13 body, Authentication authentication) throws ParseException {
         // context
-        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         String now = dateService.getNow();
         // new e13
         String e13Iri = sherlock.makeIri();
         String p140 = sherlock.resolvePrefix(body.getP140());
         String p177 = sherlock.resolvePrefix(body.getP177());
         String p141 = sherlock.resolvePrefix(body.getP141());
+        String documentContext = sherlock.resolvePrefix(body.getDocument_context());
+        String analyticalProject = sherlock.resolvePrefix(body.getAnalytical_project());
         ResourceType p141Type = body.getP141_type();
 
         // UPDATE QUERY
         Model m = ModelFactory.createDefaultModel();
         Resource e13 = m.createResource(e13Iri);
-        Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
-        m.add(e13, RDF.type, CIDOCCRM.E13_Attribute_Assignment);
-        m.add(e13, CIDOCCRM.P14_carried_out_by, authenticatedUser);
-        m.add(e13, CIDOCCRM.P140_assigned_attribute_to, m.createResource(p140));
-        m.add(e13, CIDOCCRM.P177_assigned_property_of_type, m.createResource(p177));
-        if (p141Type.equals(ResourceType.URI)) {
-            p141 = sherlock.resolvePrefix(p141);
-            m.add(e13, CIDOCCRM.P141_assigned, m.createResource(p141));
-        } else if (p141Type.equals(ResourceType.LITERAL)) {
-            m.add(e13, CIDOCCRM.P141_assigned, m.createLiteral(p141));
-        }
-        m.add(e13, DCTerms.created, now);
+        e13Service.insertNewE13(
+                e13,
+                m.createResource(p140),
+                p141Type.equals(ResourceType.URI) ? m.createResource(p141) : m.createLiteral(p141),
+                m.createResource(p177),
+                m.createResource(documentContext),
+                m.createResource(analyticalProject),
+                m,
+                authentication
+        );
 
         String updateWithModel = sherlock.makeUpdateQuery(m);
 
