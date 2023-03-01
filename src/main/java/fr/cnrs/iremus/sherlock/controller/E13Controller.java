@@ -1,13 +1,14 @@
 package fr.cnrs.iremus.sherlock.controller;
 
-import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
@@ -15,6 +16,11 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.query.Query;
@@ -25,12 +31,11 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.apache.jena.vocabulary.DCTerms;
-import org.apache.jena.vocabulary.RDF;
 
 import javax.validation.Valid;
 
 @Controller("/api/e13")
+@Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
     @Property(name = "jena")
@@ -47,7 +52,16 @@ public class E13Controller {
 
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public String create(@Valid @Body NewE13 body, Authentication authentication) throws ParseException {
+    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(value = """
+                        {
+                            "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                            "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
+                            "p141": "Ce n'est pas une cadence.",
+                            "p141_type": "literal",
+                            "document_context": "http://data-iremus.huma-num/id/ma-partition",
+                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                        }
+                        """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
         // context
         String now = dateService.getNow();
         // new e13
@@ -89,7 +103,7 @@ public class E13Controller {
             QueryExecution qe = conn.query(q);
             Model res = qe.execConstruct();
 
-            return sherlock.modelToJson(res);
+            return HttpResponse.ok(sherlock.modelToJson(res));
         }
     }
 }

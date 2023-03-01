@@ -9,6 +9,9 @@ import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.constraints.NotNull;
@@ -20,6 +23,8 @@ public class HomeController {
 
     @Produces(MediaType.TEXT_PLAIN)
     @Get
+    @ApiResponse(description = "Current user uuid", content = @Content(mediaType = "text/plain", examples = @ExampleObject("6ea17744-2345-43ee-8a3e-f3c9770e0340")))
+    @ApiResponse(responseCode = "401", description = "User has no valid token")
     public MutableHttpResponse<Object> index(@NotNull Authentication authentication) {
         return HttpResponse.ok(authentication.getAttributes().get("uuid"));
     }

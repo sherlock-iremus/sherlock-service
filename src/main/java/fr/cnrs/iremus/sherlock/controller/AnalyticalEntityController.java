@@ -36,7 +36,7 @@ import javax.validation.Valid;
 
 @Controller("/api/analytical-entity")
 @Secured(SecurityRule.IS_AUTHENTICATED)
-@Tag(name = "5. Analytical Entity")
+@Tag(name = "3. Annotations")
 public class AnalyticalEntityController {
     @Inject
     Sherlock sherlock;

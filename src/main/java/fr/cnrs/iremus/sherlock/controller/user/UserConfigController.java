@@ -12,6 +12,10 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import org.apache.http.HttpException;
@@ -36,8 +40,13 @@ public class UserConfigController {
     UserService userService;
 
     @Put
-    @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> edit(@Valid @Body UserConfigEdit body, Authentication authentication) throws HttpException, ParseException {
+    @Produces(MediaType.TEXT_PLAIN)
+    public MutableHttpResponse<String> edit(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = UserConfigEdit.class), examples = {@ExampleObject(value = """
+                            {
+                                "emoji": "♫",
+                                "color": "b985c7"
+                            }
+                        """)})}) @Valid @Body UserConfigEdit body, Authentication authentication) throws HttpException, ParseException {
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
 
         Model m = ModelFactory.createDefaultModel();
