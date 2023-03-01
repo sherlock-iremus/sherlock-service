@@ -20,6 +20,7 @@ public class CIDOCCRM {
     public static final Property P2_has_type = m_model.createProperty(NS + "P2_has_type");
     public static final Property P9_consists_of = m_model.createProperty(NS + "P9_consists_of");
     public static final Property P14_carried_out_by = m_model.createProperty(NS + "P14_carried_out_by");
+    public static final Property P67_refers_to = m_model.createProperty(NS + "P67_refers_to");
     public static final Property P71_lists = m_model.createProperty(NS + "P71_lists");
     public static final Property P106_is_composed_of = m_model.createProperty(NS + "P106_is_composed_of");
     public static final Property P127_has_broader_term = m_model.createProperty(NS + "P127_has_broader_term");

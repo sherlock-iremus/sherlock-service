@@ -1,10 +1,12 @@
 package fr.cnrs.iremus.sherlock.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.analyticalEntity.NewAnalyticalEntity;
 import fr.cnrs.iremus.sherlock.pojo.e13.E13AsLinkToP141;
+import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
@@ -17,6 +19,10 @@ import io.micronaut.http.exceptions.HttpException;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
@@ -55,14 +61,30 @@ public class AnalyticalEntityController {
 
     public final static String e55analyticalEntityIri = "http://data-iremus.huma-num.fr/id/6d72746a-9f28-4739-8786-c6415d53c56d";
 
-    @ApiResponse(responseCode = "200", description = "uri of the analytical entity")
+    @ApiResponse(responseCode = "200", description = "new analytical entity's model")
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> create(@Valid @Body NewAnalyticalEntity body, Authentication authentication) throws ParseException {
+    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewAnalyticalEntity.class), examples = {@ExampleObject(value = """
+                        {
+                            "referredEntities": [
+                                "http://data-iremus.huma-num/id/note-1",
+                                "http://data-iremus.huma-num/id/note-2",
+                                "http://data-iremus.huma-num/id/note-3"
+                            ],
+                            "document_context": "http://data-iremus.huma-num/id/ma-partition",
+                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique",
+                            "e13s": [{
+                                "p141": "http://data-iremus.huma-num.fr/id/type-cadence",
+                                "p141_type": "URI",
+                                "p177": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                                "document_context": "http://data-iremus.huma-num/id/ma-partition",
+                                "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                            }]
+                        }
+                        """)})}) @Valid @Body NewAnalyticalEntity body, Authentication authentication) throws ParseException {
         Model m = ModelFactory.createDefaultModel();
         String now = dateService.getNow();
         Resource authenticatedUser = m.createResource(sherlock.makeIri((String) authentication.getAttributes().get("uuid")));
-
 
         //region create E28 AnalyticalEntity
 
@@ -74,16 +96,18 @@ public class AnalyticalEntityController {
 
         //endregion
 
-        //region link E28 to its subject
+        //region link E28 to the referenced entities
 
         Resource e13AnalyticalEntityCreation = m.createResource(sherlock.makeIri());
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P141_assigned, e28);
         m.add(e13AnalyticalEntityCreation, RDF.type, CIDOCCRM.E13_Attribute_Assignment);
-        // TODO: Forcer l'objet du P177 : P67 refers to ??
-        m.add(e13AnalyticalEntityCreation, CIDOCCRM.P177_assigned_property_of_type, m.createResource(body.getP177()));
-        m.add(e13AnalyticalEntityCreation, CIDOCCRM.P140_assigned_attribute_to, m.createResource(body.getP140()));
+        m.add(e13AnalyticalEntityCreation, CIDOCCRM.P177_assigned_property_of_type, CIDOCCRM.P67_refers_to);
+        for (String entity : body.getReferredEntities())
+            m.add(e13AnalyticalEntityCreation, CIDOCCRM.P140_assigned_attribute_to, m.createResource(entity));
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P14_carried_out_by, authenticatedUser);
         m.add(e13AnalyticalEntityCreation, DCTerms.created, now);
+        m.add(e13AnalyticalEntityCreation, Sherlock.has_document_context, m.createResource(body.getDocument_context()));
+        m.add(m.createResource(body.getAnalytical_project()), CIDOCCRM.P9_consists_of, e13AnalyticalEntityCreation);
 
         //endregion
 
@@ -140,7 +164,7 @@ public class AnalyticalEntityController {
     @ApiResponse(responseCode = "200", description = "model deleted")
     @Delete("/{analyticalEntityUuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> delete(@PathVariable String analyticalEntityUuid, Authentication authentication) throws HttpException {
+    public MutableHttpResponse<String> delete(@PathVariable String analyticalEntityUuid, Authentication authentication) throws HttpException, JsonProcessingException {
         Model m = ModelFactory.createDefaultModel();
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
@@ -150,7 +174,7 @@ public class AnalyticalEntityController {
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             Model currentModel = analyticalEntityService.getModelByAnalyticalEntity(analyticalEntity);
             if (!currentModel.containsResource(analyticalEntity))
-                return HttpResponse.notFound("This analytical entity does not exist.");
+                return HttpResponse.notFound(sherlock.objectToJson("This analytical entity does not exist."));
             if (!currentModel.contains(analyticalEntity, DCTerms.creator, authenticatedUser))
                 return HttpResponse.unauthorized();
 

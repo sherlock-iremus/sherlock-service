@@ -1,5 +1,7 @@
 package fr.cnrs.iremus.sherlock.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.inject.Singleton;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.query.ResultSet;
@@ -76,6 +78,11 @@ public class Sherlock {
         ResultSetFormatter.outputAsJSON(outputStream, rs);
 
         return outputStream.toString();
+    }
+
+    public String objectToJson(Object object) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(object);
     }
 
     public String modelToJson(Model m) {

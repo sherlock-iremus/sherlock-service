@@ -23,23 +23,21 @@ public class AnalyticalEntityService {
 
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct(analyticalEntity, "?analyticalEntity_p", "?analyticalEntity_o")
-                    .addConstruct(analyticalEntity, "?analyticalEntity_p", "?analyticalEntity_o")
-                    .addConstruct("?analyticalEntity_e13", CIDOCCRM.P140_assigned_attribute_to, analyticalEntity)
-                    .addConstruct("?analyticalEntity_e13", "?analyticalEntity_e13_p", "?analyticalEntity_e13_o")
-                    .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, "?analyticalEntity_e13")
-                    .addConstruct("?e13", CIDOCCRM.P141_assigned, analyticalEntity)
-                    .addConstruct("?e13", "?e13_p", "?e13_o")
+                    .addConstruct("?e13_creation", "?e13_creation_p", "?e13_creation_o")
+                    .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, "?e13_creation")
+
+                    .addConstruct("?e13_annotation", "?e13_annotation_p", "?e13_annotation_o")
+                    .addConstruct("?analytical_project_annotation", CIDOCCRM.P9_consists_of, "?e13_annotation")
                     .addGraph(sherlock.getGraph(),
                             new WhereBuilder()
                                     .addWhere(analyticalEntity, "?analyticalEntity_p", "?analyticalEntity_o")
-                                    .addOptional(
-                                            new WhereBuilder()
-                                                    .addWhere("?analyticalEntity_e13", CIDOCCRM.P140_assigned_attribute_to, analyticalEntity)
-                                                    .addWhere("?analyticalEntity_e13", "?analyticalEntity_e13_p", "?analyticalEntity_e13_o")
-                                                    .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, "?analyticalEntity_e13")
-                                    )
-                                    .addWhere("?e13", CIDOCCRM.P141_assigned, analyticalEntity)
-                                    .addWhere("?e13", "?e13_p", "?e13_o")
+                                    .addWhere("?e13_creation", CIDOCCRM.P141_assigned, analyticalEntity)
+                                    .addWhere("?e13_creation", "?e13_creation_p", "?e13_creation_o")
+                                    .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, "?e13_creation")
+
+                                    .addWhere("?e13_annotation", CIDOCCRM.P140_assigned_attribute_to, analyticalEntity)
+                                    .addWhere("?e13_annotation", "?e13_annotation_p", "?e13_annotation_o")
+                                    .addWhere("?analytical_project_annotation", CIDOCCRM.P9_consists_of, "?e13_annotation")
                     );
             Query q = cb.build();
             QueryExecution qe = conn.query(q);

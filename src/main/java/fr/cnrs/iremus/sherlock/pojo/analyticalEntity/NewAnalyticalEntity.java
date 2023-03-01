@@ -1,40 +1,36 @@
 package fr.cnrs.iremus.sherlock.pojo.analyticalEntity;
 
+import fr.cnrs.iremus.sherlock.common.Triple;
 import fr.cnrs.iremus.sherlock.pojo.e13.E13AsLinkToP141;
 import io.micronaut.core.annotation.Introspected;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Introspected
 
 public class NewAnalyticalEntity {
 
-    /** AnalyticalEntity's type */
-    @NotBlank
-    private String p177;
-
     /** AnalyticalEntity's subject */
+    @NotEmpty
+    private List<String> referredEntities;
+
     @NotBlank
-    private String p140;
+    private String document_context;
+    @NotBlank
+    private String analytical_project;
 
     /** AnalyticalEntity's list of analysis */
+    @NotEmpty
     private List<E13AsLinkToP141> e13s;
 
-    public String getP177() {
-        return p177;
+    public List<String> getReferredEntities() {
+        return referredEntities;
     }
 
-    public void setP177(String p177) {
-        this.p177 = p177;
-    }
-
-    public String getP140() {
-        return p140;
-    }
-
-    public void setP140(String p140) {
-        this.p140 = p140;
+    public void setReferredEntities(List<String> referredEntity) {
+        this.referredEntities = referredEntity;
     }
 
     public List<E13AsLinkToP141> getE13s() {
@@ -43,5 +39,21 @@ public class NewAnalyticalEntity {
 
     public void setE13s(List<E13AsLinkToP141> e13s) {
         this.e13s = e13s;
+    }
+
+    public String getDocument_context() {
+        return document_context;
+    }
+
+    public void setDocument_context(String document_context) {
+        this.document_context = document_context;
+    }
+
+    public String getAnalytical_project() {
+        return analytical_project;
+    }
+
+    public void setAnalytical_project(String analytical_project) {
+        this.analytical_project = analytical_project;
     }
 }
