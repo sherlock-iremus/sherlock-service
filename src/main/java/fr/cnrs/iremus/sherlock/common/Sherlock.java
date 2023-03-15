@@ -29,6 +29,7 @@ public class Sherlock {
     public static final Resource sheP_a_pour_entite_de_plus_haut_niveau = m_model.createResource(NS + "sheP_a_pour_entité_de_plus_haut_niveau");
     public static final Resource sheP_subscribe = m_model.createResource(NS + "sheP_subscribe");
     public static final Property has_document_context = m_model.createProperty(NS + "has_document_context");
+    public static final Property has_privacy_type = m_model.createProperty(NS + "has_privacy_type");
 
     public Resource getGraph() {
         return m_model.createResource("http://data-iremus.huma-num.fr/graph/sherlock");
