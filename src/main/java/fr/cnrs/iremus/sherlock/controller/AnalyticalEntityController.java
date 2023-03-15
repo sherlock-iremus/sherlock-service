@@ -66,7 +66,7 @@ public class AnalyticalEntityController {
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewAnalyticalEntity.class), examples = {@ExampleObject(value = """
                         {
-                            "referredEntities": [
+                            "is_referred_to_by": [
                                 "http://data-iremus.huma-num/id/note-1",
                                 "http://data-iremus.huma-num/id/note-2",
                                 "http://data-iremus.huma-num/id/note-3"
@@ -102,7 +102,7 @@ public class AnalyticalEntityController {
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P141_assigned, e28);
         m.add(e13AnalyticalEntityCreation, RDF.type, CIDOCCRM.E13_Attribute_Assignment);
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P177_assigned_property_of_type, CIDOCCRM.P67_refers_to);
-        for (String entity : body.getReferredEntities())
+        for (String entity : body.getIs_referred_to_by())
             m.add(e13AnalyticalEntityCreation, CIDOCCRM.P140_assigned_attribute_to, m.createResource(entity));
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P14_carried_out_by, authenticatedUser);
         m.add(e13AnalyticalEntityCreation, DCTerms.created, now);

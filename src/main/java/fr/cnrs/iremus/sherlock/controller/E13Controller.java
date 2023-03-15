@@ -62,8 +62,6 @@ public class E13Controller {
                             "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
                         }
                         """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
-        // context
-        String now = dateService.getNow();
         // new e13
         String e13Iri = sherlock.makeIri();
         String p140 = sherlock.resolvePrefix(body.getP140());

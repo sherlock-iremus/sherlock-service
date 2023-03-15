@@ -14,7 +14,7 @@ public class NewAnalyticalEntity {
 
     /** AnalyticalEntity's subject */
     @NotEmpty
-    private List<String> referredEntities;
+    private List<String> is_referred_to_by;
 
     @NotBlank
     private String document_context;
@@ -25,12 +25,12 @@ public class NewAnalyticalEntity {
     @NotEmpty
     private List<E13AsLinkToP141> e13s;
 
-    public List<String> getReferredEntities() {
-        return referredEntities;
+    public List<String> getIs_referred_to_by() {
+        return is_referred_to_by;
     }
 
-    public void setReferredEntities(List<String> referredEntity) {
-        this.referredEntities = referredEntity;
+    public void setIs_referred_to_by(List<String> is_referred_to_by) {
+        this.is_referred_to_by = is_referred_to_by;
     }
 
     public List<E13AsLinkToP141> getE13s() {

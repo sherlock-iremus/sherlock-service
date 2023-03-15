@@ -11,10 +11,6 @@ import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.apache.jena.rdf.model.Model
-import org.apache.jena.rdf.model.ModelFactory
-import org.apache.jena.rdf.model.RDFNode
-import org.apache.jena.rdf.model.Resource
-import org.apache.jena.vocabulary.RDF
 import spock.lang.Specification;
 
 @MicronautTest()
@@ -38,7 +34,7 @@ class AnalyticalEntityControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-entity', [
-                referredEntities: ['http://data-iremus.huma-num/id/note-1',
+                is_referred_to_by: ['http://data-iremus.huma-num/id/note-1',
                                      'http://data-iremus.huma-num/id/note-2',
                                      'http://data-iremus.huma-num/id/note-3'
                 ],
@@ -70,7 +66,7 @@ class AnalyticalEntityControllerSpec extends Specification {
         common.eraseall()
 
         def postResponse = common.post('/sherlock/api/analytical-entity', [
-                referredEntities: ['http://data-iremus.huma-num/id/note-1',
+                is_referred_to_by: ['http://data-iremus.huma-num/id/note-1',
                                    'http://data-iremus.huma-num/id/note-2',
                                    'http://data-iremus.huma-num/id/note-3'
                 ],
