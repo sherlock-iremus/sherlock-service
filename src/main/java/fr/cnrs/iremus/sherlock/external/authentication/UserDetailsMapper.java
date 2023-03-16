@@ -1,18 +1,17 @@
 package fr.cnrs.iremus.sherlock.external.authentication;
 
 import fr.cnrs.iremus.sherlock.common.Sherlock;
-import fr.cnrs.iremus.sherlock.service.OrcidRefreshToken;
 import fr.cnrs.iremus.sherlock.service.UserService;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.security.authentication.AuthenticationResponse;
 import io.micronaut.security.oauth2.endpoint.authorization.state.State;
 import io.micronaut.security.oauth2.endpoint.token.response.OauthAuthenticationMapper;
 import io.micronaut.security.oauth2.endpoint.token.response.TokenResponse;
-import io.reactivex.Single;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
 import java.util.Map;
 
@@ -30,18 +29,16 @@ public class UserDetailsMapper implements OauthAuthenticationMapper {
     public UserDetailsMapper(OrcidApiClient orcidApiClient) {
         this.orcidApiClient = orcidApiClient;
     }
-    @Override
+
     public Publisher<AuthenticationResponse> createAuthenticationResponse(TokenResponse tokenResponse, State state) {
-
-
-        Single<OrcidRefreshToken> orcidRefreshTokenSingle = orcidApiClient.refreshToken(tokenResponse.getRefreshToken());
         try {
-            OrcidRefreshToken orcidRefreshToken = orcidRefreshTokenSingle.blockingGet();
-            String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(orcidRefreshToken.getOrcid()));
+            Publisher<OrcidUser> response = orcidApiClient.get("bearer " + tokenResponse.getAccessToken());
+            OrcidUser user = Flux.from(response).blockFirst();
+            String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user.getSub()));
             return Publishers.just(AuthenticationResponse.success(
-                    orcidRefreshToken.getName(),
+                    user.getSub(),
                     Map.ofEntries(
-                            Map.entry("orcid",orcidRefreshToken.getOrcid()),
+                            Map.entry("orcid", user.getSub()),
                             Map.entry("uuid", userUuid)
                     )));
         } catch (Exception exception) {

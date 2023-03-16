@@ -1,7 +1,8 @@
 plugins {
     id("groovy") 
-    id("com.github.johnrengelman.shadow") version "7.1.1"
-    id("io.micronaut.application") version "3.7.5"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.micronaut.application") version "2.0.2"
+    id 'org.graalvm.buildtools.native' version '0.9.20'
 }
 
 version = "0.1"
@@ -52,7 +53,6 @@ java {
     targetCompatibility = JavaVersion.toVersion("17")
 }
 
-graalvmNative.toolchainDetection = false
 micronaut {
     runtime("netty")
     testRuntime("spock2")
@@ -61,7 +61,7 @@ micronaut {
         annotations("fr.cnrs.iremus.sherlock.*")
     }
 }
-
+graalvmNative.toolchainDetection = false
 tasks.withType(JavaCompile) {
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
