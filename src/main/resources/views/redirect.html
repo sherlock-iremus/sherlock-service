@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+
+<script>
+    // https://stackoverflow.com/questions/5639346/what-is-the-shortest-function-for-reading-a-cookie-by-name-in-javascript
+    const getCookieValue = (name) => (
+        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+    )
+
+    const redirectUri = getCookieValue('source-url')
+    document.cookie = `source-url=/; path=/`;
+
+    location.href = redirectUri ? redirectUri : '/sherlock/api/';
+
+</script>
+</html>

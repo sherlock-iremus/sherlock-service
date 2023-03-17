@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.security.*;
 )
 @SecurityScheme(
         name="orcid",
-        description = "Navigate to http://data-iremus.huma-num.fr/sso/?redirect-uri=http://data-iremus.huma-num.fr/sherlock/rapidoc?contextPath=/sherlock#overview",
+        description = "/sherlock/login?redirect-uri=/sherlock/rapidoc",
         type = SecuritySchemeType.OPENIDCONNECT
 )
 public class Application {
