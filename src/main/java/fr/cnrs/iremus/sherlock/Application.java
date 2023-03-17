@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.security.*;
 )
 @SecurityScheme(
         name="orcid",
-        description = "/sherlock/login?redirect-uri=/sherlock/rapidoc",
+        description = "<a href='/sherlock/login?redirect-uri=/sherlock/rapidoc'>oauth2</a>",
         type = SecuritySchemeType.OPENIDCONNECT
 )
 public class Application {
