@@ -1,1 +1,1 @@
-jena: http://localhost:3030/test
+jena: "${FUSEKI:`http://localhost:3030`}/${DATASET:`test`}"
