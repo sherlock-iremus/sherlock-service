@@ -29,4 +29,5 @@ jobs:
 workflows:
   push-sherlock-service:
     jobs:
+      - setupFuseki
       - test
