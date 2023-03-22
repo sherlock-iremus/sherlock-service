@@ -14,7 +14,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: ./gradlew dockerBuild
+          command: ./gradlew test
 
 
 workflows:
