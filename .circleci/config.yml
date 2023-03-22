@@ -4,12 +4,21 @@ orbs:
   gradle: circleci/gradle@3.0.0
 
 executors:
+  fuseki:
+    docker:
+      - image: dskow/jena-fuseki
+
   openjdk17:
     docker:
       - image: cimg/openjdk:17.0.1
 
 jobs:
-  deploy:
+  setupFuseki:
+    executor: fuseki
+    steps: 
+      - run:
+          command: docker run dskow/jena-fuseki
+  test:
     executor: openjdk17
     steps:
       - checkout
@@ -20,4 +29,4 @@ jobs:
 workflows:
   push-sherlock-service:
     jobs:
-      - deploy
+      - test
