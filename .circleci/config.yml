@@ -3,31 +3,14 @@ version: 2.1
 orbs:
   gradle: circleci/gradle@3.0.0
 
-executors:
-  fuseki:
-    docker:
-      - image: dskow/jena-fuseki
-
-  openjdk17:
+jobs:
+  build:
     docker:
       - image: cimg/openjdk:17.0.1
-
-jobs:
-  setupFuseki:
-    executor: fuseki
-    steps: 
-      - run:
-          command: docker run dskow/jena-fuseki
-  test:
-    executor: openjdk17
+      - image: dskow/jena-fuseki
     steps:
+      - setup_remote_docker:
+          version: 20.10.14
       - checkout
       - run:
           command: ./gradlew test
-
-
-workflows:
-  push-sherlock-service:
-    jobs:
-      - setupFuseki
-      - test
