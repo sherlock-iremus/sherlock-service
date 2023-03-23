@@ -8,6 +8,9 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0.1
       - image: dskow/jena-fuseki
+        environment:
+          FUSEKI: http://localhost:3030
+          DATASET: test
     steps:
       - setup_remote_docker:
           version: 20.10.14
