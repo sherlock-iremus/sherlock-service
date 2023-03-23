@@ -26,6 +26,6 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3030 -timeout 1m
       - run:
-          command: wget -o --post-data 'dbName=MyDataset&dbType=tdb' --user=admin --http-password=pw123
+          command: wget -o --post-data 'dbName=MyDataset&dbType=tdb' --user=admin --http-password=pw123 http://localhost:3030
       - run:
           command: ./gradlew test
