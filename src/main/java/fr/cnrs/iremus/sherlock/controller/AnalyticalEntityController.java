@@ -144,17 +144,18 @@ public class AnalyticalEntityController {
         String updateWithModel = sherlock.makeUpdateQuery(m);
 
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        RDFConnectionRemoteBuilder builder2 = RDFConnectionFuseki.create().destination(jena + "/sparql");
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-
-            // WRITE
             conn.update(updateWithModel);
+        }
+        try (RDFConnectionFuseki conn2 = (RDFConnectionFuseki) builder2.build()) {
 
             // AND READ IT BACK AS JSON-LD
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct(e28, "?p", "?o")
                     .addGraph(sherlock.getGraph(), e28, "?p", "?o");
             Query q = cb.build();
-            Model res = conn.queryConstruct(q);// TODO: remove (circle ci test)
+            Model res = conn2.queryConstruct(q);// TODO: remove (circle ci test)
 
             return HttpResponse.ok(sherlock.modelToJson(res));
         }
