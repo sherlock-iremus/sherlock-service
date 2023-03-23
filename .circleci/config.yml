@@ -28,4 +28,4 @@ jobs:
       - run:
           command: wget -o - http://localhost:3030 --post-data 'dbName=test&dbType=tdb' --user=admin --http-password=pw123
       - run:
-          command: FUSEKI=http://localhost:3030 DATASET=tet ./gradlew test -i
+          command: FUSEKI=http://localhost:3030 DATASET=test ./gradlew test -i
