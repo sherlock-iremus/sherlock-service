@@ -11,6 +11,8 @@ jobs:
           FUSEKI: http://localhost:3030
           DATASET: test
       - image: dskow/jena-fuseki
+        environment:
+          ADMIN_PASSWORD: pw123
         entrypoint: ['fuseki-server --mem /test']
     steps:
       - setup_remote_docker:
@@ -24,5 +26,7 @@ jobs:
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3030 -timeout 1m
+      - run:
+          command: wget -o --post-data 'dbName=MyDataset&dbType=tdb' --user=admin --http-password=pw123
       - run:
           command: ./gradlew test
