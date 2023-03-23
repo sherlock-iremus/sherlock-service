@@ -155,6 +155,7 @@ public class AnalyticalEntityController {
                     .addGraph(sherlock.getGraph(), e28, "?p", "?o");
             Query q = cb.build();
             QueryExecution qe = conn.query(q);
+            System.out.println(q.toString()); // TODO: remove (circle ci test)
             Model res = qe.execConstruct();
 
             return HttpResponse.ok(sherlock.modelToJson(res));
