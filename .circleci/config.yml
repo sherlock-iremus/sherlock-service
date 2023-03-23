@@ -13,7 +13,6 @@ jobs:
       - image: dskow/jena-fuseki
         environment:
           ADMIN_PASSWORD: pw123
-        entrypoint: ['fuseki-server --mem /test']
     steps:
       - setup_remote_docker:
           version: 20.10.14
