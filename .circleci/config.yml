@@ -10,7 +10,7 @@ jobs:
         environment:
           FUSEKI: http://127.0.0.1:3030
           DATASET: test
-      - image: dskow/jena-fuseki
+      - image: stain/jena-fuseki
         environment:
           ADMIN_PASSWORD: pw123
     steps:
@@ -26,6 +26,6 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3030 -timeout 1m
       - run:
-          command: wget -o - http://localhost:3030 --post-data 'dbName=test&dbType=tdb' --user=admin --http-password=pw123
+          command: wget -o - http://localhost:3030/$/datasets --post-data 'dbName=test&dbType=tdb' --user=admin --http-password=pw123
       - run:
           command: FUSEKI=http://localhost:3030 DATASET=test ./gradlew test -i

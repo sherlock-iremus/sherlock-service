@@ -1,5 +1,7 @@
 package fr.cnrs.iremus.sherlock.controller;
 
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
@@ -26,5 +28,11 @@ public class LoginController {
     @Get("/redirect")
     public Map<String, Object> redirect() {
         return new HashMap<>();
+    }
+
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    @Get("/failure")
+    public MutableHttpResponse<Object> failure() {
+        return HttpResponse.serverError();
     }
 }

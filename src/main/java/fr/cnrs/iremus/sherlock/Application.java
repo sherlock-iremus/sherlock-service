@@ -2,6 +2,7 @@ package fr.cnrs.iremus.sherlock;
 
 import io.micronaut.runtime.Micronaut;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -21,7 +22,9 @@ import io.swagger.v3.oas.annotations.security.*;
 )
 @SecurityScheme(
         name="orcid",
+        in = SecuritySchemeIn.COOKIE,
         description = "<a href='/sherlock/login?redirect-uri=/sherlock/rapidoc'>oauth2</a>",
+        paramName = "jwt",
         type = SecuritySchemeType.OPENIDCONNECT
 )
 public class Application {
