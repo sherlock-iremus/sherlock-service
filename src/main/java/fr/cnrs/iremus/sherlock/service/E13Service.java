@@ -41,6 +41,7 @@ public class E13Service {
         m.add(e13, Sherlock.has_document_context, documentContext);
         m.add(analyticalProject, CIDOCCRM.P9_consists_of, e13);
         m.add(e13, DCTerms.created, now);
+        m.add(e13, DCTerms.creator, user);
     }
 
 }

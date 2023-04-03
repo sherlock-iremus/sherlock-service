@@ -32,6 +32,7 @@ import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import jakarta.inject.Inject;
+import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
 import javax.validation.Valid;
@@ -75,6 +76,7 @@ public class AnalyticalProjectController {
         // triples
 
         m.add(analyticalProject, RDF.type, CIDOCCRM.E7_Activity);
+        m.add(analyticalProject, DCTerms.creator, authenticatedUser);
         m.add(analyticalProject, CIDOCCRM.P2_has_type, m.createResource(e55analyticalProjectIri));
         m.add(analyticalProject, CIDOCCRM.P14_carried_out_by, authenticatedUser);
         m.add(analyticalProject, CIDOCCRM.P1_is_identified_by, body.getLabel());

@@ -6,7 +6,6 @@ import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.analyticalEntity.NewAnalyticalEntity;
 import fr.cnrs.iremus.sherlock.pojo.e13.E13AsLinkToP141;
-import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
@@ -106,6 +105,7 @@ public class AnalyticalEntityController {
             m.add(e13AnalyticalEntityCreation, CIDOCCRM.P140_assigned_attribute_to, m.createResource(entity));
         m.add(e13AnalyticalEntityCreation, CIDOCCRM.P14_carried_out_by, authenticatedUser);
         m.add(e13AnalyticalEntityCreation, DCTerms.created, now);
+        m.add(e13AnalyticalEntityCreation, DCTerms.creator, authenticatedUser);
         m.add(e13AnalyticalEntityCreation, Sherlock.has_document_context, m.createResource(body.getDocument_context()));
         m.add(m.createResource(body.getAnalytical_project()), CIDOCCRM.P9_consists_of, e13AnalyticalEntityCreation);
 

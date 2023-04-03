@@ -58,7 +58,7 @@ class AnalyticalEntityControllerSpec extends Specification {
         currentModel.contains(null, CIDOCCRM.P140_assigned_attribute_to, currentModel.createResource('http://data-iremus.huma-num/id/note-1') )
         currentModel.contains(null, CIDOCCRM.P140_assigned_attribute_to, currentModel.createResource('http://data-iremus.huma-num/id/note-2') )
         currentModel.contains(null, CIDOCCRM.P140_assigned_attribute_to, currentModel.createResource('http://data-iremus.huma-num/id/note-3') )
-        currentModel.size() == 22
+        currentModel.size() == 24
     }
 
     void 'test delete analytical entity, no more old triples left'() {
@@ -91,7 +91,7 @@ class AnalyticalEntityControllerSpec extends Specification {
         then:
 
         Model afterDeleteModel = common.getAllTriples()
-        beforeDeleteModel.size() == 22
+        beforeDeleteModel.size() == 24
         afterDeleteModel.empty
 
 
