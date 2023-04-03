@@ -97,6 +97,50 @@ class AnalyticalEntityControllerSpec extends Specification {
 
     }
 
+    void 'test deleting analytical entity used by other user fail'() {
+        when:
+        common.eraseall()
+
+        def postResponse = common.post('/sherlock/api/analytical-entity', [
+                is_referred_to_by: ['http://data-iremus.huma-num/id/note-1',
+                                    'http://data-iremus.huma-num/id/note-2',
+                                    'http://data-iremus.huma-num/id/note-3'
+                ],
+                document_context: 'http://data-iremus.huma-num/id/ma-partition',
+                analytical_project: 'http://data-iremus.huma-num/id/mon-projet-analytique',
+                e13s: [
+                        p141: 'http://data-iremus.huma-num.fr/id/type-cadence',
+                        p141_type: 'URI',
+                        p177: 'http://www.cidoc-crm.org/cidoc-crm/P2_has_type',
+                        document_context: 'http://data-iremus.huma-num/id/ma-partition',
+                        analytical_project: 'http://data-iremus.huma-num/id/mon-projet-analytique'
+                ]
+        ])
+
+
+        def analyticalEntityIri = postResponse[0]["@id"] as String
+        def analyticalEntityUuid = analyticalEntityIri.split("/").last()
+        common.post('/sherlock/api/e13?fake-user=true', [
+                "p140"              : analyticalEntityIri,
+                "p177"              : "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                "p141"              : "http://data-iremus.huma-num.fr/un-autre-type-de-cadence",
+                "p141_type"         : "uri",
+                "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
+                "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+        ])
+
+
+        common.delete("/sherlock/api/analytical-entity/${analyticalEntityUuid}")
+
+        then:
+
+        HttpClientResponseException e = thrown()
+        e.getStatus().getCode() == 401
+
+
+    }
+
+
     void 'test deleting not existing analytical entity returns 404'() {
         when:
         common.eraseall()

@@ -10,13 +10,15 @@ import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Singleton
 public class MockAuthenticationProvider implements AuthenticationProvider {
 
     @Override
-    public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
-        Map<String, Object> attributes = Map.of("uuid", "4b15a57d-8cae-43c5-8096-187b58d29327");
+    public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {
+        boolean shouldFakeUser = Objects.equals(httpRequest.getParameters().get("fake-user"), "true");
+        Map<String, Object> attributes = Map.of("uuid", shouldFakeUser ? "0bd155cc-d23a-11ed-afa1-0242ac120002" : "4b15a57d-8cae-43c5-8096-187b58d29327");
         return Flowable.just(AuthenticationResponse.success("sherlock", attributes));
     }
 }

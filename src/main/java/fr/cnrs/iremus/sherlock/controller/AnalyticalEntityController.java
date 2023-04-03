@@ -28,9 +28,7 @@ import jakarta.inject.Inject;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
@@ -38,6 +36,7 @@ import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller("/api/analytical-entity")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -172,12 +171,15 @@ public class AnalyticalEntityController {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             Model currentModel = analyticalEntityService.getModelByAnalyticalEntity(analyticalEntity);
+
             if (!currentModel.containsResource(analyticalEntity))
                 return HttpResponse.notFound(sherlock.objectToJson("This analytical entity does not exist."));
-            if (!currentModel.contains(analyticalEntity, DCTerms.creator, authenticatedUser))
-                return HttpResponse.unauthorized();
 
-            System.out.println(sherlock.makeDeleteQuery(currentModel));
+            List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
+            if (! involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
+                return HttpResponse.unauthorized();
+            }
+
             conn.update(sherlock.makeDeleteQuery(currentModel));
 
             return HttpResponse.ok(sherlock.modelToJson(currentModel));

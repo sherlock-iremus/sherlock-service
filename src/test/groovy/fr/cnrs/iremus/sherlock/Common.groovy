@@ -58,20 +58,7 @@ class Common {
         return requestWithAuthorization
     }
 
-    String getAccessToken() {
-        getAccessToken("sherlock", "kcolrehs")
-    }
-
-    String getAccessToken(String username, String password) {
-        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(username, password)
-        HttpRequest request = HttpRequest.POST('/sherlock/api/login', creds)
-        HttpResponse<BearerAccessRefreshToken> rsp = client.toBlocking().exchange(request, BearerAccessRefreshToken)
-        BearerAccessRefreshToken bearerAccessRefreshToken = rsp.body()
-        String accessToken = bearerAccessRefreshToken.accessToken
-        return accessToken
-    }
-
-    Object parse(String json) {
+    static Object parse(String json) {
         return new ObjectMapper().readValue(json, Object.class)
     }
 
