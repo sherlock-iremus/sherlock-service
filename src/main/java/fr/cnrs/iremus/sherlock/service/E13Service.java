@@ -5,14 +5,22 @@ import fr.cnrs.iremus.sherlock.common.Sherlock;
 import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.apache.jena.arq.querybuilder.ConstructBuilder;
+import org.apache.jena.arq.querybuilder.WhereBuilder;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdfconnection.RDFConnectionFuseki;
+import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
 @Singleton
 public class E13Service {
+    @io.micronaut.context.annotation.Property(name = "jena")
+    protected String jena;
 
     @Inject
     Sherlock sherlock;
@@ -42,6 +50,31 @@ public class E13Service {
         m.add(analyticalProject, CIDOCCRM.P9_consists_of, e13);
         m.add(e13, DCTerms.created, now);
         m.add(e13, DCTerms.creator, user);
+    }
+
+    public Model getModelByE13(Resource e13) {
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+            ConstructBuilder cb = new ConstructBuilder()
+                    .addConstruct(e13, "?e13_p", "?e13_o")
+                    .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, e13)
+                    .addConstruct("?p141", "?p141_p", "?p141_o")
+                    .addConstruct("?p141_s", "?p141_p_i", "?p141")
+                    .addGraph(sherlock.getGraph(),
+                            new WhereBuilder()
+                                    .addWhere(e13, "?e13_p", "?e13_o")
+                                    .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, e13)
+                                    .addOptional( new WhereBuilder()
+                                            .addWhere(e13, CIDOCCRM.P141_assigned, "?p141")
+                                            .addOptional("?p141", "?p141_p", "?p141_o")
+                                            .addOptional("?p141_s", "?p141_p_i", "?p141")
+                                    )
+                    );
+            Query q = cb.build();
+            QueryExecution qe = conn.query(q);
+            return qe.execConstruct();
+        }
     }
 
 }

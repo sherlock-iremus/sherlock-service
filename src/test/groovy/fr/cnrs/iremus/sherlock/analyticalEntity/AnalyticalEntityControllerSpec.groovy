@@ -2,12 +2,8 @@ package fr.cnrs.iremus.sherlock.analyticalEntity
 
 import fr.cnrs.iremus.sherlock.Common;
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
-import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalEntityController
-import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService;
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
-import io.micronaut.rxjava2.http.client.RxHttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.apache.jena.rdf.model.Model
@@ -17,17 +13,7 @@ import spock.lang.Specification;
 class AnalyticalEntityControllerSpec extends Specification {
 
     @Inject
-    @Client('/')
-    RxHttpClient client
-
-    @Inject
     Common common
-
-    @Inject
-    Sherlock sherlock
-
-    @Inject
-    AnalyticalEntityService analyticalEntityService
 
     void 'test post analytical entity creates triples'() {
         when:
@@ -135,7 +121,8 @@ class AnalyticalEntityControllerSpec extends Specification {
         then:
 
         HttpClientResponseException e = thrown()
-        e.getStatus().getCode() == 401
+        e.getStatus().getCode() == 403
+        e.message == "Some resources belongs to other users."
 
 
     }

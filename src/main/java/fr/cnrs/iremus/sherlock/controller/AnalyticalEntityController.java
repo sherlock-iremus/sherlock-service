@@ -11,6 +11,7 @@ import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.*;
@@ -177,7 +178,7 @@ public class AnalyticalEntityController {
 
             List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
             if (! involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
-                return HttpResponse.unauthorized();
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Some resources belongs to other users."));
             }
 
             conn.update(sherlock.makeDeleteQuery(currentModel));

@@ -1,18 +1,19 @@
 package fr.cnrs.iremus.sherlock.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
-import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
+import io.micronaut.http.exceptions.HttpException;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -25,14 +26,16 @@ import jakarta.inject.Inject;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.SelectorImpl;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.apache.jena.vocabulary.DCTerms;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller("/api/e13")
 @Tag(name = "3. Annotations")
@@ -40,9 +43,6 @@ import javax.validation.Valid;
 public class E13Controller {
     @Property(name = "jena")
     protected String jena;
-
-    @Inject
-    DateService dateService;
 
     @Inject
     Sherlock sherlock;
@@ -102,6 +102,55 @@ public class E13Controller {
             Model res = qe.execConstruct();
 
             return HttpResponse.ok(sherlock.modelToJson(res));
+        }
+    }
+
+    /**
+     * @param propagate set to "true" if you want to delete also the 141 of the E13
+     */
+    @Delete("/{e13Uuid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<String> delete(@PathVariable String e13Uuid, @QueryValue @Nullable Boolean propagate, Authentication authentication) throws HttpException, JsonProcessingException {
+        Model m = ModelFactory.createDefaultModel();
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
+        Resource e13 = m.getResource(sherlock.makeIri(e13Uuid));
+
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            Model currentModel = e13Service.getModelByE13(e13);
+
+            if (!currentModel.containsResource(e13))
+                return HttpResponse.notFound(sherlock.objectToJson("This E13 does not exist."));
+
+            List<RDFNode> p141List = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).toList();
+            for(RDFNode p141 : p141List) {
+                if (p141.isResource()) {
+                    List<Resource> resourcesDependingOnP141 = currentModel.listSubjectsWithProperty(null, p141.asResource()).filterDrop(resource -> resource.equals(e13)).toList();
+                    if (! resourcesDependingOnP141.isEmpty()) {
+                        return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Please delete entities which depends on the P141 of the E13 first."));
+                    }
+
+                    // If P141 does not belong to current user, do NOT consider it
+                    if (! currentModel.contains(p141.asResource(), DCTerms.creator, authenticatedUser)) {
+                        currentModel.removeAll(p141.asResource(), null, null);
+                    }
+
+                    // If no propagation, do NOT remove triples with 141 as subject
+                    if (! Boolean.TRUE.equals(propagate)) {
+                        currentModel.removeAll(p141.asResource(), null, null);
+                    }
+                }
+            }
+
+            List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
+            if (! involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Some resources belongs to other users."));
+            }
+
+            conn.update(sherlock.makeDeleteQuery(currentModel));
+
+            return HttpResponse.ok(sherlock.modelToJson(currentModel));
         }
     }
 }
