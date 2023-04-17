@@ -2,7 +2,7 @@ package fr.cnrs.iremus.sherlock
 
 class J {
     static def getOneByType(response, type) {
-        return response.find { it?.get("@type")?.get(0) == type.toString() }
+        return response.find { it?.get("@type")?.contains(type.toString()) }
     }
 
     static def getAllByPO(response, predicate, linkedResourceId) {
