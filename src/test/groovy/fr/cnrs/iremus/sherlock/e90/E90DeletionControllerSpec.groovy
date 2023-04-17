@@ -26,7 +26,7 @@ class E90DeletionControllerSpec extends Specification {
                 "p177"              : annotationProperty,
                 "p141_type" : "new resource",
                 "new_p141"              : [
-                        rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
+                        rdf_type: ["crm:E36_Visual_Item"],
                         p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
                 ],
                 "document_context"  : documentContext,
@@ -70,6 +70,7 @@ class E90DeletionControllerSpec extends Specification {
                 "analytical_project": analyticalProject
         ])
 
+        print(responsePostE13)
         def parent_e90 = J.getOneByType(responsePostE13, CIDOCCRM.E36_Visual_Item)
 
         def responsePostFragment = common.post('/sherlock/api/e90/fragment?fake-user=true', [
