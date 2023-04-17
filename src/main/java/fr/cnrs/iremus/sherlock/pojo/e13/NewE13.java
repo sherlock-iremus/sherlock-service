@@ -3,29 +3,33 @@ package fr.cnrs.iremus.sherlock.pojo.e13;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import io.micronaut.core.annotation.Introspected;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Introspected
+@NewE13P141Validator
 public class NewE13 {
-    @NotBlank
-    private String p140;
+    @NotEmpty
+    private List<String> p140;
     @NotBlank
     private String p177;
-    @NotBlank
     private String p141;
+    @Valid
+    private NewP141 new_p141;
     @NotBlank
     private String document_context;
     @NotBlank
     private String analytical_project;
-    @NotNull
+    @NotBlank
     private ResourceType p141_type;
 
-    public String getP140() {
+    public List<String> getP140() {
         return p140;
     }
 
-    public void setP140(String p140) {
+    public void setP140(List<String> p140) {
         this.p140 = p140;
     }
 
@@ -67,5 +71,13 @@ public class NewE13 {
 
     public void setAnalytical_project(String analytical_project) {
         this.analytical_project = analytical_project;
+    }
+
+    public NewP141 getNew_p141() {
+        return new_p141;
+    }
+
+    public void setNew_p141(NewP141 new_p141) {
+        this.new_p141 = new_p141;
     }
 }

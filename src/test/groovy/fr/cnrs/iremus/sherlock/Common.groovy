@@ -13,11 +13,13 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import jakarta.inject.Inject
 import org.apache.jena.arq.querybuilder.ConstructBuilder
-import org.apache.jena.arq.querybuilder.WhereBuilder
 import org.apache.jena.atlas.web.HttpException
 import org.apache.jena.query.Query
 import org.apache.jena.query.QueryExecution
 import org.apache.jena.rdf.model.Model
+import org.apache.jena.rdf.model.ModelFactory
+import org.apache.jena.rdf.model.RDFNode
+import org.apache.jena.rdf.model.Resource
 import org.apache.jena.rdfconnection.RDFConnectionFuseki
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder
 
@@ -94,6 +96,16 @@ class Common {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             conn.delete(sherlock.getGraph().toString())
+        } catch (HttpException e) {
+        }
+    }
+
+    void addTripleToDataset(Resource s, org.apache.jena.rdf.model.Property p, RDFNode o) {
+        Model m = ModelFactory.createDefaultModel();
+        m.add(s, p, o)
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            conn.load(sherlock.getGraph().toString(), m)
         } catch (HttpException e) {
         }
     }

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ResourceType {
     URI("uri"),
-    LITERAL("literal");
+    LITERAL("literal"),
+    NEW_RESOURCE("new resource");
 
     @JsonValue
     private final String label;

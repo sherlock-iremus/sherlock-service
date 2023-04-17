@@ -1,4 +1,4 @@
-package fr.cnrs.iremus.sherlock.pojo.triple;
+package fr.cnrs.iremus.sherlock.pojo.e13;
 
 import javax.validation.Constraint;
 import java.lang.annotation.ElementType;
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Constraint(validatedBy = {})
-public @interface TripleValidator {
-    String message() default "You cannot define datatype or language if your object is uri";
+public @interface NewE13P141Validator {
+    String message() default "Please set either body.p141 or body.new_p141. And set corresponding p141_type";
 }

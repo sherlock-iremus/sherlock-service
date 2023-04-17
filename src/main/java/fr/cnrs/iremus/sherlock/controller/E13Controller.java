@@ -5,7 +5,10 @@ import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
+import fr.cnrs.iremus.sherlock.pojo.e13.NewP141;
+import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
+import fr.cnrs.iremus.sherlock.service.ResourceService;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -32,6 +35,7 @@ import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.RDF;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -50,9 +54,12 @@ public class E13Controller {
     @Inject
     E13Service e13Service;
 
+    @Inject
+    ResourceService resourceService;
+
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(value = """
+    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
                         {
                             "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
                             "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
@@ -61,29 +68,56 @@ public class E13Controller {
                             "document_context": "http://data-iremus.huma-num/id/ma-partition",
                             "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
                         }
-                        """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
+                        """), @ExampleObject(name = "E13 and new resource as P141" ,value = """
+                                    {
+                            "p140": "http://data-iremus.huma-num/id/mon-fragment-d-estampe",
+                            "p177": "crm:P1_is_identified_by",
+                            "new_p141": {
+                                "rdf_type": ["crm:E42_Identifier"],
+                                "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
+                            },
+                            "p141_type": "new resource",
+                            "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
+                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                        }
+            """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
         // new e13
         String e13Iri = sherlock.makeIri();
-        String p140 = sherlock.resolvePrefix(body.getP140());
         String p177 = sherlock.resolvePrefix(body.getP177());
-        String p141 = sherlock.resolvePrefix(body.getP141());
+        String p141 = sherlock.resolvePrefix(body.getP141_type() == ResourceType.NEW_RESOURCE ? sherlock.makeIri() :  body.getP141());
         String documentContext = sherlock.resolvePrefix(body.getDocument_context());
         String analyticalProject = sherlock.resolvePrefix(body.getAnalytical_project());
         ResourceType p141Type = body.getP141_type();
 
         // UPDATE QUERY
         Model m = ModelFactory.createDefaultModel();
+        List<Resource> p140s = body.getP140().stream().map(p140 -> m.createResource(sherlock.resolvePrefix(p140))).toList();
         Resource e13 = m.createResource(e13Iri);
         e13Service.insertNewE13(
                 e13,
-                m.createResource(p140),
-                p141Type.equals(ResourceType.URI) ? m.createResource(p141) : m.createLiteral(p141),
+                p140s,
+                p141Type.equals(ResourceType.LITERAL) ? m.createLiteral(p141) : m.createResource(p141),
                 m.createResource(p177),
                 m.createResource(documentContext),
                 m.createResource(analyticalProject),
                 m,
                 authentication
         );
+
+        if (body.getP141_type() == ResourceType.NEW_RESOURCE) {
+            NewP141 newP141 = body.getNew_p141();
+            Resource p141Resource = m.createResource(p141);
+
+            resourceService.insertResourceCommonTriples(p141Resource, authentication, m);
+            for (String rdfType : newP141.getRdf_type())
+                m.add(p141Resource, RDF.type, m.createResource(sherlock.resolvePrefix(rdfType)));
+            for (String p2Type : newP141.getP2_type()) {
+                m.add(p141Resource, CIDOCCRM.P2_has_type, m.createResource(sherlock.resolvePrefix(p2Type)));
+            }
+            if (newP141.getP190() != null) {
+                m.add(p141Resource, CIDOCCRM.P190_has_symbolic_content, sherlock.resolvePrefix(newP141.getP190()));
+            }
+        }
 
         String updateWithModel = sherlock.makeUpdateQuery(m);
 
@@ -92,16 +126,9 @@ public class E13Controller {
 
             // WRITE
             conn.update(updateWithModel);
+            Model currentModel = e13Service.getModelByE13(e13);
 
-            // AND READ IT BACK AS JSON-LD
-            ConstructBuilder cb = new ConstructBuilder()
-                    .addConstruct(e13, "?e13_p", "?e13_o")
-                    .addGraph(sherlock.getGraph(), e13, "?e13_p", "?e13_o");
-            Query q = cb.build();
-            QueryExecution qe = conn.query(q);
-            Model res = qe.execConstruct();
-
-            return HttpResponse.ok(sherlock.modelToJson(res));
+            return HttpResponse.ok(sherlock.modelToJson(currentModel));
         }
     }
 

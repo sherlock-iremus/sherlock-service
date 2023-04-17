@@ -6,10 +6,6 @@ micronaut:
     port: 5555
     cors:
       enabled: true
-      configurations:
-        all:
-          allowedOrigins:
-            - http://localhost:3000
   security:
     authentication: cookie
     redirect:
@@ -29,6 +25,8 @@ micronaut:
     token:
       jwt:
         cookie:
+          cookie-same-site: none
+          cookie-secure: true
           cookie-http-only: false
         signatures:
           secret:

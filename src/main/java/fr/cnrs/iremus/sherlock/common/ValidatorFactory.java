@@ -1,10 +1,7 @@
 package fr.cnrs.iremus.sherlock.common;
 
-import fr.cnrs.iremus.sherlock.pojo.e13.E13AsLink;
-import fr.cnrs.iremus.sherlock.pojo.resource.E13AsLinkValidator;
-import fr.cnrs.iremus.sherlock.pojo.resource.LinkedResourcesValidator;
-import fr.cnrs.iremus.sherlock.pojo.triple.TripleCreate;
-import fr.cnrs.iremus.sherlock.pojo.triple.TripleValidator;
+import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
+import fr.cnrs.iremus.sherlock.pojo.e13.NewE13P141Validator;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserColorValidator;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfigEdit;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfigValidator;
@@ -15,51 +12,10 @@ import io.micronaut.validation.validator.constraints.ConstraintValidator;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.List;
-
 @Factory
 public class ValidatorFactory {
     @Inject
     ValidatorService validatorService;
-
-    @Singleton
-    ConstraintValidator<TripleValidator, TripleCreate> tripleValidator() {
-        return (value, annotationMetadata, context) -> (
-                value != null
-                        &&
-                        (
-                                value.getObject_type() == null
-                                        ||
-                                        (
-                                                !value.getObject_type().equals(ResourceType.URI)
-                                                        ||
-                                                        (
-                                                                value.getO_datatype() == null
-                                                                        &&
-                                                                        value.getO_lg() == null
-                                                        )
-                                        )
-                        )
-        );
-    }
-
-    @Singleton
-    ConstraintValidator<LinkedResourcesValidator, List<Triple>> LinkedResourcesValidator() {
-        return (value, annotationMetadata, context) -> {
-            return value != null
-                    &&
-                    value.stream().allMatch(this::isTripleValid);
-        };
-    }
-
-    @Singleton
-    ConstraintValidator<E13AsLinkValidator, List<E13AsLink>> E13AsLinkValidator() {
-        return (value, annotationMetadata, context) -> {
-            return value != null
-                    &&
-                    value.stream().allMatch(this::E13AsLinkValid);
-        };
-    }
 
     @Singleton
     ConstraintValidator<UserConfigValidator, UserConfigEdit> userConfigValidator() {
@@ -79,36 +35,23 @@ public class ValidatorFactory {
         return (value, annotationMetadata, context) -> value == null || validatorService.isHexColorCode(value);
     }
 
-    private boolean E13AsLinkValid(E13AsLink e13AsLink) {
-        return (
-                e13AsLink.getP140() == null
-                        &&
-                        e13AsLink.getP141() != null
-                        &&
-                        e13AsLink.getP141_type() != null
-        )
-                ||
-                (
-                        e13AsLink.getP140() != null
-                                &&
-                                e13AsLink.getP141() == null
-                );
+    @Singleton
+    ConstraintValidator<NewE13P141Validator, NewE13> newE13P141Validator() {
+        return (value, annotationMetadata, context) -> {
+            assert value != null;
+            return hasE13ValidNewP141(value) || hasE13ValidP141(value);
+        };
     }
 
-    private boolean isTripleValid(Triple triple) {
-        return triple.getP() != null
-                && (
-                (
-                        triple.getS() == null
-                                &&
-                                triple.getO() != null
-                )
-                        ||
-                        (
-                                triple.getS() != null
-                                        &&
-                                        triple.getO() == null
-                        )
-        );
+    private boolean hasE13ValidNewP141 (NewE13 newE13) {
+        return newE13.getNew_p141() != null &&
+                newE13.getP141() == null &&
+                newE13.getP141_type().equals(ResourceType.NEW_RESOURCE);
+    }
+
+    private boolean hasE13ValidP141 (NewE13 newE13) {
+        return newE13.getNew_p141() == null &&
+                newE13.getP141() != null &&
+                (newE13.getP141_type().equals(ResourceType.URI) || newE13.getP141_type().equals(ResourceType.LITERAL));
     }
 }
