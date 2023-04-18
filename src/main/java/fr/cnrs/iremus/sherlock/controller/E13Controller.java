@@ -6,7 +6,6 @@ import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewP141;
-import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import fr.cnrs.iremus.sherlock.service.ResourceService;
 import io.micronaut.context.annotation.Property;
@@ -128,7 +127,7 @@ public class E13Controller {
             conn.update(updateWithModel);
             Model currentModel = e13Service.getModelByE13(e13);
 
-            return HttpResponse.ok(sherlock.modelToJson(currentModel));
+            return HttpResponse.created(sherlock.modelToJson(currentModel));
         }
     }
 

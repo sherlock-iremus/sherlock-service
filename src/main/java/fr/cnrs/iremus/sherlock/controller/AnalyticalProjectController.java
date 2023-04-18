@@ -107,7 +107,7 @@ public class AnalyticalProjectController {
             QueryExecution qe = conn.query(q);
             Model res = qe.execConstruct();
 
-            return HttpResponse.ok(sherlock.modelToJson(res));
+            return HttpResponse.created(sherlock.modelToJson(res));
         }
 
     }

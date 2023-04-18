@@ -14,7 +14,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
-import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
 import java.util.List;
