@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.arq.querybuilder.WhereBuilder;
 import org.apache.jena.query.Query;
@@ -36,7 +37,6 @@ import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller("/api/e90")
@@ -57,7 +57,7 @@ public class E90Controller {
 
     @Post("/fragment")
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewE90Fragment.class), examples = {@ExampleObject(value = """
+    public MutableHttpResponse<String> create(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE90Fragment.class), examples = {@ExampleObject(value = """
             {
                 "parent": "http://data-iremus.huma-num.fr/id/24c7c452-e9cf-4280-bb23-a66744f74835",
                 "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
@@ -71,7 +71,6 @@ public class E90Controller {
             e90Type = e90Service.getMostAccurateE90RDFType(parentE90);
         } catch (Exception e) {
             return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Parent resource has no rdf:type matching E90"));
-
         }
 
         Resource e90Fragment = m.createResource(sherlock.makeIri());
@@ -94,7 +93,7 @@ public class E90Controller {
                     .addConstruct(e90Fragment, "?p", "?o")
                     .addGraph(sherlock.getGraph(),
                             new WhereBuilder().addWhere(e90Fragment, "?p", "?o")
-            );
+                    );
             Query q = cb.build();
             QueryExecution qe = conn.query(q);
             Model res = qe.execConstruct();
@@ -129,11 +128,11 @@ public class E90Controller {
                 return HttpResponse.notFound(sherlock.objectToJson("This E90 does not exist."));
 
             List<Resource> resourcesWithE90AsObject = e90Model.listSubjectsWithProperty(null, e90).toList();
-            if (! resourcesWithE90AsObject.isEmpty())
+            if (!resourcesWithE90AsObject.isEmpty())
                 return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Please delete entities which depends on the this E90 before deleting it."));
 
             List<RDFNode> involvedUsers = e90Model.listObjectsOfProperty(e90, DCTerms.creator).toList();
-            if (! involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString())))
+            if (!involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString())))
                 return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("This E90 belongs to other users."));
 
             conn.update(sherlock.makeDeleteQuery(e90Model));

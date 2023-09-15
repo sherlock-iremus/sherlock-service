@@ -44,7 +44,7 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
                     emitter.error(new OauthErrorResponseException(INVALID_GRANT, "refresh token revoked", null));
                 } else {
                     emitter.next(Authentication.build(token.getUsername(), Map.ofEntries(
-                            Map.entry("orcid",token.getOrcid()),
+                            Map.entry("orcid", token.getOrcid()),
                             Map.entry("uuid", token.getUuid())
                     )));
                     emitter.complete();

@@ -3,14 +3,14 @@ package fr.cnrs.iremus.sherlock.functional
 import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
-import fr.cnrs.iremus.sherlock.common.Sherlock;
+import fr.cnrs.iremus.sherlock.common.Sherlock
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.vocabulary.DCTerms
 import org.apache.jena.vocabulary.RDF
-import spock.lang.Specification;
+import spock.lang.Specification
 
 @MicronautTest()
 class VisualItemAnnotationSpec extends Specification {
@@ -21,8 +21,8 @@ class VisualItemAnnotationSpec extends Specification {
     @Inject
     Sherlock sherlock
 
-    public final static String e55ImageFragmentIri = "http://data-iremus.huma-num.fr/id/69a87e42-fa1e-46d1-9ae1-eb73fb0894d8";
-    public final static String e55IiifIri = "http://data-iremus.huma-num.fr/id/19073c4a-0ef7-4ac4-a51a-e0810a596773";
+    public final static String e55ImageFragmentIri = "http://data-iremus.huma-num.fr/id/69a87e42-fa1e-46d1-9ae1-eb73fb0894d8"
+    public final static String e55IiifIri = "http://data-iremus.huma-num.fr/id/19073c4a-0ef7-4ac4-a51a-e0810a596773"
 
     void "Indexation de la thématique 'Religion' sur l'estampe 1677-09_224"() {
         when:
@@ -62,7 +62,7 @@ class VisualItemAnnotationSpec extends Specification {
     void "Indexation de la représentation de la personne 'Louis XIV' sur un fragment de l'estampe 1677-09_224"() {
         when:
         common.eraseall()
-        Model m = ModelFactory.createDefaultModel();
+        Model m = ModelFactory.createDefaultModel()
 
         def estampeE36Iri = "http://data-iremus.huma-num.fr/id/24c7c452-e9cf-4280-bb23-a66744f74835"
         def louisXIVE21Iri = "http://data-iremus.huma-num.fr/sherlock/id/1480e2ab-f3d6-4915-a0c0-9a5b55fd56b6"

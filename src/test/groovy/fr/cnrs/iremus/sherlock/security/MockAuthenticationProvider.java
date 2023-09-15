@@ -5,7 +5,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationProvider;
 import io.micronaut.security.authentication.AuthenticationRequest;
 import io.micronaut.security.authentication.AuthenticationResponse;
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Singleton
-public class MockAuthenticationProvider implements AuthenticationProvider {
+public class MockAuthenticationProvider implements AuthenticationProvider<HttpRequest<?>> {
 
     @Override
     public Publisher<AuthenticationResponse> authenticate(HttpRequest<?> httpRequest, AuthenticationRequest<?, ?> authenticationRequest) {

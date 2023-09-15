@@ -17,8 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
-
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Controller("/api/")
 @Tag(name = "1. Home")
@@ -27,6 +26,7 @@ public class HomeController {
 
     @Inject
     Sherlock sherlock;
+
     @Produces(MediaType.APPLICATION_JSON)
     @Get
     @ApiResponse(description = "Current user uuid", content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class), examples = @ExampleObject("6ea17744-2345-43ee-8a3e-f3c9770e0340")))

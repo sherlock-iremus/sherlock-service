@@ -1,10 +1,10 @@
 package fr.cnrs.iremus.sherlock.analyticalEntity
 
-import fr.cnrs.iremus.sherlock.Common;
-import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
+import fr.cnrs.iremus.sherlock.Common
+import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalEntityController
-import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService;
+import fr.cnrs.iremus.sherlock.service.AnalyticalEntityService
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.rxjava2.http.client.RxHttpClient
@@ -13,7 +13,7 @@ import jakarta.inject.Inject
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdf.model.ModelFactory
 import org.apache.jena.rdf.model.Resource
-import spock.lang.Specification;
+import spock.lang.Specification
 
 @MicronautTest()
 class AnalyticalEntityControllerSpec extends Specification {
@@ -75,7 +75,7 @@ class AnalyticalEntityControllerSpec extends Specification {
     void 'test delete analytical entity without annotations, no more old triples left'() {
         when:
         common.eraseall()
-        Model m = ModelFactory.createDefaultModel();
+        Model m = ModelFactory.createDefaultModel()
 
         String p177Iri = sherlock.makeIri()
         String p140Iri = sherlock.makeIri()
@@ -99,7 +99,7 @@ class AnalyticalEntityControllerSpec extends Specification {
     void 'test delete analytical entity with annotations, no more old triples left'() {
         when:
         common.eraseall()
-        Model m = ModelFactory.createDefaultModel();
+        Model m = ModelFactory.createDefaultModel()
 
         String p177Iri = sherlock.makeIri()
         String p140Iri = sherlock.makeIri()

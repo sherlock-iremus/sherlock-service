@@ -18,12 +18,11 @@ import java.util.Map;
 @Named("orcid")
 @Singleton
 public class UserDetailsMapper implements OauthAuthenticationMapper {
+    private final OrcidApiClient orcidApiClient;
     @Inject
     UserService userService;
-
     @Inject
     Sherlock sherlock;
-    private final OrcidApiClient orcidApiClient;
 
 
     public UserDetailsMapper(OrcidApiClient orcidApiClient) {

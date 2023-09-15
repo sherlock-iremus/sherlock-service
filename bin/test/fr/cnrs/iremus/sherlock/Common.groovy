@@ -30,7 +30,7 @@ class Common {
     @Inject
     Sherlock sherlock
     @Property(name = "jena")
-    protected String jena;
+    protected String jena
 
     @Deprecated
     String getAccessToken(client) {
@@ -112,15 +112,15 @@ class Common {
     }
 
     Model getAllTriples() {
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena)
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
             ConstructBuilder cb = new ConstructBuilder()
                 .addConstruct("?s", "?p", "?o")
                 .addGraph("?g", "?s", "?p", "?o")
-            Query q = cb.build();
-            QueryExecution qe = conn.query(q);
-            return qe.execConstruct();
+            Query q = cb.build()
+            QueryExecution qe = conn.query(q)
+            return qe.execConstruct()
         }
     }
 }

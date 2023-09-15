@@ -1,0 +1,13 @@
+fr.cnrs.iremus.sherlock.pojo.analyticalEntity.$NewAnalyticalEntity$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.e13.$E13AsLink$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.e13.$E13AsLinkToP141$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.e13.$NewE13$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.resource.$E13AndTripleLinkedResource$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.resource.$E13LinkedResource$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.resource.$LinkedResource$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.resource.$NewResource$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.selection.$SelectionCreate$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.triple.$TripleCreate$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.triple.$TripleReplace$IntrospectionRef
+fr.cnrs.iremus.sherlock.pojo.user.config.$UserConfigEdit$IntrospectionRef
+fr.cnrs.iremus.sherlock.security.$RefreshTokenEntity$IntrospectionRef

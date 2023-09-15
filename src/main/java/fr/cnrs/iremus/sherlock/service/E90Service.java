@@ -7,14 +7,14 @@ import org.apache.jena.rdf.model.Resource;
 
 import java.util.List;
 
-@Singleton public class E90Service {
+@Singleton
+public class E90Service {
+    private final List<Resource> E90TypesOrderedByAccuracyDesc = List.of(CIDOCCRM.E36_Visual_Item, CIDOCCRM.E34_Inscription, CIDOCCRM.E90_Symbolic_Object);
     @io.micronaut.context.annotation.Property(name = "jena")
     protected String jena;
-
     @Inject
     ResourceService resourceService;
 
-    private final List<Resource> E90TypesOrderedByAccuracyDesc = List.of(CIDOCCRM.E36_Visual_Item, CIDOCCRM.E34_Inscription, CIDOCCRM.E90_Symbolic_Object);
     public Resource getMostAccurateE90RDFType(Resource e90) throws Exception {
         List<Resource> resourceRDFTypes = resourceService.getResourceRDFTypes(e90);
         for (Resource type : E90TypesOrderedByAccuracyDesc) {

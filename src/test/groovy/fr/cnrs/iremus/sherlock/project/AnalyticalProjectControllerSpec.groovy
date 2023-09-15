@@ -1,22 +1,22 @@
 package fr.cnrs.iremus.sherlock.project
 
 import fr.cnrs.iremus.sherlock.Common
-import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
+import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalProjectController
 import fr.cnrs.iremus.sherlock.service.DateService
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.rxjava2.http.client.RxHttpClient
+import io.micronaut.rxjava3.http.client.Rx3HttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import spock.lang.Specification;
+import spock.lang.Specification
 
 @MicronautTest()
 class AnalyticalProjectControllerSpec extends Specification {
 
     @Inject
     @Client('/')
-    RxHttpClient client
+    Rx3HttpClient client
 
     @Inject
     Common common
@@ -35,10 +35,11 @@ class AnalyticalProjectControllerSpec extends Specification {
                 label: 'Mon projet'
         ])
 
-        then:response
+        then:
+        response
 
-        def resource = response.find { item -> item["@type"][0] ==  CIDOCCRM.E7_Activity.URI }
-        def timeSpan = response.find { item -> item["@type"][0] ==  CIDOCCRM.E52_Time_span.URI }
+        def resource = response.find { item -> item["@type"][0] == CIDOCCRM.E7_Activity.URI }
+        def timeSpan = response.find { item -> item["@type"][0] == CIDOCCRM.E52_Time_span.URI }
 
         resource["@type"][0] == CIDOCCRM.E7_Activity.URI
         resource[CIDOCCRM.P1_is_identified_by.URI]["@value"][0] == 'Mon projet'

@@ -1,16 +1,15 @@
 package fr.cnrs.iremus.sherlock
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.rxjava2.http.client.RxHttpClient
+import io.micronaut.rxjava3.http.client.Rx3HttpClient
 import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.security.token.render.BearerAccessRefreshToken
 import jakarta.inject.Inject
 import org.apache.jena.arq.querybuilder.ConstructBuilder
 import org.apache.jena.atlas.web.HttpException
@@ -23,16 +22,15 @@ import org.apache.jena.rdf.model.Resource
 import org.apache.jena.rdfconnection.RDFConnectionFuseki
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder
 
-
 class Common {
 
     @Inject
     @Client("/")
-    RxHttpClient client
+    Rx3HttpClient client
     @Inject
     Sherlock sherlock
     @Property(name = "jena")
-    protected String jena;
+    protected String jena
 
     @Deprecated
     String getAccessToken(client) {
@@ -65,30 +63,46 @@ class Common {
     }
 
     Object post(String route, Map body) {
-        HttpRequest request = HttpRequest.POST(route, body)
+        HttpRequest request = HttpRequest
+                .POST(route, body)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
+        println "----------------------------------------"
+        println route
+        println request.getBody()
+        println "----------------------------------------"
         String response = client.toBlocking().retrieve(request)
         return parse(response)
     }
 
     Object patch(String route, Map body) {
-        HttpRequest request = HttpRequest.PATCH(route, body)
+        HttpRequest request = HttpRequest
+                .PATCH(route, body)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
         String response = client.toBlocking().retrieve(request)
         return parse(response)
     }
 
     Object delete(String route) {
-        HttpRequest request = HttpRequest.DELETE(route)
+        HttpRequest request = HttpRequest
+                .DELETE(route)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
         String response = client.toBlocking().retrieve(request)
         return parse(response)
     }
 
     Object put(String route, Map body) {
-        HttpRequest request = HttpRequest.PUT(route, body)
+        HttpRequest request = HttpRequest
+                .PUT(route, body)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
         String response = client.toBlocking().retrieve(request)
+        return parse(response)
+    }
+
+    Object get(String route) {
+        HttpRequest request = HttpRequest
+                .GET(route)
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+        Object response = client.toBlocking().retrieve(request)
         return parse(response)
     }
 
@@ -101,7 +115,7 @@ class Common {
     }
 
     void addTripleToDataset(Resource s, org.apache.jena.rdf.model.Property p, RDFNode o) {
-        Model m = ModelFactory.createDefaultModel();
+        Model m = ModelFactory.createDefaultModel()
         m.add(s, p, o)
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
@@ -111,15 +125,15 @@ class Common {
     }
 
     Model getAllTriples() {
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena)
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
             ConstructBuilder cb = new ConstructBuilder()
-                .addConstruct("?s", "?p", "?o")
-                .addGraph("?g", "?s", "?p", "?o")
-            Query q = cb.build();
-            QueryExecution qe = conn.query(q);
-            return qe.execConstruct();
+                    .addConstruct("?s", "?p", "?o")
+                    .addGraph("?g", "?s", "?p", "?o")
+            Query q = cb.build()
+            QueryExecution qe = conn.query(q)
+            return qe.execConstruct()
         }
     }
 }

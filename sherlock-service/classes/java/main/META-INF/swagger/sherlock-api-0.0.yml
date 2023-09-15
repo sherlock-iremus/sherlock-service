@@ -1,0 +1,353 @@
+openapi: 3.0.1
+info:
+  title: SHERLOCK API
+  description: SHERLOCK API
+  contact:
+    name: Thomas Bottini
+    url: http://iremus.cnrs.fr
+    email: thomas.bottini@cnrs.fr
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "0.0"
+security:
+- orcid: []
+paths:
+  /api:
+    get:
+      tags:
+      - 1. Home
+      operationId: index
+      parameters: []
+      responses:
+        "200":
+          description: index 200 response
+          content:
+            text/html:
+              schema:
+                type: string
+  /api/analytical-entity:
+    post:
+      tags:
+      - 5. Analytical Entity
+      operationId: create
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAnalyticalEntity'
+        required: true
+      responses:
+        "200":
+          description: uri of the analytical entity
+  /api/analytical-entity/{analyticalEntityUuid}:
+    delete:
+      tags:
+      - 5. Analytical Entity
+      operationId: delete
+      parameters:
+      - name: analyticalEntityUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: model deleted
+  /api/e13:
+    post:
+      operationId: create_1
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewE13'
+        required: true
+      responses:
+        "200":
+          description: create_1 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/selection:
+    post:
+      tags:
+      - 4. Selection
+      operationId: create_2
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectionCreate'
+        required: true
+      responses:
+        "200":
+          description: create_2 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/selection/{selectionUuid}:
+    delete:
+      tags:
+      - 4. Selection
+      operationId: delete_1
+      parameters:
+      - name: selectionUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: delete_1 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+    patch:
+      tags:
+      - 4. Selection
+      operationId: edit
+      parameters:
+      - name: selectionUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectionCreate'
+        required: true
+      responses:
+        "200":
+          description: edit 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/triple:
+    put:
+      tags:
+      - 3. Triples
+      operationId: replace
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripleReplace'
+        required: true
+      responses:
+        "200":
+          description: replace 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      tags:
+      - 3. Triples
+      operationId: create_3
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripleCreate'
+        required: true
+      responses:
+        "200":
+          description: create_3 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/user/config:
+    get:
+      tags:
+      - 2. User Configuration
+      operationId: get
+      parameters: []
+      responses:
+        "200":
+          description: get 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConfig'
+    put:
+      tags:
+      - 2. User Configuration
+      operationId: edit_1
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserConfigEdit'
+        required: true
+      responses:
+        "200":
+          description: edit_1 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    Datatype:
+      type: string
+      enum:
+      - STRING
+      - INTEGER
+      - DATE
+    E13AsLinkToP141:
+      required:
+      - p141
+      - p141_type
+      - p177
+      type: object
+      properties:
+        p177:
+          minLength: 1
+          type: string
+        p141:
+          minLength: 1
+          type: string
+        p141_type:
+          $ref: '#/components/schemas/ResourceType'
+    NewAnalyticalEntity:
+      required:
+      - p140
+      - p177
+      type: object
+      properties:
+        p177:
+          minLength: 1
+          type: string
+        p140:
+          minLength: 1
+          type: string
+        e13s:
+          type: array
+          items:
+            $ref: '#/components/schemas/E13AsLinkToP141'
+    NewE13:
+      required:
+      - p140
+      - p141
+      - p141_type
+      - p177
+      type: object
+      properties:
+        p140:
+          minLength: 1
+          type: string
+        p177:
+          minLength: 1
+          type: string
+        p141:
+          minLength: 1
+          type: string
+        p141_type:
+          $ref: '#/components/schemas/ResourceType'
+    ResourceType:
+      type: string
+      enum:
+      - URI
+      - LITERAL
+    SelectionCreate:
+      required:
+      - children
+      - document_contexts
+      type: object
+      properties:
+        children:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        document_contexts:
+          minItems: 1
+          type: array
+          items:
+            type: string
+    TripleCreate:
+      required:
+      - o
+      - object_type
+      - p
+      - s
+      type: object
+      properties:
+        s:
+          minLength: 1
+          type: string
+        p:
+          minLength: 1
+          type: string
+        o:
+          minLength: 1
+          type: string
+        object_type:
+          $ref: '#/components/schemas/ResourceType'
+        o_datatype:
+          $ref: '#/components/schemas/Datatype'
+        o_lg:
+          type: string
+    TripleReplace:
+      required:
+      - new_o
+      - new_p
+      - new_s
+      - old_o
+      - old_p
+      - old_s
+      type: object
+      properties:
+        old_s:
+          minLength: 1
+          type: string
+        old_p:
+          minLength: 1
+          type: string
+        old_o:
+          minLength: 1
+          type: string
+        new_s:
+          minLength: 1
+          type: string
+        new_p:
+          minLength: 1
+          type: string
+        new_o:
+          minLength: 1
+          type: string
+    UserConfig:
+      required:
+      - hexColor
+      - unicodeChar
+      type: object
+      properties:
+        hexColor:
+          type: string
+        unicodeChar:
+          type: string
+    UserConfigEdit:
+      type: object
+      properties:
+        emoji:
+          type: string
+        color:
+          type: string
+  securitySchemes:
+    orcid:
+      type: openIdConnect
+      description: Navigate to http://data-iremus.huma-num.fr/sso/?redirect-uri=http://data-iremus.huma-num.fr/sherlock/rapidoc?contextPath=/sherlock#overview

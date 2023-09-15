@@ -7,7 +7,8 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.security.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 
 @OpenAPIDefinition(
@@ -21,7 +22,7 @@ import io.swagger.v3.oas.annotations.security.*;
         security = @SecurityRequirement(name = "orcid")
 )
 @SecurityScheme(
-        name="orcid",
+        name = "orcid",
         in = SecuritySchemeIn.COOKIE,
         description = "<a href='/sherlock/login?redirect-uri=/sherlock/rapidoc'>oauth2</a>",
         paramName = "jwt",

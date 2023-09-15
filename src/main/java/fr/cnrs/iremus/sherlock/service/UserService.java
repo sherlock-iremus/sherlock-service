@@ -8,7 +8,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.arq.querybuilder.SelectBuilder;
-import org.apache.jena.query.*;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -21,18 +23,16 @@ import org.apache.jena.vocabulary.RDF;
 
 @Singleton
 public class UserService {
-    @Property(name = "jena")
-    protected String jena;
-
-    @Inject
-    DateService dateService;
-
-    @Inject
-    Sherlock sherlock;
-
     private final String e55EmojiUuid = "04242f64-fbb3-4b5b-bb2e-3ddd59eeea18";
     private final String e55HexColorUuid = "5f1bb74f-6ea0-4073-8b68-086f98454f1c";
     private final String e55OrcidUuid = "d7ef2583-ff31-4913-9ed3-bc3a1c664b21";
+    @Property(name = "jena")
+    protected String jena;
+    @Inject
+    DateService dateService;
+    @Inject
+    Sherlock sherlock;
+
     /**
      * Create user if not exists in database
      *
@@ -80,11 +80,11 @@ public class UserService {
 
             // WRITE
             SelectBuilder cb = new SelectBuilder()
-                    .addVar( "*" )
-                    .addGraph(sherlock.getUserGraph(),"?E42_Identifier", CIDOCCRM.P190_has_symbolic_content, orcid)
-                    .addGraph(sherlock.getUserGraph(),"?E42_Identifier", RDF.type, CIDOCCRM.E42_Identifier)
-                    .addGraph(sherlock.getUserGraph(),"?E21_Person", CIDOCCRM.P1_is_identified_by, "?E42_Identifier")
-                    .addGraph(sherlock.getUserGraph(),"?E21_Person", RDF.type, CIDOCCRM.E21_Person);
+                    .addVar("*")
+                    .addGraph(sherlock.getUserGraph(), "?E42_Identifier", CIDOCCRM.P190_has_symbolic_content, orcid)
+                    .addGraph(sherlock.getUserGraph(), "?E42_Identifier", RDF.type, CIDOCCRM.E42_Identifier)
+                    .addGraph(sherlock.getUserGraph(), "?E21_Person", CIDOCCRM.P1_is_identified_by, "?E42_Identifier")
+                    .addGraph(sherlock.getUserGraph(), "?E21_Person", RDF.type, CIDOCCRM.E21_Person);
             Query q = cb.build();
             QueryExecution qe = conn.query(q);
             ResultSetMem results = (ResultSetMem) ResultSetFactory.copyResults(qe.execSelect());
@@ -100,7 +100,7 @@ public class UserService {
 
             // WRITE
             SelectBuilder cb = new SelectBuilder()
-                    .addVar( "*" )
+                    .addVar("*")
                     .addGraph(sherlock.getUserGraph(), user, RDF.type, CIDOCCRM.E21_Person);
             Query q = cb.build();
             QueryExecution qe = conn.query(q);
@@ -125,16 +125,16 @@ public class UserService {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             ConstructBuilder cb = new ConstructBuilder()
-                    .addConstruct( "?E41_Appellation", CIDOCCRM.P190_has_symbolic_content, "?appellation")
-                    .addGraph(sherlock.getUserGraph(),authenticatedUser, CIDOCCRM.P1_is_identified_by, "?E41_Appellation")
-                    .addGraph(sherlock.getUserGraph(),"?E41_Appellation", RDF.type, CIDOCCRM.E41_Appellation)
-                    .addGraph(sherlock.getUserGraph(),"?E41_Appellation", CIDOCCRM.P190_has_symbolic_content, "?appellation")
+                    .addConstruct("?E41_Appellation", CIDOCCRM.P190_has_symbolic_content, "?appellation")
+                    .addGraph(sherlock.getUserGraph(), authenticatedUser, CIDOCCRM.P1_is_identified_by, "?E41_Appellation")
+                    .addGraph(sherlock.getUserGraph(), "?E41_Appellation", RDF.type, CIDOCCRM.E41_Appellation)
+                    .addGraph(sherlock.getUserGraph(), "?E41_Appellation", CIDOCCRM.P190_has_symbolic_content, "?appellation")
                     .addGraph(sherlock.getUserGraph(), "?E41_Appellation", CIDOCCRM.P2_has_type, e55);
             Query q = cb.build();
             QueryExecution qe = conn.query(q);
             Model modelRemoved = qe.execConstruct();
             conn.update(sherlock.makeDeleteQuery(modelRemoved, sherlock.getUserGraph()));
-            linkUserToE41(model, authenticatedUser, modelRemoved.listSubjects().hasNext() ? modelRemoved.listSubjects().nextResource() : null, e55 ,literal);
+            linkUserToE41(model, authenticatedUser, modelRemoved.listSubjects().hasNext() ? modelRemoved.listSubjects().nextResource() : null, e55, literal);
             String updateWithModel = sherlock.makeUpdateQuery(model, sherlock.getUserGraph());
             conn.update(updateWithModel);
         }
@@ -152,7 +152,7 @@ public class UserService {
 
             // WRITE
             SelectBuilder cb = new SelectBuilder()
-                    .addVar( "?type ?literal" )
+                    .addVar("?type ?literal")
                     .addGraph(sherlock.getUserGraph(), user, CIDOCCRM.P1_is_identified_by, "?e41")
                     .addGraph(sherlock.getUserGraph(), "?e41", RDF.type, CIDOCCRM.E41_Appellation)
                     .addGraph(sherlock.getUserGraph(), "?e41", CIDOCCRM.P2_has_type, "?type")
@@ -162,8 +162,10 @@ public class UserService {
             ResultSetMem results = (ResultSetMem) ResultSetFactory.copyResults(qe.execSelect());
             while (results.hasNext()) {
                 Binding results1 = results.peekBinding();
-                if (results1.get("type").toString().equals(e55Emoji.getURI())) userConfig.setUnicodeChar(results1.get("literal").toString(false));
-                if (results1.get("type").toString().equals(e55HexColor.getURI())) userConfig.setHexColor(results1.get("literal").toString(false));
+                if (results1.get("type").toString().equals(e55Emoji.getURI()))
+                    userConfig.setUnicodeChar(results1.get("literal").toString(false));
+                if (results1.get("type").toString().equals(e55HexColor.getURI()))
+                    userConfig.setHexColor(results1.get("literal").toString(false));
                 results.next();
             }
             return userConfig;

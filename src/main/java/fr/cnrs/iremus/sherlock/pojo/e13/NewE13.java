@@ -2,13 +2,15 @@ package fr.cnrs.iremus.sherlock.pojo.e13;
 
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Introspected
+@Serdeable
 @NewE13P141Validator
 public class NewE13 {
     @NotEmpty

@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 @Singleton
 public class ValidatorService {
 
-    private final Pattern hexColorPattern = Pattern.compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");;
-    private final Pattern unicodePattern = Pattern.compile("^.$");;
+    private final Pattern hexColorPattern = Pattern.compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+    private final Pattern unicodePattern = Pattern.compile("^.$");
     private Matcher matcher;
 
     public boolean isHexColorCode(final String hexColorCode) {
