@@ -34,10 +34,10 @@ class VisualItemAnnotationSpec extends Specification {
         def analyticalProjectIri = "http://data-iremus.huma-num.fr/id/756aa164-0cde-46ac-bc3a-a0ea83a08e2d"
 
         def response = common.post('/sherlock/api/e13', [
-                "p140"              : estampeE36Iri,
+                "p140"              : [estampeE36Iri],
                 "p177"              : thematiqueIndexationE55Iri,
                 "p141"              : religionE55Iri,
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : estampeE36Iri,
                 "analytical_project": analyticalProjectIri
         ])
@@ -80,23 +80,23 @@ class VisualItemAnnotationSpec extends Specification {
 
         def e36FragmentIri = J.getOneByType(response, CIDOCCRM.E36_Visual_Item)["@id"]
         def responsePostE13Indexation = common.post('/sherlock/api/e13', [
-                "p140"              : e36FragmentIri,
+                "p140"              : [e36FragmentIri],
                 "p177"              : CIDOCCRM.P138_represents.URI,
                 "p141"              : louisXIVE21Iri,
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : estampeE36Iri,
                 "analytical_project": analyticalProjectIri
         ])
 
         def responsePostE13IdentifierAttribution = common.post('/sherlock/api/e13', [
-                "p140"              : e36FragmentIri,
+                "p140"              : [e36FragmentIri],
                 "p177"              : CIDOCCRM.P1_is_identified_by.URI,
                 "new_p141"              : [
                         rdf_type: ["crm:E42_Identifier"],
                         p2_type: [e55IiifIri],
                         p190: iiifFragmentURL
                 ],
-                "p141_type"         : "new resource",
+                "p141_type"         : "NEW_RESOURCE",
                 "document_context"  : estampeE36Iri,
                 "analytical_project": analyticalProjectIri
         ])

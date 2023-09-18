@@ -56,28 +56,32 @@ public class E13Controller {
 
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> create(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
-            {
-                "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
-                "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
-                "p141": "Ce n'est pas une cadence.",
-                "p141_type": "literal",
-                "document_context": "http://data-iremus.huma-num/id/ma-partition",
-                "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
-            }
-            """), @ExampleObject(name = "E13 and new resource as P141", value = """
-                                    {
-                            "p140": "http://data-iremus.huma-num/id/mon-fragment-d-estampe",
-                            "p177": "crm:P1_is_identified_by",
-                            "new_p141": {
-                                "rdf_type": ["crm:E42_Identifier"],
-                                "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
-                            },
-                            "p141_type": "new resource",
-                            "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
-                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
-                        }
-            """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
+    public MutableHttpResponse<String> create(
+            @RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
+                    {
+                        "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                        "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
+                        "p141": "Ce n'est pas une cadence.",
+                        "p141_type": "LITERAL",
+                        "document_context": "http://data-iremus.huma-num/id/ma-partition",
+                        "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                    }
+                    """), @ExampleObject(name = "E13 and new resource as P141", value = """
+                                            {
+                                    "p140": "http://data-iremus.huma-num/id/mon-fragment-d-estampe",
+                                    "p177": "crm:P1_is_identified_by",
+                                    "new_p141": {
+                                        "rdf_type": ["crm:E42_Identifier"],
+                                        "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
+                                    },
+                                    "p141_type": "NEW_RESOURCE",
+                                    "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
+                                    "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                                }
+                    """)})}) @Valid @Body NewE13 body,
+            Authentication authentication
+    ) throws ParseException {
+
         // new e13
         String e13Iri = sherlock.makeIri();
         String p177 = sherlock.resolvePrefix(body.getP177());

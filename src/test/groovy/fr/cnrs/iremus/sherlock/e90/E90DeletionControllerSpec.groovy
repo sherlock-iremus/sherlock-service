@@ -24,7 +24,7 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
+                "p141_type" : "NEW_RESOURCE",
                 "new_p141"              : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
                         p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -61,7 +61,7 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
+                "p141_type" : "NEW_RESOURCE",
                 "new_p141"              : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
                         p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -98,7 +98,7 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
+                "p141_type" : "NEW_RESOURCE",
                 "new_p141"              : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
                         p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],

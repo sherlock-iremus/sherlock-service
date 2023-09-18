@@ -32,10 +32,10 @@ class SimpleE13ControllerSpec extends Specification {
         String analyticalProject = "http://data-iremus.huma-num/id/mon-projet-analytique"
 
         def response = common.post('/sherlock/api/e13', [
-                "p140"              : annotatedResourceIri,
+                "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
                 "p141"              : annotationValue,
-                "p141_type"         : "literal",
+                "p141_type"         : "LITERAL",
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
         ])
@@ -70,10 +70,10 @@ class SimpleE13ControllerSpec extends Specification {
         String analyticalProject = "http://data-iremus.huma-num/id/mon-projet-analytique"
 
         def response = common.post('/sherlock/api/e13', [
-                "p140"              : annotatedResourceIri,
+                "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
                 "p141"              : annotationValue,
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
         ])

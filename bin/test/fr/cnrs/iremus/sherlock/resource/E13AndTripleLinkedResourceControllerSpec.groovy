@@ -37,7 +37,7 @@ class E13AndTripleLinkedResourceControllerSpec extends Specification {
                         [
                                 p177     : DCTerms.title.toString(),
                                 p141     : "Titre",
-                                p141_type: "literal"
+                                p141_type: "LITERAL"
                         ]
                 ],
                 linked_triple       : [

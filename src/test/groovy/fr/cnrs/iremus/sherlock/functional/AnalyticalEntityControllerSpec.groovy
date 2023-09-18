@@ -35,7 +35,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 ],
                 document_context: 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
-                p141_type: 'new resource',
+                p141_type: 'NEW_RESOURCE',
                 p177: 'crm:P67_refers_to',
                 new_p141 : [
                         rdf_type: ["crm:E28_Conceptual_Object"],
@@ -105,7 +105,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 ],
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
-                p141_type         : 'new resource',
+                p141_type         : 'NEW_RESOURCE',
                 p177              : 'crm:P67_refers_to',
                 new_p141          : [
                         rdf_type: ["crm:E28_Conceptual_Object"],
@@ -153,7 +153,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 ],
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
-                p141_type         : 'new resource',
+                p141_type         : 'NEW_RESOURCE',
                 p177              : 'crm:P67_refers_to',
                 new_p141          : [
                         rdf_type: ["crm:E28_Conceptual_Object"],

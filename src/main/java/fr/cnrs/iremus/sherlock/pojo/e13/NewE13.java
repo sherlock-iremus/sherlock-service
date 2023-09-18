@@ -6,6 +6,7 @@ import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class NewE13 {
     private String document_context;
     @NotBlank
     private String analytical_project;
-    @NotBlank
+    @NotNull
     private ResourceType p141_type;
 
     public List<String> getP140() {

@@ -66,10 +66,6 @@ class Common {
         HttpRequest request = HttpRequest
                 .POST(route, body)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-        println "----------------------------------------"
-        println route
-        println request.getBody()
-        println "----------------------------------------"
         String response = client.toBlocking().retrieve(request)
         return parse(response)
     }
@@ -102,7 +98,7 @@ class Common {
         HttpRequest request = HttpRequest
                 .GET(route)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
-        Object response = client.toBlocking().retrieve(request)
+        String response = client.toBlocking().retrieve(request)
         return parse(response)
     }
 

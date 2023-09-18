@@ -38,7 +38,7 @@ class E13LinkedResourceControllerSpec extends Specification {
                         [
                                 p177     : DCTerms.title.toString(),
                                 p141     : "Titre",
-                                p141_type: "literal"
+                                p141_type: "LITERAL"
                         ],
                         [
                                 p177: CIDOCCRM.P150_defines_typical_parts_of.toString(),

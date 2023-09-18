@@ -28,10 +28,10 @@ class E90ControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
-                "new_p141"              : [
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/element-visuel"],
                 ],
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
@@ -39,8 +39,8 @@ class E90ControllerSpec extends Specification {
 
         def parent_e90 = J.getOneByType(responsePostE13, CIDOCCRM.E36_Visual_Item)
         def responsePostFragment = common.post('/sherlock/api/e90/fragment', [
-                "parent"              : parent_e90["@id"],
-                "p2_type"         : ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
+                "parent" : parent_e90["@id"],
+                "p2_type": ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
         ])
 
         then:
@@ -59,8 +59,8 @@ class E90ControllerSpec extends Specification {
         common.eraseall()
 
         common.post('/sherlock/api/e90/fragment', [
-                "parent"              : "http://data-iremus.huma-num/id/ma-resource-non-typee",
-                "p2_type"         : ["http://data-iremus.huma-num/id/fragment-d-image", "http://data-iremus.huma-num/id/image-mercure-galant"],
+                "parent" : "http://data-iremus.huma-num/id/ma-resource-non-typee",
+                "p2_type": ["http://data-iremus.huma-num/id/fragment-d-image", "http://data-iremus.huma-num/id/image-mercure-galant"],
         ])
 
         then:
