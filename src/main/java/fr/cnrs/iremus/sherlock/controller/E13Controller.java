@@ -64,7 +64,7 @@ public class E13Controller {
     public MutableHttpResponse<String> create(
             @RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
                     {
-                        "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                        "p140": ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                         "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                         "p141": "Ce n'est pas une cadence.",
                         "p141_type": "LITERAL",
@@ -73,7 +73,7 @@ public class E13Controller {
                     }
                     """), @ExampleObject(name = "E13 and new resource as P141", value = """
                                             {
-                                    "p140": "http://data-iremus.huma-num/id/mon-fragment-d-estampe",
+                                    "p140": ["http://data-iremus.huma-num/id/mon-fragment-d-estampe"],
                                     "p177": "crm:P1_is_identified_by",
                                     "new_p141": {
                                         "rdf_type": ["crm:E42_Identifier"],

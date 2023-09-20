@@ -1,8 +1,10 @@
 package fr.cnrs.iremus.sherlock.external.authentication;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 
 @Introspected
+@Serdeable
 public class OrcidUser {
     private String sub;
     private String id;

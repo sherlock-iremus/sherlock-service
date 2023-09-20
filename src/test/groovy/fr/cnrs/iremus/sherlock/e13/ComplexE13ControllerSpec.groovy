@@ -4,6 +4,7 @@ import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
+import fr.cnrs.iremus.sherlock.pojo.e13.NewE13P141Validator
 import groovy.json.JsonSlurper
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -76,9 +77,9 @@ class ComplexE13ControllerSpec extends Specification {
         then:
         HttpClientResponseException e = thrown()
         e.getStatus().getCode() == 400
-        def jsonSlurper = new JsonSlurper(type: JsonParserType.INDEX_OVERLAY)
-        def object = jsonSlurper.parseText(e.getResponse().getBody())
-//        NewE13P141Validator.PLEASE_SET_P141
+        def jsonSlurper = new JsonSlurper()
+        def responseBody = jsonSlurper.parseText(e.getResponse().body())
+        "body.null: " + NewE13P141Validator.PLEASE_SET_P141 == responseBody._embedded.errors[0].message
     }
 
     void 'test creating incomplete complex e13 fails'() {
