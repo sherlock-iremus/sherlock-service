@@ -51,6 +51,8 @@ dependencies {
 
     runtimeOnly("org.yaml:snakeyaml")
 
+    implementation('org.apache.groovy:groovy-json')
+
 }
 
 
