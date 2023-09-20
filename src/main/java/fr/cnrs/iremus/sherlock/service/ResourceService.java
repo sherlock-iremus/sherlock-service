@@ -36,6 +36,7 @@ public class ResourceService {
         insertResourceCommonTriples(resource, authenticatedUser, m);
 
     }
+
     public void insertResourceCommonTriples(Resource resource, Resource user, Model m) {
         if (resource == null) {
             resource = m.createResource(sherlock.makeIri());

@@ -4,6 +4,8 @@ import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
+import fr.cnrs.iremus.sherlock.pojo.e13.NewE13P141Validator
+import groovy.json.JsonSlurper
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -29,11 +31,11 @@ class ComplexE13ControllerSpec extends Specification {
         def response = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
-                "new_p141"              : [
-                    rdf_type: ["crm:E42_Identifier"],
-                    p2_type: ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
-                    p190: "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
+                        rdf_type: ["crm:E42_Identifier"],
+                        p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
+                        p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
                 ],
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
@@ -62,11 +64,11 @@ class ComplexE13ControllerSpec extends Specification {
         common.post('/sherlock/api/e13', [
                 "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
-                "p141_type" : "URI",
-                "new_p141"              : [
+                "p141_type"         : "URI",
+                "new_p141"          : [
                         rdf_type: ["crm:E42_Identifier"],
-                        p2_type: ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
-                        p190: "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
+                        p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
+                        p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
                 ],
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
@@ -75,7 +77,9 @@ class ComplexE13ControllerSpec extends Specification {
         then:
         HttpClientResponseException e = thrown()
         e.getStatus().getCode() == 400
-        e.message == "body: Please set either body.p141 or body.new_p141. And set corresponding p141_type"
+        def jsonSlurper = new JsonSlurper()
+        def responseBody = jsonSlurper.parseText(e.getResponse().body())
+        "body.null: " + NewE13P141Validator.PLEASE_SET_P141 == responseBody._embedded.errors[0].message
     }
 
     void 'test creating incomplete complex e13 fails'() {
@@ -84,11 +88,11 @@ class ComplexE13ControllerSpec extends Specification {
         common.post('/sherlock/api/e13', [
                 "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
-                "p141_type" : "new resource",
-                "new_p141"              : [
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
                         rdf_type: [],
-                        p2_type: ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
-                        p190: "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
+                        p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
+                        p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
                 ],
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"

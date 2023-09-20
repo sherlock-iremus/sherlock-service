@@ -25,25 +25,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
-import org.apache.jena.arq.querybuilder.ConstructBuilder;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.rdf.model.impl.SelectorImpl;
+import jakarta.validation.Valid;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @Controller("/api/e13")
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
+
+    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 of the E13 first.";
+    public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
+    public static final String E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER = "Some resources belongs to other users.";
+
     @Property(name = "jena")
     protected String jena;
 
@@ -58,32 +61,36 @@ public class E13Controller {
 
     @Post
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> create(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
-                        {
-                            "p140": "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
-                            "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
-                            "p141": "Ce n'est pas une cadence.",
-                            "p141_type": "literal",
-                            "document_context": "http://data-iremus.huma-num/id/ma-partition",
-                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
-                        }
-                        """), @ExampleObject(name = "E13 and new resource as P141" ,value = """
-                                    {
-                            "p140": "http://data-iremus.huma-num/id/mon-fragment-d-estampe",
-                            "p177": "crm:P1_is_identified_by",
-                            "new_p141": {
-                                "rdf_type": ["crm:E42_Identifier"],
-                                "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
-                            },
-                            "p141_type": "new resource",
-                            "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
-                            "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
-                        }
-            """)})}) @Valid @Body NewE13 body, Authentication authentication) throws ParseException {
+    public MutableHttpResponse<String> create(
+            @RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
+                    {
+                        "p140": ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
+                        "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
+                        "p141": "Ce n'est pas une cadence.",
+                        "p141_type": "LITERAL",
+                        "document_context": "http://data-iremus.huma-num/id/ma-partition",
+                        "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                    }
+                    """), @ExampleObject(name = "E13 and new resource as P141", value = """
+                                            {
+                                    "p140": ["http://data-iremus.huma-num/id/mon-fragment-d-estampe"],
+                                    "p177": "crm:P1_is_identified_by",
+                                    "new_p141": {
+                                        "rdf_type": ["crm:E42_Identifier"],
+                                        "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
+                                    },
+                                    "p141_type": "NEW_RESOURCE",
+                                    "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
+                                    "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                                }
+                    """)})}) @Valid @Body NewE13 body,
+            Authentication authentication
+    ) throws ParseException {
+
         // new e13
         String e13Iri = sherlock.makeIri();
         String p177 = sherlock.resolvePrefix(body.getP177());
-        String p141 = sherlock.resolvePrefix(body.getP141_type() == ResourceType.NEW_RESOURCE ? sherlock.makeIri() :  body.getP141());
+        String p141 = sherlock.resolvePrefix(body.getP141_type() == ResourceType.NEW_RESOURCE ? sherlock.makeIri() : body.getP141());
         String documentContext = sherlock.resolvePrefix(body.getDocument_context());
         String analyticalProject = sherlock.resolvePrefix(body.getAnalytical_project());
         ResourceType p141Type = body.getP141_type();
@@ -147,31 +154,31 @@ public class E13Controller {
             Model currentModel = e13Service.getModelByE13(e13);
 
             if (!currentModel.containsResource(e13))
-                return HttpResponse.notFound(sherlock.objectToJson("This E13 does not exist."));
+                return HttpResponse.notFound("{\"message\": \"" + E13_DELETE_DOES_NOT_EXIST + "\"}");
 
             List<RDFNode> p141List = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).toList();
-            for(RDFNode p141 : p141List) {
+            for (RDFNode p141 : p141List) {
                 if (p141.isResource()) {
                     List<Resource> resourcesDependingOnP141 = currentModel.listSubjectsWithProperty(null, p141.asResource()).filterDrop(resource -> resource.equals(e13)).toList();
-                    if (! resourcesDependingOnP141.isEmpty()) {
-                        return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Please delete entities which depends on the P141 of the E13 first."));
+                    if (!resourcesDependingOnP141.isEmpty()) {
+                        return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}");
                     }
 
                     // If P141 does not belong to current user, do NOT consider it
-                    if (! currentModel.contains(p141.asResource(), DCTerms.creator, authenticatedUser)) {
+                    if (!currentModel.contains(p141.asResource(), DCTerms.creator, authenticatedUser)) {
                         currentModel.removeAll(p141.asResource(), null, null);
                     }
 
                     // If no propagation, do NOT remove triples with 141 as subject
-                    if (! Boolean.TRUE.equals(propagate)) {
+                    if (!Boolean.TRUE.equals(propagate)) {
                         currentModel.removeAll(p141.asResource(), null, null);
                     }
                 }
             }
 
             List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
-            if (! involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Some resources belongs to other users."));
+            if (!involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER + "\"}");
             }
 
             conn.update(sherlock.makeDeleteQuery(currentModel));

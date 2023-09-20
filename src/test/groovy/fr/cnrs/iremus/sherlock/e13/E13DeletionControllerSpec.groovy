@@ -18,10 +18,10 @@ class E13DeletionControllerSpec extends Specification {
         common.eraseall()
 
         def postResponse = common.post('/sherlock/api/e13', [
-                "p140"              : "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141"              : "http://data-iremus.huma-num/id/mon-commentaire",
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -30,10 +30,10 @@ class E13DeletionControllerSpec extends Specification {
         def e13Uuid = e13Iri.split("/").last()
 
         common.post('/sherlock/api/e13', [
-                "p140"              : "http://data-iremus.huma-num/id/mon-commentaire",
+                "p140"              : ["http://data-iremus.huma-num/id/mon-commentaire"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-commentaire",
                 "p141"              : "Si !",
-                "p141_type"         : "literal",
+                "p141_type"         : "LITERAL",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -51,10 +51,10 @@ class E13DeletionControllerSpec extends Specification {
         common.eraseall()
 
         def postResponse = common.post('/sherlock/api/e13', [
-                "p140"              : "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141"              : "http://data-iremus.huma-num/id/mon-commentaire",
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -63,10 +63,10 @@ class E13DeletionControllerSpec extends Specification {
         def e13Uuid = e13Iri.split("/").last()
 
         common.post('/sherlock/api/e13?fake-user=true', [
-                "p140"              : "http://data-iremus.huma-num/id/mon-commentaire",
+                "p140"              : ["http://data-iremus.huma-num/id/mon-commentaire"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-commentaire",
                 "p141"              : e13Iri,
-                "p141_type"         : "literal",
+                "p141_type"         : "LITERAL",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -85,17 +85,17 @@ class E13DeletionControllerSpec extends Specification {
         when:
 
         def response = common.post('/sherlock/api/e13', [
-                p140: ['http://data-iremus.huma-num.fr/id/note-1',
-                       'http://data-iremus.huma-num.fr/id/note-2',
-                       'http://data-iremus.huma-num.fr/id/note-3'
+                p140              : ['http://data-iremus.huma-num.fr/id/note-1',
+                                     'http://data-iremus.huma-num.fr/id/note-2',
+                                     'http://data-iremus.huma-num.fr/id/note-3'
                 ],
-                document_context: 'http://data-iremus.huma-num.fr/id/ma-partition',
+                document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
-                p141_type: 'new resource',
-                p177: 'crm:P67_refers_to',
-                new_p141 : [
+                p141_type         : 'NEW_RESOURCE',
+                p177              : 'crm:P67_refers_to',
+                new_p141          : [
                         rdf_type: ["crm:E28_Conceptual_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/analytical-entity-e55"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/analytical-entity-e55"],
                 ]
         ])
 
@@ -115,10 +115,10 @@ class E13DeletionControllerSpec extends Specification {
         common.eraseall()
 
         def postResponse = common.post('/sherlock/api/e13', [
-                "p140"              : "http://data-iremus.huma-num/id/e13-assignant-le-type-cadence",
+                "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141"              : "http://data-iremus.huma-num/id/mon-commentaire",
-                "p141_type"         : "uri",
+                "p141_type"         : "URI",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -126,10 +126,10 @@ class E13DeletionControllerSpec extends Specification {
         def e13Iri = postResponse[0]["@id"] as String
 
         postResponse = common.post('/sherlock/api/e13?fake-user=true', [
-                "p140"              : "http://data-iremus.huma-num/id/mon-commentaire",
+                "p140"              : ["http://data-iremus.huma-num/id/mon-commentaire"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-commentaire",
                 "p141"              : e13Iri,
-                "p141_type"         : "literal",
+                "p141_type"         : "LITERAL",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
         ])
@@ -151,17 +151,17 @@ class E13DeletionControllerSpec extends Specification {
         when:
 
         def response = common.post('/sherlock/api/e13', [
-                p140: ['http://data-iremus.huma-num.fr/id/note-1',
-                       'http://data-iremus.huma-num.fr/id/note-2',
-                       'http://data-iremus.huma-num.fr/id/note-3'
+                p140              : ['http://data-iremus.huma-num.fr/id/note-1',
+                                     'http://data-iremus.huma-num.fr/id/note-2',
+                                     'http://data-iremus.huma-num.fr/id/note-3'
                 ],
-                document_context: 'http://data-iremus.huma-num.fr/id/ma-partition',
+                document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
-                p141_type: 'new resource',
-                p177: 'crm:P67_refers_to',
-                new_p141 : [
+                p141_type         : 'NEW_RESOURCE',
+                p177              : 'crm:P67_refers_to',
+                new_p141          : [
                         rdf_type: ["crm:E28_Conceptual_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/analytical-entity-e55"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/analytical-entity-e55"],
                 ]
         ])
 

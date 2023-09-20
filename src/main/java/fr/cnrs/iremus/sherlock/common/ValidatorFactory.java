@@ -43,13 +43,13 @@ public class ValidatorFactory {
         };
     }
 
-    private boolean hasE13ValidNewP141 (NewE13 newE13) {
+    private boolean hasE13ValidNewP141(NewE13 newE13) {
         return newE13.getNew_p141() != null &&
                 newE13.getP141() == null &&
                 newE13.getP141_type().equals(ResourceType.NEW_RESOURCE);
     }
 
-    private boolean hasE13ValidP141 (NewE13 newE13) {
+    private boolean hasE13ValidP141(NewE13 newE13) {
         return newE13.getNew_p141() == null &&
                 newE13.getP141() != null &&
                 (newE13.getP141_type().equals(ResourceType.URI) || newE13.getP141_type().equals(ResourceType.LITERAL));

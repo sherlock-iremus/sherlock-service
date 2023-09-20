@@ -1,12 +1,14 @@
 package fr.cnrs.iremus.sherlock.pojo.e90;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Introspected
+@Serdeable
 public class NewE90Fragment {
     @NotBlank
     private String parent;

@@ -106,7 +106,7 @@ class SelectionControllerSpec extends Specification {
     void 'test delete selection erase it'() {
         when:
         common.eraseall()
-        Model m = ModelFactory.createDefaultModel();
+        Model m = ModelFactory.createDefaultModel()
         String child1Iri = sherlock.makeIri()
         String document_contextsIri = sherlock.makeIri()
 
@@ -122,7 +122,7 @@ class SelectionControllerSpec extends Specification {
         common.delete("/sherlock/api/selection/${selectionUuid}")
 
         then:
-        Model currentModel = selectionService.getSelectionTriplesByResource(selection);
+        Model currentModel = selectionService.getSelectionTriplesByResource(selection)
         currentModel.empty
     }
 

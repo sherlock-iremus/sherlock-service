@@ -1,11 +1,13 @@
 package fr.cnrs.iremus.sherlock.common;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.micronaut.serde.annotation.Serdeable;
 
+@Serdeable
 public enum ResourceType {
-    URI("uri"),
-    LITERAL("literal"),
-    NEW_RESOURCE("new resource");
+    URI("URI"),
+    LITERAL("LITERAL"),
+    NEW_RESOURCE("NEW_RESOURCE");
 
     @JsonValue
     private final String label;

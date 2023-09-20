@@ -1,10 +1,11 @@
 package fr.cnrs.iremus.sherlock.pojo.analyticalProject;
 
 import io.micronaut.core.annotation.Introspected;
-
-import javax.validation.constraints.NotEmpty;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.NotEmpty;
 
 @Introspected
+@Serdeable
 public class NewAnalyticalProject {
 
     @NotEmpty

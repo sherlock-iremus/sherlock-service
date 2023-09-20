@@ -41,32 +41,32 @@ micronaut:
         cookie:
           cookie-path: /
     intercept-url-map:
-      - pattern: /sherlock/swagger/**
+      - pattern: /swagger/**
         access:
           - isAnonymous()
-      - pattern: /sherlock/swagger-ui/**
+      - pattern: /swagger-ui/**
         access:
           - isAnonymous()
-      - pattern: /sherlock/rapidoc/**
+      - pattern: /rapidoc/**
         access:
           - isAnonymous()
-      - pattern: /sherlock/redoc/**
+      - pattern: /redoc/**
         access:
           - isAnonymous()
   router:
     static-resources:
       swagger:
         paths: classpath:META-INF/swagger
-        mapping: /sherlock/swagger/**
+        mapping: /swagger/**
       redoc:
         paths: classpath:META-INF/swagger/views/redoc
-        mapping: /sherlock/redoc/**
+        mapping: /redoc/**
       rapidoc:
         paths: classpath:META-INF/swagger/views/rapidoc
-        mapping: /sherlock/rapidoc/**
+        mapping: /rapidoc/**
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
-        mapping: /sherlock/swagger-ui/**
+        mapping: /swagger-ui/**
 netty:
   default:
     allocator:

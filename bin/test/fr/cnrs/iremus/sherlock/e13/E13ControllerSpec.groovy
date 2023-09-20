@@ -39,7 +39,7 @@ class E13ControllerSpec extends Specification {
                 "p140"     : annotatedResourceIri,
                 "p177"     : annotationProperty,
                 "p141"     : annotationValue,
-                "p141_type": "literal"
+                "p141_type": "LITERAL"
         ])
 
         then:

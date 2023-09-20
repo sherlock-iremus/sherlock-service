@@ -2,21 +2,21 @@ package fr.cnrs.iremus.sherlock.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.json.JsonMapper;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,6 +24,8 @@ import java.util.UUID;
 
 @Singleton
 public class Sherlock {
+    @Inject
+    JsonMapper jsonMapper;
     public static final String NS = "http://data-iremus.huma-num.fr/ns/sherlock#";
     private static final Model m_model = ModelFactory.createDefaultModel();
     public static final Resource sheP_a_pour_entite_de_plus_haut_niveau = m_model.createResource(NS + "sheP_a_pour_entité_de_plus_haut_niveau");
@@ -82,8 +84,13 @@ public class Sherlock {
     }
 
     public String objectToJson(Object object) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
+//        ObjectMapper mapper = new ObjectMapper();
+//        return mapper.writeValueAsString(object);
+        try {
+            return jsonMapper.writeValueAsString(object);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String modelToJson(Model m) {

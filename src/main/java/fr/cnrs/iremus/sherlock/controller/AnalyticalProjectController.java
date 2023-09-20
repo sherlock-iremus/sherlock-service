@@ -21,6 +21,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import org.apache.jena.arq.querybuilder.ConstructBuilder;
 import org.apache.jena.arq.querybuilder.WhereBuilder;
 import org.apache.jena.query.Query;
@@ -31,26 +33,21 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import jakarta.inject.Inject;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
-
-import javax.validation.Valid;
 
 @Controller("/api/analytical-project")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "4. Structural")
 public class AnalyticalProjectController {
+    public final static String e55analyticalProjectIri = "http://data-iremus.huma-num.fr/id/21816195-6708-4bbd-a758-ee354bb84900";
+    public final static String e55draftIri = "http://data-iremus.huma-num.fr/id/cabe46bf-23d4-4392-aa20-b3eb21ad7dfd";
     @Property(name = "jena")
     protected String jena;
     @Inject
     Sherlock sherlock;
-
     @Inject
     DateService dateService;
-
-    public final static String e55analyticalProjectIri = "http://data-iremus.huma-num.fr/id/21816195-6708-4bbd-a758-ee354bb84900";
-    public final static String e55draftIri = "http://data-iremus.huma-num.fr/id/cabe46bf-23d4-4392-aa20-b3eb21ad7dfd";
 
     @ApiResponse(responseCode = "200", description = "new analytical entity's model")
     @Post

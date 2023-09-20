@@ -3,6 +3,7 @@ package fr.cnrs.iremus.sherlock.e90
 import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
+import fr.cnrs.iremus.sherlock.controller.E90Controller
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -24,10 +25,10 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
-                "new_p141"              : [
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/element-visuel"],
                 ],
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
@@ -37,8 +38,8 @@ class E90DeletionControllerSpec extends Specification {
         def parent_e90 = J.getOneByType(responsePostE13, CIDOCCRM.E36_Visual_Item)
 
         def responsePostFragment = common.post('/sherlock/api/e90/fragment', [
-                "parent"              : parent_e90["@id"],
-                "p2_type"         : ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
+                "parent" : parent_e90["@id"],
+                "p2_type": ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
         ])
 
         def e90Fragment = J.getOneByType(responsePostFragment, CIDOCCRM.E36_Visual_Item)
@@ -61,10 +62,10 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
-                "new_p141"              : [
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/element-visuel"],
                 ],
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
@@ -73,8 +74,8 @@ class E90DeletionControllerSpec extends Specification {
         def parent_e90 = J.getOneByType(responsePostE13, CIDOCCRM.E36_Visual_Item)
 
         def responsePostFragment = common.post('/sherlock/api/e90/fragment?fake-user=true', [
-                "parent"              : parent_e90["@id"],
-                "p2_type"         : ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
+                "parent" : parent_e90["@id"],
+                "p2_type": ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
         ])
 
         def e90Fragment = J.getOneByType(responsePostFragment, CIDOCCRM.E36_Visual_Item)
@@ -84,7 +85,7 @@ class E90DeletionControllerSpec extends Specification {
 
         HttpClientResponseException e = thrown()
         e.getStatus().getCode() == 403
-        e.message == "This E90 belongs to other users."
+        e.message == E90Controller.E90_DELETE_FRAGMENT_BELONGS_TO_ANOTHER_USER
     }
 
     void "test user cannot delete a fragment used by an other resource"() {
@@ -98,10 +99,10 @@ class E90DeletionControllerSpec extends Specification {
         def responsePostE13 = common.post('/sherlock/api/e13', [
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
-                "p141_type" : "new resource",
-                "new_p141"              : [
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
                         rdf_type: ["crm:E36_Visual_Item", "crm:E90_Symbolic_Object"],
-                        p2_type: ["http://data-iremus.huma-num.fr/id/element-visuel"],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/element-visuel"],
                 ],
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
@@ -110,15 +111,15 @@ class E90DeletionControllerSpec extends Specification {
         def parent_e90 = J.getOneByType(responsePostE13, CIDOCCRM.E36_Visual_Item)
 
         def responsePostFragment = common.post('/sherlock/api/e90/fragment', [
-                "parent"              : parent_e90["@id"],
-                "p2_type"         : ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
+                "parent" : parent_e90["@id"],
+                "p2_type": ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
         ])
 
         def e90Fragment = J.getOneByType(responsePostFragment, CIDOCCRM.E36_Visual_Item)
 
         def responsePostFragmentFragment = common.post('/sherlock/api/e90/fragment', [
-                "parent"              : e90Fragment["@id"],
-                "p2_type"         : ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
+                "parent" : e90Fragment["@id"],
+                "p2_type": ["http://data-iremus.huma-num.fr/id/fragment-d-image", "http://data-iremus.huma-num.fr/id/image-mercure-galant"],
         ])
 
         common.delete("/sherlock/api/e90/fragment/${e90Fragment["@id"].split("/").last()}")

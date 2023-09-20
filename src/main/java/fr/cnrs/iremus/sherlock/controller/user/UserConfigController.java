@@ -18,13 +18,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import org.apache.http.HttpException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-
-import javax.validation.Valid;
 
 @Controller("/api/user/config")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -41,17 +40,18 @@ public class UserConfigController {
 
     @Put
     @Produces(MediaType.TEXT_PLAIN)
-    public MutableHttpResponse<String> edit(@RequestBody( content= { @Content( mediaType = "application/json", schema = @Schema(implementation = UserConfigEdit.class), examples = {@ExampleObject(value = """
-                            {
-                                "emoji": "♫",
-                                "color": "b985c7"
-                            }
-                        """)})}) @Valid @Body UserConfigEdit body, Authentication authentication) throws HttpException, ParseException {
+    public MutableHttpResponse<String> edit(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UserConfigEdit.class), examples = {@ExampleObject(value = """
+                {
+                    "emoji": "♫",
+                    "color": "b985c7"
+                }
+            """)})}) @Valid @Body UserConfigEdit body, Authentication authentication) throws HttpException, ParseException {
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
 
         Model m = ModelFactory.createDefaultModel();
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
-        if (userService.getUserByUuid( (String) authentication.getAttributes().get("uuid")) == null) return HttpResponse.badRequest("No user found. Please reconnect");
+        if (userService.getUserByUuid((String) authentication.getAttributes().get("uuid")) == null)
+            return HttpResponse.badRequest("No user found. Please reconnect");
         if (body.getEmoji() != null) userService.editEmoji(authenticatedUser, body.getEmoji());
         if (body.getColor() != null) userService.editHexColor(authenticatedUser, body.getColor());
         return HttpResponse.ok("User updated");

@@ -1,0 +1,50 @@
+Manifest-Version: 1.0
+Class-Path: libs/micronaut-data-jdbc-3.3.0.jar libs/micronaut-data-runti
+ me-3.3.0.jar libs/micronaut-data-model-3.3.0.jar libs/micronaut-jdbc-hi
+ kari-4.2.2.jar libs/micronaut-jdbc-4.2.2.jar libs/micronaut-data-tx-3.3
+ .0.jar libs/micronaut-reactor-http-client-2.2.2.jar libs/micronaut-reac
+ tor-2.2.2.jar libs/micronaut-rxjava2-http-client-1.2.1.jar libs/microna
+ ut-rxjava2-1.2.1.jar libs/micronaut-security-jwt-3.5.0.jar libs/microna
+ ut-security-ldap-3.5.0.jar libs/micronaut-security-oauth2-3.5.0.jar lib
+ s/micronaut-security-3.5.0.jar libs/micronaut-security-annotations-3.5.
+ 0.jar libs/micronaut-http-client-3.4.2.jar libs/micronaut-http-server-n
+ etty-3.4.2.jar libs/micronaut-http-netty-3.4.2.jar libs/micronaut-http-
+ server-3.4.2.jar libs/micronaut-websocket-3.4.2.jar libs/micronaut-http
+ -client-core-3.4.2.jar libs/micronaut-runtime-3.4.2.jar libs/micronaut-
+ jackson-databind-3.4.2.jar libs/swagger-annotations-2.1.12.jar libs/mic
+ ronaut-validation-3.4.2.jar libs/micronaut-jackson-core-3.4.2.jar libs/
+ micronaut-json-core-3.4.2.jar libs/micronaut-router-3.4.2.jar libs/micr
+ onaut-http-3.4.2.jar libs/micronaut-context-3.4.2.jar libs/micronaut-ao
+ p-3.4.2.jar libs/micronaut-buffer-netty-3.4.2.jar libs/micronaut-inject
+ -3.4.2.jar libs/jakarta.annotation-api-2.0.0.jar libs/jakarta.inject-ap
+ i-2.0.1.jar libs/jena-querybuilder-4.3.2.jar libs/apache-jena-libs-4.3.
+ 2.pom libs/jena-rdfconnection-4.3.2.jar libs/logback-classic-1.2.10.jar
+  libs/h2-1.4.200.jar libs/jena-shacl-4.3.2.jar libs/jena-shex-4.3.2.jar
+  libs/jena-tdb-4.3.2.jar libs/jena-tdb2-4.3.2.jar libs/jena-dboe-storag
+ e-4.3.2.jar libs/jena-dboe-trans-data-4.3.2.jar libs/jena-dboe-transact
+ ion-4.3.2.jar libs/jena-dboe-index-4.3.2.jar libs/jena-dboe-base-4.3.2.
+ jar libs/jena-arq-4.3.2.jar libs/jackson-datatype-jdk8-2.13.2.jar libs/
+ jackson-datatype-jsr310-2.13.2.jar libs/jackson-databind-2.13.2.2.jar l
+ ibs/jackson-core-2.13.2.jar libs/jackson-annotations-2.13.2.jar libs/li
+ bthrift-0.15.0.jar libs/javax.annotation-api-1.3.2.jar libs/netty-handl
+ er-proxy-4.1.76.Final.jar libs/netty-codec-http2-4.1.76.Final.jar libs/
+ netty-codec-http-4.1.76.Final.jar libs/netty-handler-4.1.76.Final.jar l
+ ibs/netty-codec-socks-4.1.76.Final.jar libs/netty-codec-4.1.76.Final.ja
+ r libs/netty-transport-4.1.76.Final.jar libs/netty-buffer-4.1.76.Final.
+ jar libs/micronaut-core-reactive-3.4.2.jar libs/reactor-core-3.4.15.jar
+  libs/rxjava-2.2.21.jar libs/reactive-streams-1.0.3.jar libs/jsonld-jav
+ a-0.13.3.jar libs/jcl-over-slf4j-1.7.32.jar libs/jena-core-4.3.2.jar li
+ bs/jena-base-4.3.2.jar libs/micronaut-core-3.4.2.jar libs/HikariCP-4.0.
+ 3.jar libs/slf4j-api-1.7.32.jar libs/snakeyaml-1.30.jar libs/validation
+ -api-2.0.1.Final.jar libs/nimbus-jose-jwt-9.20.jar libs/netty-resolver-
+ 4.1.76.Final.jar libs/netty-common-4.1.76.Final.jar libs/protobuf-java-
+ 3.17.3.jar libs/httpclient-cache-4.5.13.jar libs/httpclient-4.5.13.jar 
+ libs/titanium-json-ld-1.1.0.jar libs/jakarta.json-2.0.1.jar libs/common
+ s-lang3-3.12.0.jar libs/jena-iri-4.3.2.jar libs/commons-cli-1.5.0.jar l
+ ibs/httpcore-4.4.13.jar libs/commons-io-2.11.0.jar libs/logback-core-1.
+ 2.10.jar libs/jena-shaded-guava-4.3.2.jar libs/commons-csv-1.9.0.jar li
+ bs/commons-codec-1.15.jar libs/commons-compress-1.21.jar libs/collectio
+ n-0.7.jar libs/commons-logging-1.2.jar libs/jakarta.transaction-api-1.3
+ .3.jar libs/jcip-annotations-1.0-1.jar resources/ classes/
+Main-Class: fr.cnrs.iremus.sherlock.Application
+

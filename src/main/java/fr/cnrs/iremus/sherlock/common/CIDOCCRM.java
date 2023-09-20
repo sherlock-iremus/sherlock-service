@@ -28,7 +28,7 @@ public class CIDOCCRM {
     public static final Property P14_carried_out_by = m_model.createProperty(NS + "P14_carried_out_by");
     public static final Property P67_refers_to = m_model.createProperty(NS + "P67_refers_to");
     public static final Property P71_lists = m_model.createProperty(NS + "P71_lists");
-    public static final Property P82a_begin_of_the_begin = m_model.createProperty(NS+ "P82a_begin_of_the_begin");
+    public static final Property P82a_begin_of_the_begin = m_model.createProperty(NS + "P82a_begin_of_the_begin");
     public static final Property P106_is_composed_of = m_model.createProperty(NS + "P106_is_composed_of");
     public static final Property P106i_forms_part_of = m_model.createProperty(NS + "P106i_forms_part_of");
     public static final Property P127_has_broader_term = m_model.createProperty(NS + "P127_has_broader_term");

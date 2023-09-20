@@ -65,7 +65,7 @@ public class E13Service {
                             new WhereBuilder()
                                     .addWhere(e13, "?e13_p", "?e13_o")
                                     .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, e13)
-                                    .addOptional( new WhereBuilder()
+                                    .addOptional(new WhereBuilder()
                                             .addWhere(e13, CIDOCCRM.P141_assigned, "?p141")
                                             .addOptional("?p141", "?p141_p", "?p141_o")
                                             .addOptional("?p141_s", "?p141_p_i", "?p141")

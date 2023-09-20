@@ -1,11 +1,13 @@
 package fr.cnrs.iremus.sherlock.pojo.e13;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Introspected
+@Serdeable
 public class NewP141 {
     @NotEmpty
     private List<String> rdf_type;
