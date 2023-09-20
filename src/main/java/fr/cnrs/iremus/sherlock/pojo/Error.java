@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 
 @Introspected
 @Serdeable
-public class Test {
+public class Error {
     public String getMessage() {
         return message;
     }

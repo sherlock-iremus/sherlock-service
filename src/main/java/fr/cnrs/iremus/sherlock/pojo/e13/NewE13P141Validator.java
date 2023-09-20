@@ -13,5 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = {})
 @Serdeable
 public @interface NewE13P141Validator {
-    String message() default "Please set either body.p141 or body.new_p141. And set corresponding p141_type";
+    public static final String PLEASE_SET_P141 = "Please set either body.p141 or body.new_p141. And set corresponding p141_type";
+
+    String message() default PLEASE_SET_P141;
 }

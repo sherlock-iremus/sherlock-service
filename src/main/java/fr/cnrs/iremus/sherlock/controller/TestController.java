@@ -1,6 +1,6 @@
 package fr.cnrs.iremus.sherlock.controller;
 
-import fr.cnrs.iremus.sherlock.pojo.Test;
+import fr.cnrs.iremus.sherlock.pojo.Error;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
@@ -15,8 +15,8 @@ import io.micronaut.security.rules.SecurityRule;
 public class TestController {
     @Get
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<Test> index() {
-        Test o = new Test();
+    public MutableHttpResponse<Error> index() {
+        Error o = new Error();
         o.setMessage("Hello World");
         return HttpResponse.ok(o);
     }

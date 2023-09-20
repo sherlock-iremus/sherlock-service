@@ -50,6 +50,7 @@ dependencies {
     implementation("org.apache.jena:jena-querybuilder:4.9.0")
 
     runtimeOnly("org.yaml:snakeyaml")
+
 }
 
 
