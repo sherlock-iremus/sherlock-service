@@ -42,6 +42,11 @@ import java.util.List;
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
+
+    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 of the E13 first.";
+    public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
+    public static final String E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER = "Some resources belongs to other users.";
+
     @Property(name = "jena")
     protected String jena;
 
@@ -149,14 +154,14 @@ public class E13Controller {
             Model currentModel = e13Service.getModelByE13(e13);
 
             if (!currentModel.containsResource(e13))
-                return HttpResponse.notFound(sherlock.objectToJson("This E13 does not exist."));
+                return HttpResponse.notFound("{\"message\": \"" + E13_DELETE_DOES_NOT_EXIST + "\"}");
 
             List<RDFNode> p141List = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).toList();
             for (RDFNode p141 : p141List) {
                 if (p141.isResource()) {
                     List<Resource> resourcesDependingOnP141 = currentModel.listSubjectsWithProperty(null, p141.asResource()).filterDrop(resource -> resource.equals(e13)).toList();
                     if (!resourcesDependingOnP141.isEmpty()) {
-                        return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Please delete entities which depends on the P141 of the E13 first."));
+                        return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}");
                     }
 
                     // If P141 does not belong to current user, do NOT consider it
@@ -173,7 +178,7 @@ public class E13Controller {
 
             List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
             if (!involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Some resources belongs to other users."));
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER + "\"}");
             }
 
             conn.update(sherlock.makeDeleteQuery(currentModel));

@@ -4,6 +4,7 @@ import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
+import fr.cnrs.iremus.sherlock.controller.E90Controller
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -60,12 +61,13 @@ class E90ControllerSpec extends Specification {
 
         common.post('/sherlock/api/e90/fragment', [
                 "parent" : "http://data-iremus.huma-num/id/ma-resource-non-typee",
-                "p2_type": ["http://data-iremus.huma-num/id/fragment-d-image", "http://data-iremus.huma-num/id/image-mercure-galant"],
+                "p2_type": ["http://data-iremus.huma-num/id/fragment-d-image",
+                            "http://data-iremus.huma-num/id/image-mercure-galant"],
         ])
 
         then:
         HttpClientResponseException e = thrown()
         e.getStatus().getCode() == 403
-        e.message == "Parent resource has no rdf:type matching E90"
+        e.message == E90Controller.E90_POST_FRAGMENT_NO_RDFTYPE
     }
 }

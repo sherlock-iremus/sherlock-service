@@ -4,6 +4,7 @@ import fr.cnrs.iremus.sherlock.Common
 import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
+import fr.cnrs.iremus.sherlock.controller.E13Controller
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -76,8 +77,8 @@ class ComplexE13ControllerSpec extends Specification {
         HttpClientResponseException e = thrown()
         println e.toString()
         println e.getMessage()
-//        e.getStatus().getCode() == 400
-//        e.message == "body: Please set either body.p141 or body.new_p141. And set corresponding p141_type"
+        e.getStatus().getCode() == 400
+        e.message == "body: Please set either body.p141 or body.new_p141. And set corresponding p141_type"
     }
 
     void 'test creating incomplete complex e13 fails'() {

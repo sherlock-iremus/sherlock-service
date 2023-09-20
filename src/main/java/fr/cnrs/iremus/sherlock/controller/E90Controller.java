@@ -43,6 +43,11 @@ import java.util.List;
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E90Controller {
+    public static final String E90_POST_FRAGMENT_NO_RDFTYPE = "Parent resource has no rdf:type matching E90.";
+    public static final String E90_DELETE_FRAGMENT_DOES_NOT_EXIST = "This E90 does not exist.";
+    public static final String E90_DELETE_FRAGMENT_PLEASE_DELETE_ENTITIES = "Please delete entities which depends on the this E90 before deleting it.";
+    public static final String E90_DELETE_FRAGMENT_BELONGS_TO_ANOTHER_USER = "This E90 belongs to other users.";
+
     @Property(name = "jena")
     protected String jena;
 
@@ -70,7 +75,7 @@ public class E90Controller {
         try {
             e90Type = e90Service.getMostAccurateE90RDFType(parentE90);
         } catch (Exception e) {
-            return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Parent resource has no rdf:type matching E90"));
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E90_POST_FRAGMENT_NO_RDFTYPE + "\"}");
         }
 
         Resource e90Fragment = m.createResource(sherlock.makeIri());
@@ -125,15 +130,15 @@ public class E90Controller {
             Model e90Model = qe.execConstruct();
 
             if (!e90Model.containsResource(e90))
-                return HttpResponse.notFound(sherlock.objectToJson("This E90 does not exist."));
+                return HttpResponse.notFound("{\"message\":\"" + E90_DELETE_FRAGMENT_DOES_NOT_EXIST + "\"}");
 
             List<Resource> resourcesWithE90AsObject = e90Model.listSubjectsWithProperty(null, e90).toList();
             if (!resourcesWithE90AsObject.isEmpty())
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("Please delete entities which depends on the this E90 before deleting it."));
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E90_DELETE_FRAGMENT_PLEASE_DELETE_ENTITIES + "\"}");
 
             List<RDFNode> involvedUsers = e90Model.listObjectsOfProperty(e90, DCTerms.creator).toList();
             if (!involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString())))
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body(sherlock.objectToJson("This E90 belongs to other users."));
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E90_DELETE_FRAGMENT_BELONGS_TO_ANOTHER_USER + "\"}");
 
             conn.update(sherlock.makeDeleteQuery(e90Model));
 

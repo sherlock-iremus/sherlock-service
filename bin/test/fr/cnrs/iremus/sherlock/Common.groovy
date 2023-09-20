@@ -1,7 +1,6 @@
 package fr.cnrs.iremus.sherlock
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
@@ -13,14 +12,12 @@ import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
 import jakarta.inject.Inject
 import org.apache.jena.arq.querybuilder.ConstructBuilder
-import org.apache.jena.arq.querybuilder.WhereBuilder
 import org.apache.jena.atlas.web.HttpException
 import org.apache.jena.query.Query
 import org.apache.jena.query.QueryExecution
 import org.apache.jena.rdf.model.Model
 import org.apache.jena.rdfconnection.RDFConnectionFuseki
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder
-
 
 class Common {
 
@@ -116,8 +113,8 @@ class Common {
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
             ConstructBuilder cb = new ConstructBuilder()
-                .addConstruct("?s", "?p", "?o")
-                .addGraph("?g", "?s", "?p", "?o")
+                    .addConstruct("?s", "?p", "?o")
+                    .addGraph("?g", "?s", "?p", "?o")
             Query q = cb.build()
             QueryExecution qe = conn.query(q)
             return qe.execConstruct()
