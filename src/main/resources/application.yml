@@ -14,8 +14,8 @@ micronaut:
     oauth2:
       clients:
         orcid:
-          client_id: ${ORCID_CLIENT_ID:YOUR_ORCID_CLIENT_ID}
-          client_secret: ${ORCID_CLIENT_SECRET:YOUR_ORCID_CLIENT_SECRET}
+          client_id: ${ORCID_CLIENT_ID:APP-B1Y73I83LGWWYW26}
+          client_secret: ${ORCID_CLIENT_SECRET:9579bd2f-b379-4ff6-9858-dc69a14cfe26}
           scopes: '/authenticate'
           authorization:
             url: 'https://orcid.org/oauth/authorize'
