@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 public class MeiHead {
     private FileDesc fileDesc;
 
-    @XmlElement
+    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
     public FileDesc getFileDesc() {
         return this.fileDesc;
     }

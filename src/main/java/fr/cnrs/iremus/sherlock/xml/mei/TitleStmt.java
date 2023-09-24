@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 public class TitleStmt {
     private String title;
 
-    @XmlElement(name = "title")
+    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
     public String getTitle() {
         return this.getTitle();
     }

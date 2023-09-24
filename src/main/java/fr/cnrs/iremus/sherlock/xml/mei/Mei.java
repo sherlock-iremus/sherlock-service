@@ -19,7 +19,7 @@ public class Mei {
         this.meiversion = meiversion;
     }
 
-    @XmlElement
+    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
     private MeiHead meiHead;
 
     public MeiHead getMeiHead() {
@@ -29,16 +29,4 @@ public class Mei {
     public void setMeiHead(MeiHead meiHead) {
         this.meiHead = meiHead;
     }
-
-    @XmlElement
-    private Test test;
-
-    public Test getTest() {
-        return this.test;
-    }
-
-    public void setTest(Test test) {
-        this.test = test;
-    }
-
 }

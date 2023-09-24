@@ -7,7 +7,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 public class FileDesc {
     private TitleStmt titleStmt;
 
-    @XmlElement
+    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
     public TitleStmt getTitleStmt() {
         return this.titleStmt;
     }
