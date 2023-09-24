@@ -53,6 +53,9 @@ dependencies {
 
     implementation('org.apache.groovy:groovy-json')
 
+    implementation 'org.glassfish.jaxb:jaxb-xjc:4.0.3'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
+    implementation 'org.glassfish.jaxb:jaxb-core:4.0.3'
 }
 
 
@@ -73,7 +76,7 @@ micronaut {
     }
 }
 graalvmNative.toolchainDetection = false
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
 }

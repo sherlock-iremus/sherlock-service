@@ -27,6 +27,7 @@ class Common {
     @Inject
     @Client("/")
     Rx3HttpClient client
+
     @Inject
     Sherlock sherlock
     @Property(name = "jena")
