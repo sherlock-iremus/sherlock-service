@@ -2,16 +2,15 @@ package fr.cnrs.iremus.sherlock.xml.mei;
 
 
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.*;
 
 @Serdeable
 @XmlRootElement(name = "mei")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Mei {
+    @XmlAttribute
     private String meiversion;
 
-    @XmlAttribute
     public String getMeiversion() {
         return this.meiversion;
     }
@@ -20,9 +19,9 @@ public class Mei {
         this.meiversion = meiversion;
     }
 
+    @XmlElement
     private MeiHead meiHead;
 
-    @XmlElement
     public MeiHead getMeiHead() {
         return this.meiHead;
     }
@@ -31,9 +30,9 @@ public class Mei {
         this.meiHead = meiHead;
     }
 
+    @XmlElement
     private Test test;
 
-    @XmlElement
     public Test getTest() {
         return this.test;
     }

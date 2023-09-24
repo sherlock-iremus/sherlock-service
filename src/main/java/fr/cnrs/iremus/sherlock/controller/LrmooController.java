@@ -12,7 +12,6 @@ import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.xml.bind.JAXB;
-import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.BufferedReader;
@@ -33,7 +32,7 @@ public class LrmooController {
 
     @Post("/mei-file-uri")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Mei> createMinimalLrmooDatasetFromMeiUri(@Valid @Body FileUri body) throws JAXBException, IOException, JAXBException {
+    public HttpResponse<Mei> createMinimalLrmooDatasetFromMeiUri(@Valid @Body FileUri body) throws JAXBException, IOException {
         URL meiFileUri = new URL(body.getFileUri());
         BufferedReader in = new BufferedReader(new InputStreamReader(meiFileUri.openStream()));
 

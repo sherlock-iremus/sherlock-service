@@ -53,9 +53,8 @@ dependencies {
 
     implementation('org.apache.groovy:groovy-json')
 
-    implementation 'org.glassfish.jaxb:jaxb-xjc:4.0.3'
-    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.3'
-    implementation 'org.glassfish.jaxb:jaxb-core:4.0.3'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:4.0.3'
 }
 
 

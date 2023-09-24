@@ -2,10 +2,8 @@ package fr.cnrs.iremus.sherlock.xml.mei;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 @Serdeable
-@XmlType
 public class FileDesc {
     private TitleStmt titleStmt;
 
