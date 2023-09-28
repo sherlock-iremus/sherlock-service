@@ -11,6 +11,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.Map;
 @Named("orcid")
 @Singleton
 public class UserDetailsMapper implements OauthAuthenticationMapper {
+    private static Logger logger = LoggerFactory.getLogger(UserDetailsMapper.class);
+
     private final OrcidApiClient orcidApiClient;
     @Inject
     UserService userService;
@@ -31,9 +35,14 @@ public class UserDetailsMapper implements OauthAuthenticationMapper {
 
     public Publisher<AuthenticationResponse> createAuthenticationResponse(TokenResponse tokenResponse, State state) {
         try {
+
+            logger.info("[ORCID API] Received token");
+            logger.info("[ORCID API] /GET user ");
             Publisher<OrcidUser> response = orcidApiClient.get("bearer " + tokenResponse.getAccessToken());
             OrcidUser user = Flux.from(response).blockFirst();
+            logger.info("[ORCID API] Received user's identity");
             String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user.getSub()));
+            logger.info("[DATA] created or retrieved user");
             return Publishers.just(AuthenticationResponse.success(
                     user.getSub(),
                     Map.ofEntries(
