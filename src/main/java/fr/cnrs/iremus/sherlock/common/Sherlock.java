@@ -1,7 +1,5 @@
 package fr.cnrs.iremus.sherlock.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -83,9 +81,7 @@ public class Sherlock {
         return outputStream.toString();
     }
 
-    public String objectToJson(Object object) throws JsonProcessingException {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper.writeValueAsString(object);
+    public String objectToJson(Object object) {
         try {
             return jsonMapper.writeValueAsString(object);
         } catch (IOException e) {

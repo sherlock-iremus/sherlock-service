@@ -1,7 +1,8 @@
 package fr.cnrs.iremus.sherlock
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import fr.cnrs.iremus.sherlock.common.Sherlock
+import groovy.json.JsonSlurper
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
@@ -60,7 +61,9 @@ class Common {
     }
 
     static Object parse(String json) {
-        return new ObjectMapper().readValue(json, Object.class)
+        def jsonSlurper = new JsonSlurper()
+        def object = jsonSlurper.parseText(json)
+        return object
     }
 
     Object post(String route, Map body) {

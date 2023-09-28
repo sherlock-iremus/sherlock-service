@@ -1,6 +1,7 @@
 package fr.cnrs.iremus.sherlock.lrmoo
 
 import fr.cnrs.iremus.sherlock.Common
+import groovy.json.JsonOutput
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.rxjava3.http.client.Rx3HttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -8,7 +9,7 @@ import jakarta.inject.Inject
 import spock.lang.Specification
 
 @MicronautTest()
-class CreateLrmooEntitiesSpec extends Specification {
+class CreateMeiEntitiesSpec extends Specification {
     @Inject
     @Client('/')
     Rx3HttpClient client
@@ -16,16 +17,17 @@ class CreateLrmooEntitiesSpec extends Specification {
     @Inject
     Common common
 
-    def meiFileUri = "https://raw.githubusercontent.com/sherlock-iremus/sherlock-service/master/data/Jos2701_CGN.mei"
+    def meiFileUrl = "https://raw.githubusercontent.com/sherlock-iremus/sherlock-service/master/data/Jos2701_CGN.mei"
 
-    void 'test creation of a minimal LRMoo dataset from a MEI URI'() {
+    void 'Get MEI header data from a staticcaly published MEI file'() {
         given:
         common.eraseall()
 
         when:
-        def response = common.post('/sherlock/api/lrmoo/mei-file-uri', ["fileUri": meiFileUri])
+        def response = common.post('/sherlock/api/mei/head', ["fileUrl": meiFileUrl])
 
         then:
-        println response
+        def j = JsonOutput.prettyPrint(JsonOutput.toJson(response))
+        println j
     }
 }

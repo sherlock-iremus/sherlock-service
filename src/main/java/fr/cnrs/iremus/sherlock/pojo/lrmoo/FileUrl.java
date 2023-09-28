@@ -7,16 +7,16 @@ import jakarta.validation.constraints.NotBlank;
 
 @Introspected
 @Serdeable
-public class FileUri {
+public class FileUrl {
     @NotBlank
     @JsonProperty
-    private final String fileUri;
+    private final String fileUrl;
 
-    public FileUri(String fileUri) {
-        this.fileUri = fileUri;
+    public FileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
-    public String getFileUri() {
-        return this.fileUri;
+    public String getFileUrl() {
+        return this.fileUrl;
     }
 }
