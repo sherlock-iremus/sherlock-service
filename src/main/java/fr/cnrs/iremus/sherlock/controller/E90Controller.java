@@ -36,6 +36,8 @@ import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -43,6 +45,7 @@ import java.util.List;
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E90Controller {
+    private static Logger logger = LoggerFactory.getLogger(E90Controller.class);
     public static final String E90_POST_FRAGMENT_NO_RDFTYPE = "Parent resource has no rdf:type matching E90.";
     public static final String E90_DELETE_FRAGMENT_DOES_NOT_EXIST = "This E90 does not exist.";
     public static final String E90_DELETE_FRAGMENT_PLEASE_DELETE_ENTITIES = "Please delete entities which depends on the this E90 before deleting it.";
@@ -68,6 +71,8 @@ public class E90Controller {
                 "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
             }
             """)})}) @Valid @Body NewE90Fragment body, Authentication authentication) throws ParseException, JsonProcessingException {
+        logger.info("Creating new E90 for user %s".formatted(authentication.getAttributes().get("uuid")));
+
         Model m = ModelFactory.createDefaultModel();
 
         Resource parentE90 = m.createResource(sherlock.resolvePrefix(body.getParent()));
@@ -110,6 +115,8 @@ public class E90Controller {
     @Delete("/fragment/{e90Uuid}")
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> delete(@PathVariable String e90Uuid, Authentication authentication) throws HttpException, JsonProcessingException {
+        logger.info("E90 %s deletion triggered by user : %s".formatted(e90Uuid, authentication.getAttributes().get("uuid")));
+
         Model m = ModelFactory.createDefaultModel();
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));

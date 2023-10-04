@@ -4,7 +4,7 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%cyan(%d{HH:mm:ss.SSS}) %boldGreen([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
+            <pattern>%cyan(%d{yyyy-MM-dd  HH:mm:ss.SSS}) %boldGreen([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -15,6 +15,7 @@
     </root>
 
     <!-- Micronaut runtime loggers -->
+    <logger name="io.micronaut.http" level="DEBUG"/>
     <logger name="io.micronaut.http.client" level="TRACE"/>
     <logger name="fr.cnrs.iremus.sherlock" level="INFO"/>
 

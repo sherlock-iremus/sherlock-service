@@ -24,11 +24,15 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller("/api/user/config")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "2. User Configuration")
 public class UserConfigController {
+    private static Logger logger = LoggerFactory.getLogger(UserConfigController.class);
+
     @Property(name = "jena")
     protected String jena;
 
@@ -46,8 +50,9 @@ public class UserConfigController {
                     "color": "b985c7"
                 }
             """)})}) @Valid @Body UserConfigEdit body, Authentication authentication) throws HttpException, ParseException {
-        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        logger.info("Setting config { emoji: %s, color: %s } for user : %s".formatted(body.getEmoji(), body.getColor(), authentication.getAttributes().get("uuid")));
 
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Model m = ModelFactory.createDefaultModel();
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
         if (userService.getUserByUuid((String) authentication.getAttributes().get("uuid")) == null)
@@ -60,6 +65,8 @@ public class UserConfigController {
     @Get
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<UserConfig> get(Authentication authentication) throws HttpException, ParseException {
+        logger.info("Getting config for user : " + authentication.getAttributes().get("uuid"));
+
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         return HttpResponse.ok(userService.getUserConfigByUuid(authenticatedUserUuid));
     }

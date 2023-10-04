@@ -18,11 +18,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller("/api/")
 @Tag(name = "1. Home")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class HomeController {
+    private static Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Inject
     Sherlock sherlock;
@@ -32,6 +35,7 @@ public class HomeController {
     @ApiResponse(description = "Current user uuid", content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class), examples = @ExampleObject("6ea17744-2345-43ee-8a3e-f3c9770e0340")))
     @ApiResponse(responseCode = "401", description = "User has no valid token")
     public MutableHttpResponse<String> index(@NotNull Authentication authentication) throws JsonProcessingException {
+        logger.info("Home route has been called by : " + authentication.getAttributes().get("uuid"));
         return HttpResponse.ok(sherlock.objectToJson(authentication.getAttributes().get("uuid")));
     }
 }

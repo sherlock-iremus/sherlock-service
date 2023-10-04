@@ -35,11 +35,14 @@ import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller("/api/analytical-project")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "4. Structural")
 public class AnalyticalProjectController {
+    private static Logger logger = LoggerFactory.getLogger(AnalyticalProjectController.class);
     public final static String e55analyticalProjectIri = "http://data-iremus.huma-num.fr/id/21816195-6708-4bbd-a758-ee354bb84900";
     public final static String e55draftIri = "http://data-iremus.huma-num.fr/id/cabe46bf-23d4-4392-aa20-b3eb21ad7dfd";
     @Property(name = "jena")
@@ -57,6 +60,7 @@ public class AnalyticalProjectController {
                 "label": "mon projet analytique"
             }
             """)})}) @Valid @Body NewAnalyticalProject body, Authentication authentication) throws ParseException {
+        logger.info("Creating analytical project with name '%s' for user %s".formatted(body.getLabel(), authentication.getAttributes().get("uuid")));
 
         // context
 

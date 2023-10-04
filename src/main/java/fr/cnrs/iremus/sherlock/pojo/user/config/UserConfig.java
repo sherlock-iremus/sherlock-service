@@ -1,5 +1,9 @@
 package fr.cnrs.iremus.sherlock.pojo.user.config;
 
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
+
+@Serdeable
 public class UserConfig {
     private String hexColor;
     private String unicodeChar;

@@ -35,6 +35,8 @@ import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -42,7 +44,7 @@ import java.util.List;
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
-
+    private static Logger logger = LoggerFactory.getLogger(E13Controller.class);
     public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 of the E13 first.";
     public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
     public static final String E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER = "Some resources belongs to other users.";
@@ -86,6 +88,7 @@ public class E13Controller {
                     """)})}) @Valid @Body NewE13 body,
             Authentication authentication
     ) throws ParseException {
+        logger.info("Creating new E13 for user %s".formatted(authentication.getAttributes().get("uuid")));
 
         // new e13
         String e13Iri = sherlock.makeIri();
@@ -144,8 +147,10 @@ public class E13Controller {
     @Delete("/{e13Uuid}")
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> delete(@PathVariable String e13Uuid, @QueryValue @Nullable Boolean propagate, Authentication authentication) throws HttpException, JsonProcessingException {
-        Model m = ModelFactory.createDefaultModel();
+        logger.info("E13 %s deletion triggered by user : %s".formatted(e13Uuid, authentication.getAttributes().get("uuid")));
+
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        Model m = ModelFactory.createDefaultModel();
         Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
         Resource e13 = m.getResource(sherlock.makeIri(e13Uuid));
 
