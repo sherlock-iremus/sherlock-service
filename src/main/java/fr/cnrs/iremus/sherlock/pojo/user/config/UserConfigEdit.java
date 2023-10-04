@@ -1,9 +1,11 @@
 package fr.cnrs.iremus.sherlock.pojo.user.config;
 
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 
 @UserConfigValidator
 @Introspected
+@Serdeable
 public class UserConfigEdit {
     @UserEmojiValidator
     private String emoji;
