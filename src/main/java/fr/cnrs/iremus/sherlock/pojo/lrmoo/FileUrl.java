@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 @Serdeable
 public class FileUrl {
     @NotBlank
-    @JsonProperty
+    @JsonProperty("file_url")
     private final String fileUrl;
 
     public FileUrl(String fileUrl) {

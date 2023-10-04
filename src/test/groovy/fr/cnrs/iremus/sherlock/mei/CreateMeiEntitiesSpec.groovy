@@ -1,4 +1,4 @@
-package fr.cnrs.iremus.sherlock.lrmoo
+package fr.cnrs.iremus.sherlock.mei
 
 import fr.cnrs.iremus.sherlock.Common
 import groovy.json.JsonOutput
@@ -24,7 +24,7 @@ class CreateMeiEntitiesSpec extends Specification {
         common.eraseall()
 
         when:
-        def response = common.post('/sherlock/api/mei/head', ["fileUrl": meiFileUrl])
+        def response = common.post('/sherlock/api/mei/head', ["file_url": meiFileUrl])
 
         then:
         def j = JsonOutput.prettyPrint(JsonOutput.toJson(response))

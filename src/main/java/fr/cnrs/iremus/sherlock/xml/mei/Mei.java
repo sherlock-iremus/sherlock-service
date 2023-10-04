@@ -74,17 +74,17 @@ public class Mei {
         @Introspected
         @XmlAccessorType(XmlAccessType.FIELD)
         public static class ExtMeta {
-            public List<MetaFrame> getFrames() {
-                return frames;
+            public List<MetaFrame> getFrames_humdrum() {
+                return frames_humdrum;
             }
 
-            public void setFrames(List<MetaFrame> frames) {
-                this.frames = frames;
+            public void setFrames_humdrum(List<MetaFrame> frames_humdrum) {
+                this.frames_humdrum = frames_humdrum;
             }
 
             @XmlElementWrapper(name = "frames", namespace = "http://www.humdrum.org/ns/humxml")
             @XmlElement(name = "metaFrame", namespace = "http://www.humdrum.org/ns/humxml")
-            public List<MetaFrame> frames;
+            public List<MetaFrame> frames_humdrum;
 
             @Serdeable
             @Introspected

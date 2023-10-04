@@ -1,14 +1,16 @@
 package fr.cnrs.iremus.sherlock.controller;
 
 import fr.cnrs.iremus.sherlock.common.Sherlock;
-import fr.cnrs.iremus.sherlock.pojo.Test;
 import fr.cnrs.iremus.sherlock.pojo.lrmoo.FileUrl;
 import fr.cnrs.iremus.sherlock.service.ResourceService;
 import fr.cnrs.iremus.sherlock.xml.mei.Mei;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.inject.Inject;
@@ -29,13 +31,9 @@ public class MeiController {
     @Inject
     Sherlock sherlock;
 
-    @Get
-    public Object index() {
-        return new Test("Coucou");
-    }
-
     @Post("/head")
     @Produces(MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_ANONYMOUS)
     public MutableHttpResponse<Mei> parseMeiHead(@Valid @Body FileUrl body) throws IOException {
         URL meiFileUrl = new URL(body.getFileUrl());
         BufferedReader in = new BufferedReader(new InputStreamReader(meiFileUrl.openStream()));
