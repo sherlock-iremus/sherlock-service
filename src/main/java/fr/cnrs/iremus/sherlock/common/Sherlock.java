@@ -3,9 +3,6 @@ package fr.cnrs.iremus.sherlock.common;
 import io.micronaut.json.JsonMapper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.apache.jena.datatypes.xsd.XSDDateTime;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -15,9 +12,6 @@ import org.apache.jena.vocabulary.RDFS;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 @Singleton
@@ -26,8 +20,8 @@ public class Sherlock {
     JsonMapper jsonMapper;
     public static final String NS = "http://data-iremus.huma-num.fr/ns/sherlock#";
     private static final Model m_model = ModelFactory.createDefaultModel();
-    public static final Resource sheP_a_pour_entite_de_plus_haut_niveau = m_model.createResource(NS + "sheP_a_pour_entité_de_plus_haut_niveau");
-    public static final Resource sheP_subscribe = m_model.createResource(NS + "sheP_subscribe");
+    // public static final Resource sheP_a_pour_entite_de_plus_haut_niveau = m_model.createResource(NS + "sheP_a_pour_entité_de_plus_haut_niveau");
+    // public static final Resource sheP_subscribe = m_model.createResource(NS + "sheP_subscribe");
     public static final Property has_document_context = m_model.createProperty(NS + "has_document_context");
     public static final Property has_privacy_type = m_model.createProperty(NS + "has_privacy_type");
 
@@ -74,12 +68,12 @@ public class Sherlock {
         return baos.toString();
     }
 
-    public String resultSetToJson(ResultSet rs) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ResultSetFormatter.outputAsJSON(outputStream, rs);
-
-        return outputStream.toString();
-    }
+//    public String resultSetToJson(ResultSet rs) {
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        ResultSetFormatter.outputAsJSON(outputStream, rs);
+//
+//        return outputStream.toString();
+//    }
 
     public String objectToJson(Object object) {
         try {
@@ -102,22 +96,22 @@ public class Sherlock {
         return uri.replace("crm:", CIDOCCRM.getURI()).replace("dcterms:", DCTerms.getURI()).replace("rdf:", RDF.getURI()).replace("rdfs:", RDFS.getURI()).replace("sherlock:", NS);
     }
 
-    public Literal getTypedLiteral(Model m, Datatype datatype, String literal) {
-        switch (datatype) {
-            case STRING:
-                return m.createTypedLiteral(literal);
-            case INTEGER:
-                return m.createTypedLiteral(Integer.valueOf(literal));
-            case DATE:
-                Calendar calendar = Calendar.getInstance();
-                Date date = Date.from(Instant.parse(literal));
-                calendar.setTime(date);
-                new XSDDateTime(calendar);
-                return m.createTypedLiteral(calendar);
-            default:
-                return m.createLiteral(literal);
-        }
-    }
+//    public Literal getTypedLiteral(Model m, Datatype datatype, String literal) {
+//        switch (datatype) {
+//            case STRING:
+//                return m.createTypedLiteral(literal);
+//            case INTEGER:
+//                return m.createTypedLiteral(Integer.valueOf(literal));
+//            case DATE:
+//                Calendar calendar = Calendar.getInstance();
+//                Date date = Date.from(Instant.parse(literal));
+//                calendar.setTime(date);
+//                new XSDDateTime(calendar);
+//                return m.createTypedLiteral(calendar);
+//            default:
+//                return m.createLiteral(literal);
+//        }
+//    }
 
     public String getUuidFromSherlockUri(String uri) {
         String[] uriSplit = uri.split("/");

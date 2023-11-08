@@ -17,17 +17,17 @@ class CreateMeiEntitiesSpec extends Specification {
     @Inject
     Common common
 
-    def meiFileUrl = "https://raw.githubusercontent.com/sherlock-iremus/sherlock-service/master/data/Jos2701_CGN.mei"
+    def meiFileUrl1 = "https://raw.githubusercontent.com/polifonia-project/tonalities_pilot/main/scores/Hellinck/Hellinck_Beati.mei"
 
     void 'Get MEI header data from a staticcaly published MEI file'() {
         given:
         common.eraseall()
 
         when:
-        def response = common.post('/sherlock/api/mei/head', ["file_url": meiFileUrl])
+        def response = common.post('/sherlock/api/mei/head', ["file_url": meiFileUrl1])
 
         then:
         def j = JsonOutput.prettyPrint(JsonOutput.toJson(response))
-        println j
+        "Beati omnes qui timent Dominum" == response["meiHead"]["fileDesc"]["titleStmt"]["title"]
     }
 }
