@@ -136,4 +136,14 @@ class Common {
             return qe.execConstruct()
         }
     }
+
+    static Resource createResource(String s) {
+        Model m = ModelFactory.createDefaultModel()
+        return m.createResource(s);
+    }
+
+    static org.apache.jena.rdf.model.Property createProperty(String s) {
+        Model m = ModelFactory.createDefaultModel()
+        return m.createProperty(s);
+    }
 }

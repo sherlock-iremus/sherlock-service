@@ -17,6 +17,7 @@ import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.vocabulary.RDF;
 
 import java.util.List;
+import java.util.Objects;
 
 @Singleton
 public class E13Service {
@@ -51,24 +52,91 @@ public class E13Service {
         m.add(analyticalProject, CIDOCCRM.P9_consists_of, e13);
         resourceService.insertResourceCommonTriples(e13, user, m);
     }
-
     public Model getModelByE13(Resource e13) {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
 
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct(e13, "?e13_p", "?e13_o")
+                    .addConstruct("?e13_s", "?e13_p_i", e13)
                     .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, e13)
                     .addConstruct("?p141", "?p141_p", "?p141_o")
                     .addConstruct("?p141_s", "?p141_p_i", "?p141")
                     .addGraph(sherlock.getGraph(),
                             new WhereBuilder()
                                     .addWhere(e13, "?e13_p", "?e13_o")
+                                    .addWhere("?e13_s", "?e13_p_i", e13)
                                     .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, e13)
                                     .addOptional(new WhereBuilder()
                                             .addWhere(e13, CIDOCCRM.P141_assigned, "?p141")
                                             .addOptional("?p141", "?p141_p", "?p141_o")
                                             .addOptional("?p141_s", "?p141_p_i", "?p141")
+                                    )
+                    );
+            Query q = cb.build();
+            QueryExecution qe = conn.query(q);
+            return qe.execConstruct();
+        }
+    }
+
+    public boolean hasE13IncomingTriples(Model currentModel, Resource e13) {
+        return currentModel.listStatements(null, null, e13).toList().stream().anyMatch(triple -> !Objects.equals(triple.getPredicate().asNode().getURI(), CIDOCCRM.P9_consists_of.asNode().getURI()));
+    }
+
+    public boolean isP177aP67(Model currentModel, Resource e13) {
+        return currentModel.contains(e13, CIDOCCRM.P177_assigned_property_of_type, CIDOCCRM.P67_refers_to);
+    }
+
+    public boolean isE13Creator(Model currentModel, Resource e13, Resource authenticatedUser) {
+        return currentModel.contains(e13, CIDOCCRM.P14_carried_out_by, authenticatedUser);
+    }
+
+    public boolean isP141aE28(Model currentModel, Resource e13) {
+        Resource p141 = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).next().asResource();
+        return currentModel.contains(p141, RDF.type, CIDOCCRM.E28_Conceptual_Object);
+    }
+
+    public boolean hasP141NoIncomingTriple(Model currentModel, Resource e13) {
+        Resource p141 = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).next().asResource();
+        // We compare to "1" because there should be only the triple :  e13 -- P141 --> object.
+        return currentModel.listStatements(null, null, p141).toList().size() == 1;
+    }
+
+    public Model getModelByE13WithoutP141Triples(Resource e13) {
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+            ConstructBuilder cb = new ConstructBuilder()
+                    .addConstruct(e13, "?e13_p", "?e13_o")
+                    .addConstruct("?e13_s", "?e13_p_i", e13)
+                    .addGraph(sherlock.getGraph(),
+                            new WhereBuilder()
+                                    .addWhere(e13, "?e13_p", "?e13_o")
+                                    .addWhere("?e13_s", "?e13_p_i", e13)
+                    );
+            Query q = cb.build();
+            QueryExecution qe = conn.query(q);
+            return qe.execConstruct();
+        }
+    }
+
+    public Model getModelByE13WithoutIncomingP141Triples(Resource e13) {
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+
+            ConstructBuilder cb = new ConstructBuilder()
+                    .addConstruct(e13, "?e13_p", "?e13_o")
+                    .addConstruct("?e13_s", "?e13_p_i", e13)
+                    .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, e13)
+                    .addConstruct("?p141", "?p141_p", "?p141_o")
+                    .addGraph(sherlock.getGraph(),
+                            new WhereBuilder()
+                                    .addWhere(e13, "?e13_p", "?e13_o")
+                                    .addWhere("?e13_s", "?e13_p_i", e13)
+                                    .addWhere("?analytical_project", CIDOCCRM.P9_consists_of, e13)
+                                    .addOptional(new WhereBuilder()
+                                            .addWhere(e13, CIDOCCRM.P141_assigned, "?p141")
+                                            .addOptional("?p141", "?p141_p", "?p141_o")
                                     )
                     );
             Query q = cb.build();

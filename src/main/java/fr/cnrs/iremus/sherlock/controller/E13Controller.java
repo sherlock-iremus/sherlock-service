@@ -1,6 +1,5 @@
 package fr.cnrs.iremus.sherlock.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
@@ -9,7 +8,6 @@ import fr.cnrs.iremus.sherlock.pojo.e13.NewP141;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import fr.cnrs.iremus.sherlock.service.ResourceService;
 import io.micronaut.context.annotation.Property;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -19,6 +17,7 @@ import io.micronaut.http.exceptions.HttpException;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,12 +27,10 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +42,11 @@ import java.util.List;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
     private static Logger logger = LoggerFactory.getLogger(E13Controller.class);
-    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 of the E13 first.";
+    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the E28 first.";
     public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
-    public static final String E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER = "Some resources belongs to other users.";
+    public static final String E13_DELETE_INCOMING_TRIPLES = "This E13 has incoming triples. Delete them.";
+    public static final String E13_DELETE_BELONGS_TO_ANOTHER_USER = "This E13 belongs to anybody else.";
+    public static final String E13_DELETE_P141_IS_NOT_E28 = "This E13's P141 is not a E28.";
 
     @Property(name = "jena")
     protected String jena;
@@ -66,24 +65,24 @@ public class E13Controller {
     public MutableHttpResponse<String> create(
             @RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewE13.class), examples = {@ExampleObject(name = "Simple E13", value = """
                     {
-                        "p140": ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
-                        "p177": "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
+                        "p140": ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
+                        "p177": "http://data-iremus.huma-num.fr/id/commentaire-sur-entite-analytique",
                         "p141": "Ce n'est pas une cadence.",
                         "p141_type": "LITERAL",
-                        "document_context": "http://data-iremus.huma-num/id/ma-partition",
-                        "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                        "document_context": "http://data-iremus.huma-num.fr/id/ma-partition",
+                        "analytical_project": "http://data-iremus.huma-num.fr/id/mon-projet-analytique"
                     }
                     """), @ExampleObject(name = "E13 and new resource as P141", value = """
                                             {
-                                    "p140": ["http://data-iremus.huma-num/id/mon-fragment-d-estampe"],
+                                    "p140": ["http://data-iremus.huma-num.fr/id/mon-fragment-d-estampe"],
                                     "p177": "crm:P1_is_identified_by",
                                     "new_p141": {
                                         "rdf_type": ["crm:E42_Identifier"],
-                                        "p2_type": ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"]
+                                        "p2_type": ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"]
                                     },
                                     "p141_type": "NEW_RESOURCE",
-                                    "document_context": "http://data-iremus.huma-num/id/mon-e36-estampe",
-                                    "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
+                                    "document_context": "http://data-iremus.huma-num.fr/id/mon-e36-estampe",
+                                    "analytical_project": "http://data-iremus.huma-num.fr/id/mon-projet-analytique"
                                 }
                     """)})}) @Valid @Body NewE13 body,
             Authentication authentication
@@ -135,18 +134,16 @@ public class E13Controller {
 
             // WRITE
             conn.update(updateWithModel);
-            Model currentModel = e13Service.getModelByE13(e13);
+            Model currentModel = e13Service.getModelByE13WithoutIncomingP141Triples(e13);
 
             return HttpResponse.created(sherlock.modelToJson(currentModel));
         }
     }
 
-    /**
-     * @param propagate set to "true" if you want to delete also the 141 of the E13
-     */
-    @Delete("/{e13Uuid}")
+    @Delete("/{e13Uuid}") // 572423c3-5019-47be-b845-6b96fbddc754
     @Produces(MediaType.APPLICATION_JSON)
-    public MutableHttpResponse<String> delete(@PathVariable String e13Uuid, @QueryValue @Nullable Boolean propagate, Authentication authentication) throws HttpException, JsonProcessingException {
+    @ExternalDocumentation(description = "Workflow Miro", url = "https://miro.com/app/board/uXjVO1vwG0U=/?moveToWidget=3458764570720281878&cot=14")
+    public MutableHttpResponse<String> delete(@PathVariable String e13Uuid, Authentication authentication) throws HttpException {
         logger.info("E13 %s deletion triggered by user : %s".formatted(e13Uuid, authentication.getAttributes().get("uuid")));
 
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
@@ -157,38 +154,35 @@ public class E13Controller {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             Model currentModel = e13Service.getModelByE13(e13);
+            Model modelToDelete;
 
             if (!currentModel.containsResource(e13))
                 return HttpResponse.notFound("{\"message\": \"" + E13_DELETE_DOES_NOT_EXIST + "\"}");
 
-            List<RDFNode> p141List = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).toList();
-            for (RDFNode p141 : p141List) {
-                if (p141.isResource()) {
-                    List<Resource> resourcesDependingOnP141 = currentModel.listSubjectsWithProperty(null, p141.asResource()).filterDrop(resource -> resource.equals(e13)).toList();
-                    if (!resourcesDependingOnP141.isEmpty()) {
-                        return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}");
-                    }
+            if (e13Service.hasE13IncomingTriples(currentModel, e13))
+                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_INCOMING_TRIPLES + "\"}");
 
-                    // If P141 does not belong to current user, do NOT consider it
-                    if (!currentModel.contains(p141.asResource(), DCTerms.creator, authenticatedUser)) {
-                        currentModel.removeAll(p141.asResource(), null, null);
+            // This algorithm is specified here: https://miro.com/app/board/uXjVO1vwG0U=/?moveToWidget=3458764570720281878&cot=14
+            if (e13Service.isP177aP67(currentModel, e13)) {
+                if (e13Service.isP141aE28(currentModel, e13)) {
+                    if (e13Service.hasP141NoIncomingTriple(currentModel, e13)) {
+                        modelToDelete = currentModel;
+                    } else {
+                        return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}");
                     }
-
-                    // If no propagation, do NOT remove triples with 141 as subject
-                    if (!Boolean.TRUE.equals(propagate)) {
-                        currentModel.removeAll(p141.asResource(), null, null);
-                    }
+                } else {
+                    return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_P141_IS_NOT_E28 + "\"}");
+                }
+            } else {
+                if (e13Service.isE13Creator(currentModel, e13, authenticatedUser)) {
+                    modelToDelete = e13Service.getModelByE13WithoutP141Triples(e13);
+                } else {
+                    return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_BELONGS_TO_ANOTHER_USER + "\"}");
                 }
             }
+            conn.update(sherlock.makeDeleteQuery(modelToDelete));
 
-            List<RDFNode> involvedUsers = currentModel.listObjectsOfProperty(DCTerms.creator).toList();
-            if (!involvedUsers.stream().allMatch(rdfNode -> authenticatedUser.toString().equals(rdfNode.toString()))) {
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\":\"" + E13_DELETE_SOME_BELONGS_TO_ANOTHER_USER + "\"}");
-            }
-
-            conn.update(sherlock.makeDeleteQuery(currentModel));
-
-            return HttpResponse.ok(sherlock.modelToJson(currentModel));
+            return HttpResponse.ok(sherlock.modelToJson(modelToDelete));
         }
     }
 }
