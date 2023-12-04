@@ -23,10 +23,16 @@ public class Mei {
     @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
     public MeiHead meiHead;
 
+
     @Serdeable
     @Introspected
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class MeiHead {
+
+        ///////////////////////////////////////////////////////////////////////
+        // EXTMETA
+        ///////////////////////////////////////////////////////////////////////
+
         public ExtMeta getExtMeta() {
             return extMeta;
         }
@@ -99,6 +105,186 @@ public class Mei {
         }
 
         ///////////////////////////////////////////////////////////////////////
+        // ENCODINGDESC
+        ///////////////////////////////////////////////////////////////////////
+
+        public EncodingDesc getEncodingDesc() {
+            return encodingDesc;
+        }
+
+        public void setEncodingDesc(EncodingDesc encodingDesc) {
+            this.encodingDesc = encodingDesc;
+        }
+
+        @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+        public EncodingDesc encodingDesc;
+
+        @Serdeable
+        @Introspected
+        @XmlAccessorType(XmlAccessType.FIELD)
+        public static class EncodingDesc {
+
+            public AppInfo getAppInfo() {
+                return appInfo;
+            }
+
+            public void setAppInfo(AppInfo appInfo) {
+                this.appInfo = appInfo;
+            }
+
+            @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+            public AppInfo appInfo;
+
+            @Serdeable
+            @Introspected
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class AppInfo {
+                public List<Application> getApplication() {
+                    return application;
+                }
+
+                public void setApplication(List<Application> application) {
+                    this.application = application;
+                }
+
+                @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                public List<Application> application;
+
+                @Serdeable
+                @Introspected
+                @XmlAccessorType(XmlAccessType.FIELD)
+                public static class Application {
+                    public String getIsodate() {
+                        return isodate;
+                    }
+
+                    public void setIsodate(String isodate) {
+                        this.isodate = isodate;
+                    }
+
+                    @XmlAttribute
+                    public String isodate;
+
+                    public String getVersion() {
+                        return version;
+                    }
+
+                    public void setVersion(String version) {
+                        this.version = version;
+                    }
+
+                    @XmlAttribute
+                    public String version;
+
+                    public ApplicationName getName() {
+                        return name;
+                    }
+
+                    public void setName(ApplicationName name) {
+                        this.name = name;
+                    }
+
+                    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                    public ApplicationName name;
+
+                    @Serdeable
+                    @Introspected
+                    @XmlAccessorType(XmlAccessType.FIELD)
+                    public static class ApplicationName {
+                        public String getType() {
+                            return type;
+                        }
+
+                        public void setType(String type) {
+                            this.type = type;
+                        }
+
+                        @XmlAttribute
+                        public String type;
+
+                        public String getValue() {
+                            return value;
+                        }
+
+                        public void setValue(String value) {
+                            this.value = value;
+                        }
+
+                        @XmlValue
+                        public String value;
+                    }
+
+                    public String getP() {
+                        return p;
+                    }
+
+                    public void setP(String p) {
+                        this.p = p;
+                    }
+
+                    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                    public String p;
+
+                    public String getType() {
+                        return type;
+                    }
+
+                    public void setType(String type) {
+                        this.type = type;
+                    }
+
+                    @XmlAttribute
+                    public String type;
+                }
+            }
+
+            public ProjectDesc getProjectDesc() {
+                return projectDesc;
+            }
+
+            public void setProjectDesc(ProjectDesc projectDesc) {
+                this.projectDesc = projectDesc;
+            }
+
+            @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+            public ProjectDesc projectDesc;
+
+            @Serdeable
+            @Introspected
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class ProjectDesc {
+
+                public List<P> getP() {
+                    return p;
+                }
+
+                public void setP(List<P> p) {
+                    this.p = p;
+                }
+
+                @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                public List<P> p;
+
+                @Serdeable
+                @Introspected
+                @XmlAccessorType(XmlAccessType.FIELD)
+                public static class P {
+                    public String getValue() {
+                        return value;
+                    }
+
+                    public void setValue(String value) {
+                        this.value = value;
+                    }
+
+                    @XmlValue
+                    public String value;
+                }
+            }
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////
         // FILEDESC
         ///////////////////////////////////////////////////////////////////////
 
@@ -132,16 +318,54 @@ public class Mei {
             @Introspected
             @XmlAccessorType(XmlAccessType.FIELD)
             public static class TitleStmt {
-                public String getTitle() {
+                public List<Title> getTitle() {
                     return title;
                 }
 
-                public void setTitle(String title) {
+                public void setTitle(List<Title> title) {
                     this.title = title;
                 }
 
                 @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-                public String title;
+                public List<Title> title;
+
+                @Serdeable
+                @Introspected
+                @XmlAccessorType(XmlAccessType.FIELD)
+                public static class Title {
+                    public String getAnalog() {
+                        return analog;
+                    }
+
+                    public void setAnalog(String analog) {
+                        this.analog = analog;
+                    }
+
+                    @XmlAttribute
+                    public String analog;
+
+                    public String getType() {
+                        return type;
+                    }
+
+                    public void setType(String type) {
+                        this.type = type;
+                    }
+
+                    @XmlAttribute
+                    public String type;
+
+                    public String getValue() {
+                        return value;
+                    }
+
+                    public void setValue(String value) {
+                        this.value = value;
+                    }
+
+                    @XmlValue
+                    public String value;
+                }
 
                 public RespStmt getRespStmt() {
                     return respStmt;
@@ -158,21 +382,21 @@ public class Mei {
                 @Introspected
                 @XmlAccessorType(XmlAccessType.FIELD)
                 public static class RespStmt {
-                    public List<Name> getName() {
+                    public List<ResponsibilityStatementName> getName() {
                         return name;
                     }
 
-                    public void setName(List<Name> name) {
+                    public void setName(List<ResponsibilityStatementName> name) {
                         this.name = name;
                     }
 
                     @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-                    public List<Name> name;
+                    public List<ResponsibilityStatementName> name;
 
                     @Serdeable
                     @Introspected
                     @XmlAccessorType(XmlAccessType.FIELD)
-                    public static class Name {
+                    public static class ResponsibilityStatementName {
                         public String getRole() {
                             return this.role;
                         }
@@ -232,6 +456,18 @@ public class Mei {
 
                         @XmlValue
                         public String value;
+
+
+                        public String getAnalog() {
+                            return analog;
+                        }
+
+                        public void setAnalog(String analog) {
+                            this.analog = analog;
+                        }
+
+                        @XmlValue
+                        public String analog;
                     }
                 }
 
@@ -262,6 +498,17 @@ public class Mei {
             @Introspected
             @XmlAccessorType(XmlAccessType.FIELD)
             public static class PubStmt {
+                public TitleStmt.RespStmt getRespStmt() {
+                    return respStmt;
+                }
+
+                public void setRespStmt(TitleStmt.RespStmt respStmt) {
+                    this.respStmt = respStmt;
+                }
+
+                @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                public TitleStmt.RespStmt respStmt;
+
                 public Date getDate() {
                     return date;
                 }
@@ -309,6 +556,33 @@ public class Mei {
 
                     @XmlAttribute
                     public String type;
+                }
+
+                public Availability getAvailability() {
+                    return availability;
+                }
+
+                public void setAvailability(Availability availability) {
+                    this.availability = availability;
+                }
+
+                @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                public Availability availability;
+
+                @Serdeable
+                @Introspected
+                @XmlAccessorType(XmlAccessType.FIELD)
+                public static class Availability {
+                    @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+                    public String distributor;
+
+                    public String getDistributor() {
+                        return distributor;
+                    }
+
+                    public void setDistributor(String distributor) {
+                        this.distributor = distributor;
+                    }
                 }
             }
 
@@ -420,16 +694,16 @@ public class Mei {
         @Introspected
         @XmlAccessorType(XmlAccessType.FIELD)
         public static class Work {
-            public String getTitle() {
+            public List<FileDesc.TitleStmt.Title> getTitle() {
                 return title;
             }
 
-            public void setTitle(String title) {
+            public void setTitle(List<FileDesc.TitleStmt.Title> title) {
                 this.title = title;
             }
 
             @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-            public String title;
+            public List<FileDesc.TitleStmt.Title> title;
 
             public String getComposer() {
                 return composer;
@@ -452,6 +726,44 @@ public class Mei {
 
             @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
             FileDesc.TitleStmt titleStmt;
+
+            public Identifier getIdentifier() {
+                return identifier;
+            }
+
+            public void setIdentifier(Identifier identifier) {
+                this.identifier = identifier;
+            }
+
+            @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+            public Identifier identifier;
+
+            @Serdeable
+            @Introspected
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class Identifier {
+                public String getAnalog() {
+                    return analog;
+                }
+
+                public void setAnalog(String analog) {
+                    this.analog = analog;
+                }
+
+                @XmlAttribute
+                public String analog;
+
+                public String getValue() {
+                    return value;
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
+                }
+
+                @XmlValue
+                public String value;
+            }
         }
     }
 }

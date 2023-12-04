@@ -45,9 +45,9 @@ dependencies {
     implementation("io.micronaut.security:micronaut-security-ldap")
     implementation("io.micronaut.security:micronaut-security-oauth2")
 
-    implementation("org.apache.jena:jena:4.9.0")
-    implementation("org.apache.jena:jena-rdfconnection:4.9.0")
-    implementation("org.apache.jena:jena-querybuilder:4.9.0")
+    implementation("org.apache.jena:jena:4.10.0")
+    implementation("org.apache.jena:jena-rdfconnection:4.10.0")
+    implementation("org.apache.jena:jena-querybuilder:4.10.0")
 
     runtimeOnly("org.yaml:snakeyaml")
 
