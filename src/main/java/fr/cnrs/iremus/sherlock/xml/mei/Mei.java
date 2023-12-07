@@ -466,7 +466,7 @@ public class Mei {
                             this.analog = analog;
                         }
 
-                        @XmlValue
+                        @XmlAttribute
                         public String analog;
                     }
                 }
@@ -705,17 +705,6 @@ public class Mei {
             @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
             public List<FileDesc.TitleStmt.Title> title;
 
-            public String getComposer() {
-                return composer;
-            }
-
-            public void setComposer(String composer) {
-                this.composer = composer;
-            }
-
-            @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-            public String composer;
-
             public FileDesc.TitleStmt getTitleStmt() {
                 return titleStmt;
             }
@@ -763,6 +752,55 @@ public class Mei {
 
                 @XmlValue
                 public String value;
+            }
+
+            public List<Composer> getComposer() {
+                return composer;
+            }
+
+            public void setComposer(List<Composer> composer) {
+                this.composer = composer;
+            }
+
+            @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
+            public List<Composer> composer;
+
+            @Serdeable
+            @Introspected
+            @XmlAccessorType(XmlAccessType.FIELD)
+            public static class Composer {
+                public String getValue() {
+                    return value;
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
+                }
+
+                @XmlValue
+                public String value;
+
+                public String getAnalog() {
+                    return analog;
+                }
+
+                public void setAnalog(String analog) {
+                    this.analog = analog;
+                }
+
+                @XmlAttribute
+                public String analog;
+
+                public String getCert() {
+                    return cert;
+                }
+
+                public void setCert(String cert) {
+                    this.cert = cert;
+                }
+
+                @XmlAttribute
+                public String cert;
             }
         }
     }

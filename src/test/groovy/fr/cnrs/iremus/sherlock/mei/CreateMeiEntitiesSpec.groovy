@@ -18,6 +18,7 @@ class CreateMeiEntitiesSpec extends Specification {
     Common common
 
     def meiFileUrl1 = "https://raw.githubusercontent.com/polifonia-project/tonalities_pilot/main/scores/Hellinck/Hellinck_Beati.mei"
+    // PB def meiFileUrl1 = "https://raw.githubusercontent.com/polifonia-project/tonalities_pilot/main/scores/Morales/Morales_Sancta_et_immaculata.mei"
 
     void 'Get MEI header data from a staticcaly published MEI file'() {
         given:
@@ -28,6 +29,6 @@ class CreateMeiEntitiesSpec extends Specification {
 
         then:
         def j = JsonOutput.prettyPrint(JsonOutput.toJson(response))
-        "Beati omnes qui timent Dominum" == response["meiHead"]["fileDesc"]["titleStmt"]["title"]
+        "Beati omnes qui timent Dominum" == response["meiHead"]["fileDesc"]["titleStmt"]["title"][0]["value"]
     }
 }
