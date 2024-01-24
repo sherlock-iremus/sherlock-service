@@ -109,9 +109,13 @@ class Common {
     void eraseall() {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-            conn.delete(sherlock.getGraph().toString())
-        } catch (HttpException e) {
-        }
+            try {
+                conn.delete(sherlock.getGraph().toString())
+            } catch(Exception e) {}
+            try {
+                conn.delete(sherlock.getUserGraph().toString())
+            } catch (Exception e) {}
+        } catch (HttpException e) {}
     }
 
     void addTripleToDataset(Resource s, org.apache.jena.rdf.model.Property p, RDFNode o) {
