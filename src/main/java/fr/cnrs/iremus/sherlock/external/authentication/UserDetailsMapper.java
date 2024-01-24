@@ -41,7 +41,7 @@ public class UserDetailsMapper implements OauthAuthenticationMapper {
             Publisher<OrcidUser> response = orcidApiClient.get("bearer " + tokenResponse.getAccessToken());
             OrcidUser user = Flux.from(response).blockFirst();
             logger.info("[ORCID API] Received user's identity");
-            String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user.getSub()));
+            String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user));
             logger.info("[DATA] created or retrieved user");
             return Publishers.just(AuthenticationResponse.success(
                     user.getSub(),

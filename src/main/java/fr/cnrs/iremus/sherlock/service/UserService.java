@@ -2,6 +2,7 @@ package fr.cnrs.iremus.sherlock.service;
 
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
+import fr.cnrs.iremus.sherlock.external.authentication.OrcidUser;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfig;
 import io.micronaut.context.annotation.Property;
 import jakarta.inject.Inject;
@@ -21,11 +22,17 @@ import org.apache.jena.sparql.resultset.ResultSetMem;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
+
 @Singleton
 public class UserService {
     private final String e55EmojiUuid = "04242f64-fbb3-4b5b-bb2e-3ddd59eeea18";
     private final String e55HexColorUuid = "5f1bb74f-6ea0-4073-8b68-086f98454f1c";
+    private final String e55OrcidNameUuid = "73ea8d74-3526-4f6a-8830-dd369795650d";
     private final String e55OrcidUuid = "d7ef2583-ff31-4913-9ed3-bc3a1c664b21";
+    private final String[] userHexColors = new String[]{"8921C2", "FE39A4","FFFDBB","53E8D4","25C4F8"};
+
     @Property(name = "jena")
     protected String jena;
     @Inject
@@ -36,11 +43,11 @@ public class UserService {
     /**
      * Create user if not exists in database
      *
-     * @param orcid ORCID id from person who used OAuth2 protocol
+     * @param orcidUser ORCID user who used OAuth2 protocol
      * @return E21_Person URI
      */
-    public String createUserIfNotExists(String orcid) {
-        String userUuid = getUuidByOrcid(orcid);
+    public String createUserIfNotExists(OrcidUser orcidUser) {
+        String userUuid = getUuidByOrcid(orcidUser.getSub());
         if (userUuid != null) return userUuid;
 
         String e21Iri = sherlock.makeIri();
@@ -59,11 +66,13 @@ public class UserService {
         m.add(e21_user, RDF.type, CIDOCCRM.E21_Person);
         m.add(e21_user, DCTerms.created, now);
         m.add(e42_identifier, RDF.type, CIDOCCRM.E42_Identifier);
-        m.add(e42_identifier, CIDOCCRM.P190_has_symbolic_content, orcid);
+        m.add(e42_identifier, CIDOCCRM.P190_has_symbolic_content, orcidUser.getSub());
         m.add(e42_identifier, CIDOCCRM.P2_has_type, e55_orcid);
 
-        linkUserToEmoji(m, e21_user, null, "D"); // Assign default emoji and color to new users
-        linkUserToHexColor(m, e21_user, null, "C45252");
+        // Assign default emoji and color to new users
+        linkUserToEmoji(m, e21_user, null, getInitialsFromOrcidUser(orcidUser));
+        linkUserToHexColor(m, e21_user, null, getRandomColor());
+        linkUserToOrcidName(m, e21_user, null, getOrcidNameFromOrcidUser(orcidUser));
 
         String updateWithModel = sherlock.makeUpdateQuery(m, sherlock.getUserGraph());
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
@@ -72,6 +81,30 @@ public class UserService {
             conn.update(updateWithModel);
             return e21_user.getURI();
         }
+    }
+
+    private String getOrcidNameFromOrcidUser(OrcidUser orcidUser) {
+        return (Objects.toString(orcidUser.getGiven_name(),"") + " " + Objects.toString(orcidUser.getFamily_name(), "")).trim();
+    }
+
+    private String getRandomColor() {
+        return userHexColors[ThreadLocalRandom.current().nextInt(userHexColors.length)];
+    }
+
+    private String getInitialsFromOrcidUser(OrcidUser orcidUser) {
+        return String.valueOf(
+                isNameNullOrEmpty(orcidUser.getGiven_name())
+                        ? ""
+                        : orcidUser.getGiven_name().charAt(0)
+                ) + (
+                isNameNullOrEmpty(orcidUser.getFamily_name())
+                    ? ""
+                    : orcidUser.getFamily_name().charAt(0)
+                );
+    }
+
+    private boolean isNameNullOrEmpty(String name) {
+        return name == null || name.isEmpty();
     }
 
     private String getUuidByOrcid(String orcid) {
@@ -182,6 +215,12 @@ public class UserService {
         String e55HexColorIri = sherlock.makeIri(e55HexColorUuid);
         Resource e55HexColor = model.createResource(e55HexColorIri);
         linkUserToE41(model, e21_user, e41_emoji, e55HexColor, hexColor);
+    }
+
+    private void linkUserToOrcidName(Model model, Resource e21_user, Resource e41_name, String name) {
+        String e55OrcidNameIri = sherlock.makeIri(e55OrcidNameUuid);
+        Resource e55OrcidName = model.createResource(e55OrcidNameIri);
+        linkUserToE41(model, e21_user, e41_name, e55OrcidName, name);
     }
 
     private void linkUserToE41(Model model, Resource e21_user, Resource e41, Resource e55, String literal) {
