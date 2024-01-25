@@ -1,0 +1,10 @@
+micronaut.security.oauth2.clients.orcid.client_id: ${ORCID_CLIENT_ID:APP-B1Y73I83LGWWYW26}
+micronaut.security.oauth2.clients.orcid.client_secret: ${ORCID_CLIENT_SECRET:9579bd2f-b379-4ff6-9858-dc69a14cfe26}
+jena: "${FUSEKI}/${DATASET}"
+micronaut:
+  security:
+    token:
+      jwt:
+        cookie:
+          cookie-same-site: none
+          cookie-secure: true

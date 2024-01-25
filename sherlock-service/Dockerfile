@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17.0.5_8-jre-jammy
 WORKDIR /home/app
 COPY layers/libs /home/app/libs
 COPY layers/classes /home/app/classes

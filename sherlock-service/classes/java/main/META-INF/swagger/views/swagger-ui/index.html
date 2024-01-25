@@ -4,12 +4,12 @@
 <head>
     <meta charset='UTF-8' />
     <title>sherlock-api-0.0</title>
-    <link rel='icon' type='image/png' href='https://unpkg.com/swagger-ui-dist/favicon-32x32.png' sizes='32x32' />
-    <link rel='icon' type='image/png' href='https://unpkg.com/swagger-ui-dist/favicon-16x16.png' sizes='16x16' />
-    <script src='https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js'></script>
-    <script src='https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js'></script>
-    <link rel='stylesheet' type='text/css' href='https://unpkg.com/swagger-ui-dist/swagger-ui.css' />
-    <link rel='stylesheet' type='text/css' href='https://unpkg.com/swagger-ui-themes@3.0.0/themes/3.x/theme-flattop.css' />
+    <link rel='icon' type='image/png' href='/sherlock/swagger-ui/res/favicon-32x32.png' sizes='32x32' />
+    <link rel='icon' type='image/png' href='/sherlock/swagger-ui/res/favicon-16x16.png' sizes='16x16' />
+    <script src='/sherlock/swagger-ui/res/swagger-ui-bundle.js'></script>
+    <script src='/sherlock/swagger-ui/res/swagger-ui-standalone-preset.js'></script>
+    <link rel='stylesheet' type='text/css' href='/sherlock/swagger-ui/res/swagger-ui.css' />
+    <link rel='stylesheet' type='text/css' href='/sherlock/swagger-ui/res/flattop.css' />
     
 </head>
 
@@ -23,12 +23,12 @@
                 },
                 cookie = extract(document.cookie),
                 contextPath = cookie === '' ? extract(window.location.search.substring(1)) : cookie,
-                f = contextPath === '' ? undefined : function(system) {
+                f = contextPath === '' ? undefined : () => {
                     return {
                         statePlugins: {
                             spec: {
                                 wrapActions: {
-                                    updateJsonSpec: (oriAction, system) => (...args) => {
+                                    updateJsonSpec: (oriAction) => (...args) => {
                                         let [spec] = args;
                                         if (spec && spec.paths) {
                                             const newPaths = {};
@@ -43,7 +43,7 @@
                     };
                 },
                 ui = SwaggerUIBundle({
-                    url: contextPath + '/swagger/sherlock-api-0.0.yml',
+                    url: contextPath + '/sherlock/swagger/sherlock-api-0.0.yml',
                     dom_id: '#swagger-ui',
                     presets: [
                         SwaggerUIBundle.presets.apis,
@@ -53,8 +53,11 @@
                         SwaggerUIBundle.plugins.DownloadUrl,
                         f
                     ],
+                    
+                    
                     deepLinking: true,
 layout: "StandaloneLayout",
+tagsSorter: "alpha",
 validatorUrl: null
                 });
                 

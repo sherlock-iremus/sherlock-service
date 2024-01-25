@@ -1,14 +1,22 @@
 <!doctype html>
 <!-- Important: must specify, else rendering will be effected -->
-<html>
+<html lang="en">
     <head>
         <title>sherlock-api-0.0</title>
         <!-- Important: The Custom element uses utf8 characters -->
         <meta charset='utf-8' />
-        <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes' />
-        <script src='https://unpkg.com/rapidoc/dist/rapidoc-min.js'></script>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,user-scalable=yes">
+        <script defer="defer" src='/sherlock/rapidoc/res/rapidoc-min.js'></script>
         
     </head>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const docEl = document.getElementById('rapidoc');
+            docEl.addEventListener('before-try', (e) => {
+                e.detail.request.headers.append('AAA-BBB', 'CCC DDDD');
+            });
+        });
+    </script>
     <body>
         <rapi-doc id='rapidoc' layout="row" sort-tags="true" sort-endpoints-by="method" show-header="false" theme="dark"></rapi-doc>
         <script>
@@ -24,7 +32,7 @@
                     rapidoc.requestUpdate();
                 });
             }
-            rapidoc.setAttribute('spec-url', contextPath + '/swagger/sherlock-api-0.0.yml');
+            rapidoc.setAttribute('spec-url', contextPath + '/sherlock/swagger/sherlock-api-0.0.yml');
             
         </script>
     </body>

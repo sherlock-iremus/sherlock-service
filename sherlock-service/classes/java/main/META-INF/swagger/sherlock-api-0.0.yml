@@ -13,57 +13,82 @@ info:
 security:
 - orcid: []
 paths:
-  /api:
+  /sherlock/api:
     get:
       tags:
       - 1. Home
       operationId: index
-      parameters: []
       responses:
+        "401":
+          description: User has no valid token
         "200":
-          description: index 200 response
+          description: Current user uuid
           content:
-            text/html:
+            application/json:
               schema:
                 type: string
-  /api/analytical-entity:
+                allOf: []
+                anyOf: []
+                oneOf: []
+              examples:
+                example:
+                  value: 6ea17744-2345-43ee-8a3e-f3c9770e0340
+  /sherlock/api/analytical-project:
     post:
       tags:
-      - 5. Analytical Entity
+      - 4. Structural
       operationId: create
-      parameters: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewAnalyticalEntity'
+              $ref: '#/components/schemas/NewAnalyticalProject'
+            examples:
+              example:
+                value:
+                  label: mon projet analytique
         required: true
       responses:
         "200":
-          description: uri of the analytical entity
-  /api/analytical-entity/{analyticalEntityUuid}:
-    delete:
-      tags:
-      - 5. Analytical Entity
-      operationId: delete
-      parameters:
-      - name: analyticalEntityUuid
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: model deleted
-  /api/e13:
+          description: new analytical entity's model
+          content:
+            application/json:
+              schema:
+                type: string
+  /sherlock/api/e13:
     post:
+      tags:
+      - 3. Annotations
       operationId: create_1
-      parameters: []
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/NewE13'
+            examples:
+              Simple E13:
+                value:
+                  p140:
+                  - http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence
+                  p177: http://data-iremus.huma-num.fr/id/commentaire-sur-entite-analytique
+                  p141: Ce n'est pas une cadence.
+                  p141_type: LITERAL
+                  document_context: http://data-iremus.huma-num.fr/id/ma-partition
+                  analytical_project: http://data-iremus.huma-num.fr/id/mon-projet-analytique
+              E13 and new resource as P141:
+                value:
+                  p140:
+                  - http://data-iremus.huma-num.fr/id/mon-fragment-d-estampe
+                  p177: crm:P1_is_identified_by
+                  new_p141:
+                    rdf_type:
+                    - crm:E42_Identifier
+                    p2_type:
+                    - http://data-iremus.huma-num.fr/id/identifiant-iiif
+                    - http://data-iremus.huma-num.fr/id/element-visuel
+                  p141_type: NEW_RESOURCE
+                  document_context: http://data-iremus.huma-num.fr/id/mon-e36-estampe
+                  analytical_project: http://data-iremus.huma-num.fr/id/mon-projet-analytique
         required: true
       responses:
         "200":
@@ -72,17 +97,44 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/selection:
+  /sherlock/api/e13/{e13Uuid}:
+    delete:
+      tags:
+      - 3. Annotations
+      externalDocs:
+        description: Workflow Miro
+        url: https://miro.com/app/board/uXjVO1vwG0U=/?moveToWidget=3458764570720281878&cot=14
+      operationId: delete
+      parameters:
+      - name: e13Uuid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: delete 200 response
+          content:
+            application/json:
+              schema:
+                type: string
+  /sherlock/api/e90/fragment:
     post:
       tags:
-      - 4. Selection
+      - 3. Annotations
       operationId: create_2
-      parameters: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SelectionCreate'
+              $ref: '#/components/schemas/NewE90Fragment'
+            examples:
+              example:
+                value:
+                  parent: http://data-iremus.huma-num.fr/id/24c7c452-e9cf-4280-bb23-a66744f74835
+                  p2_type:
+                  - http://data-iremus.huma-num/id/identifiant-iiif
+                  - http://data-iremus.huma-num/id/element-visuel
         required: true
       responses:
         "200":
@@ -91,13 +143,13 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/selection/{selectionUuid}:
+  /sherlock/api/e90/fragment/{e90Uuid}:
     delete:
       tags:
-      - 4. Selection
+      - 3. Annotations
       operationId: delete_1
       parameters:
-      - name: selectionUuid
+      - name: e90Uuid
         in: path
         required: true
         schema:
@@ -109,72 +161,27 @@ paths:
             application/json:
               schema:
                 type: string
-    patch:
-      tags:
-      - 4. Selection
-      operationId: edit
-      parameters:
-      - name: selectionUuid
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SelectionCreate'
-        required: true
-      responses:
-        "200":
-          description: edit 200 response
-          content:
-            application/json:
-              schema:
-                type: string
-  /api/triple:
-    put:
-      tags:
-      - 3. Triples
-      operationId: replace
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TripleReplace'
-        required: true
-      responses:
-        "200":
-          description: replace 200 response
-          content:
-            application/json:
-              schema:
-                type: string
+  /sherlock/api/mei/head:
     post:
-      tags:
-      - 3. Triples
-      operationId: create_3
-      parameters: []
+      operationId: parseMeiHead
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TripleCreate'
+              $ref: '#/components/schemas/FileUrl'
         required: true
       responses:
         "200":
-          description: create_3 200 response
+          description: parseMeiHead 200 response
           content:
             application/json:
               schema:
-                type: string
-  /api/user/config:
+                $ref: '#/components/schemas/Mei'
+  /sherlock/api/user/config:
     get:
       tags:
       - 2. User Configuration
       operationId: get
-      parameters: []
       responses:
         "200":
           description: get 200 response
@@ -185,151 +192,340 @@ paths:
     put:
       tags:
       - 2. User Configuration
-      operationId: edit_1
-      parameters: []
+      operationId: edit
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UserConfigEdit'
+            examples:
+              example:
+                value:
+                  emoji: ♫
+                  color: b985c7
         required: true
       responses:
         "200":
-          description: edit_1 200 response
+          description: edit 200 response
+          content:
+            text/plain:
+              schema:
+                type: string
+  /sherlock/test:
+    get:
+      operationId: index_1
+      responses:
+        "200":
+          description: index_1 200 response
           content:
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
-    Datatype:
-      type: string
-      enum:
-      - STRING
-      - INTEGER
-      - DATE
-    E13AsLinkToP141:
+    Error:
       required:
-      - p141
-      - p141_type
-      - p177
+      - message
       type: object
       properties:
-        p177:
+        message:
           minLength: 1
           type: string
-        p141:
-          minLength: 1
-          type: string
-        p141_type:
-          $ref: '#/components/schemas/ResourceType'
-    NewAnalyticalEntity:
+    FileUrl:
       required:
-      - p140
-      - p177
+      - file_url
       type: object
       properties:
-        p177:
+        file_url:
           minLength: 1
           type: string
-        p140:
-          minLength: 1
-          type: string
-        e13s:
+    Mei:
+      type: object
+      properties:
+        meiHead:
+          $ref: '#/components/schemas/Mei.MeiHead'
+    Mei.MeiHead:
+      type: object
+      properties:
+        extMeta:
+          $ref: '#/components/schemas/Mei.MeiHead.ExtMeta'
+        encodingDesc:
+          $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc'
+        fileDesc:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc'
+        workDesc:
+          $ref: '#/components/schemas/Mei.MeiHead.WorkDesc'
+        workList:
           type: array
           items:
-            $ref: '#/components/schemas/E13AsLinkToP141'
+            $ref: '#/components/schemas/Mei.MeiHead.Work'
+    Mei.MeiHead.EncodingDesc:
+      type: object
+      properties:
+        appInfo:
+          $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc.AppInfo'
+        projectDesc:
+          $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc.ProjectDesc'
+    Mei.MeiHead.EncodingDesc.AppInfo:
+      type: object
+      properties:
+        application:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc.AppInfo.Application'
+    Mei.MeiHead.EncodingDesc.AppInfo.Application:
+      type: object
+      properties:
+        isodate:
+          type: string
+        version:
+          type: string
+        name:
+          $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc.AppInfo.Application.ApplicationName'
+        p:
+          type: string
+        type:
+          type: string
+    Mei.MeiHead.EncodingDesc.AppInfo.Application.ApplicationName:
+      type: object
+      properties:
+        type:
+          type: string
+        value:
+          type: string
+    Mei.MeiHead.EncodingDesc.ProjectDesc:
+      type: object
+      properties:
+        p:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.EncodingDesc.ProjectDesc.P'
+    Mei.MeiHead.EncodingDesc.ProjectDesc.P:
+      type: object
+      properties:
+        value:
+          type: string
+    Mei.MeiHead.ExtMeta:
+      type: object
+      properties:
+        frames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.ExtMeta.MetaFrame'
+    Mei.MeiHead.ExtMeta.MetaFrame:
+      type: object
+      properties:
+        frameInfo:
+          $ref: '#/components/schemas/Mei.MeiHead.ExtMeta.MetaFrame.FrameInfo'
+    Mei.MeiHead.ExtMeta.MetaFrame.FrameInfo:
+      type: object
+      properties:
+        referenceKey:
+          type: string
+        referenceValue:
+          type: string
+    Mei.MeiHead.FileDesc:
+      type: object
+      properties:
+        titleStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt'
+        pubStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.PubStmt'
+        sourceDesc:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.SourceDesc'
+    Mei.MeiHead.FileDesc.PubStmt:
+      type: object
+      properties:
+        respStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
+        date:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.PubStmt.Date'
+        availability:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.PubStmt.Availability'
+    Mei.MeiHead.FileDesc.PubStmt.Availability:
+      type: object
+      properties:
+        distributor:
+          type: string
+    Mei.MeiHead.FileDesc.PubStmt.Date:
+      type: object
+      properties:
+        value:
+          type: string
+        isodate:
+          type: string
+        type:
+          type: string
+    Mei.MeiHead.FileDesc.SourceDesc:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.SourceDesc.Source'
+    Mei.MeiHead.FileDesc.SourceDesc.Source:
+      type: object
+      properties:
+        titleStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt'
+        pubStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.PubStmt'
+    Mei.MeiHead.FileDesc.TitleStmt:
+      type: object
+      properties:
+        title:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.Title'
+        respStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
+        composer:
+          type: string
+    Mei.MeiHead.FileDesc.TitleStmt.RespStmt:
+      type: object
+      properties:
+        name:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt.ResponsibilityStatementName'
+        persName:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt.PersName'
+    Mei.MeiHead.FileDesc.TitleStmt.RespStmt.PersName:
+      type: object
+      properties:
+        role:
+          type: string
+        value:
+          type: string
+        analog:
+          type: string
+    Mei.MeiHead.FileDesc.TitleStmt.RespStmt.ResponsibilityStatementName:
+      type: object
+      properties:
+        role:
+          type: string
+        value:
+          type: string
+    Mei.MeiHead.FileDesc.TitleStmt.Title:
+      type: object
+      properties:
+        analog:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+    Mei.MeiHead.Work:
+      type: object
+      properties:
+        title:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.Title'
+        titleStmt:
+          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt'
+        identifier:
+          $ref: '#/components/schemas/Mei.MeiHead.Work.Identifier'
+        composer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.Work.Composer'
+    Mei.MeiHead.Work.Composer:
+      type: object
+      properties:
+        value:
+          type: string
+        analog:
+          type: string
+        cert:
+          type: string
+    Mei.MeiHead.Work.Identifier:
+      type: object
+      properties:
+        analog:
+          type: string
+        value:
+          type: string
+    Mei.MeiHead.WorkDesc:
+      type: object
+      properties:
+        work:
+          $ref: '#/components/schemas/Mei.MeiHead.Work'
+    NewAnalyticalProject:
+      required:
+      - label
+      type: object
+      properties:
+        label:
+          minLength: 1
+          type: string
     NewE13:
       required:
+      - analytical_project
+      - document_context
       - p140
-      - p141
       - p141_type
       - p177
       type: object
       properties:
         p140:
-          minLength: 1
-          type: string
+          minItems: 1
+          type: array
+          items:
+            type: string
         p177:
           minLength: 1
           type: string
         p141:
-          minLength: 1
           type: string
         p141_type:
           $ref: '#/components/schemas/ResourceType'
+        document_context:
+          minLength: 1
+          type: string
+        analytical_project:
+          minLength: 1
+          type: string
+        new_p141:
+          $ref: '#/components/schemas/NewP141'
+    NewE90Fragment:
+      required:
+      - p2_type
+      - parent
+      type: object
+      properties:
+        parent:
+          minLength: 1
+          type: string
+        p2_type:
+          minItems: 1
+          type: array
+          items:
+            type: string
+    NewP141:
+      required:
+      - p2_type
+      - rdf_type
+      type: object
+      properties:
+        rdf_type:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        p2_type:
+          minItems: 1
+          type: array
+          items:
+            type: string
+        p190:
+          type: string
     ResourceType:
       type: string
       enum:
       - URI
       - LITERAL
-    SelectionCreate:
-      required:
-      - children
-      - document_contexts
-      type: object
-      properties:
-        children:
-          minItems: 1
-          type: array
-          items:
-            type: string
-        document_contexts:
-          minItems: 1
-          type: array
-          items:
-            type: string
-    TripleCreate:
-      required:
-      - o
-      - object_type
-      - p
-      - s
-      type: object
-      properties:
-        s:
-          minLength: 1
-          type: string
-        p:
-          minLength: 1
-          type: string
-        o:
-          minLength: 1
-          type: string
-        object_type:
-          $ref: '#/components/schemas/ResourceType'
-        o_datatype:
-          $ref: '#/components/schemas/Datatype'
-        o_lg:
-          type: string
-    TripleReplace:
-      required:
-      - new_o
-      - new_p
-      - new_s
-      - old_o
-      - old_p
-      - old_s
-      type: object
-      properties:
-        old_s:
-          minLength: 1
-          type: string
-        old_p:
-          minLength: 1
-          type: string
-        old_o:
-          minLength: 1
-          type: string
-        new_s:
-          minLength: 1
-          type: string
-        new_p:
-          minLength: 1
-          type: string
-        new_o:
-          minLength: 1
-          type: string
+      - NEW_RESOURCE
     UserConfig:
       required:
       - hexColor
@@ -350,4 +546,4 @@ components:
   securitySchemes:
     orcid:
       type: openIdConnect
-      description: Navigate to http://data-iremus.huma-num.fr/sso/?redirect-uri=http://data-iremus.huma-num.fr/sherlock/rapidoc?contextPath=/sherlock#overview
+      description: <a href='/sherlock/login?redirect-uri=/sherlock/rapidoc'>oauth2</a>

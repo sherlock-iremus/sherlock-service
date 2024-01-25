@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="fr">
+<body>
+...
+</body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUri = urlParams.get('redirect-uri')
+    document.cookie = `source-url=${redirectUri}; path=/`;
+
+    location.href = '/oauth/login/orcid';
+</script>
+</html>

@@ -81,3 +81,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 rewrite { activeRecipe("org.openrewrite.java.micronaut.Micronaut3to4Migration") }
+
+tasks.named("dockerfile") {
+    baseImage = "eclipse-temurin:17.0.5_8-jre-jammy"
+}
