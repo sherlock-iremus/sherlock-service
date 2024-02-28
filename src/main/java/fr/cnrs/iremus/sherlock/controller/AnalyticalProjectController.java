@@ -3,15 +3,15 @@ package fr.cnrs.iremus.sherlock.controller;
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.analyticalProject.NewAnalyticalProject;
+import fr.cnrs.iremus.sherlock.service.AnalyticalProjectService;
 import fr.cnrs.iremus.sherlock.service.DateService;
+import fr.cnrs.iremus.sherlock.service.E13Service;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Post;
-import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -38,6 +38,8 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @Controller("/api/analytical-project")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "4. Structural")
@@ -45,12 +47,18 @@ public class AnalyticalProjectController {
     private static Logger logger = LoggerFactory.getLogger(AnalyticalProjectController.class);
     public final static String e55analyticalProjectIri = "http://data-iremus.huma-num.fr/id/21816195-6708-4bbd-a758-ee354bb84900";
     public final static String e55draftIri = "http://data-iremus.huma-num.fr/id/cabe46bf-23d4-4392-aa20-b3eb21ad7dfd";
+    public final static String ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER = "This analytical project belongs to somebody else. Ask them do to deletion themself";
+    public final static String RESOURCE_IS_NOT_AN_ANALYTICAL_PROJECT = "This resource is not an analytical project";
     @Property(name = "jena")
     protected String jena;
     @Inject
     Sherlock sherlock;
     @Inject
     DateService dateService;
+    @Inject
+    AnalyticalProjectService analyticalProjectService;
+    @Inject
+    E13Service e13Service;
 
     @ApiResponse(responseCode = "200", description = "new analytical entity's model")
     @Post
@@ -86,29 +94,67 @@ public class AnalyticalProjectController {
         m.add(timeSpan, RDF.type, CIDOCCRM.E52_Time_span);
         m.add(timeSpan, CIDOCCRM.P82a_begin_of_the_begin, now);
 
+        // update dataset
+
         String updateWithModel = sherlock.makeUpdateQuery(m);
 
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-
-            // WRITE
             conn.update(updateWithModel);
+        }
 
-            // AND READ IT BACK AS JSON-LD
-            ConstructBuilder cb = new ConstructBuilder()
-                    .addConstruct(analyticalProject, "?e7_p", "?e7_o")
-                    .addConstruct("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
-                    .addGraph(sherlock.getGraph(), new WhereBuilder()
-                            .addWhere(analyticalProject, "?e7_p", "?e7_o")
-                            .addWhere(analyticalProject, "?e7_p_time_span", "?e7_o_time_span")
-                            .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_span)
-                            .addWhere("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
-                    );
-            Query q = cb.build();
-            QueryExecution qe = conn.query(q);
-            Model res = qe.execConstruct();
+        // query and return updated dataset
 
-            return HttpResponse.created(sherlock.modelToJson(res));
+        return HttpResponse.created(sherlock.modelToJson(analyticalProjectService.getAnalyticalProject(analyticalProject)));
+    }
+
+    @ApiResponse(responseCode = "200", description = "model containing every triple deleted")
+    @Delete("/{analyticalProjectUuid}") // 572423c3-5019-47be-b845-6b96fbddc754
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<String> delete(@PathVariable String analyticalProjectUuid, Authentication authentication) throws ParseException {
+        logger.info("Trying to delete analytical project : {}", analyticalProjectUuid);
+
+        // context
+
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+
+        // resources
+
+        Model m = ModelFactory.createDefaultModel();
+        Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
+        Resource analyticalProject = m.createResource(sherlock.makeIri(analyticalProjectUuid));
+
+        // get analytical project and verify deletable
+
+        Model analyticalProjectModel = analyticalProjectService.getAnalyticalProject(analyticalProject);
+
+        if (! analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P2_has_type, m.createResource(e55analyticalProjectIri)))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + RESOURCE_IS_NOT_AN_ANALYTICAL_PROJECT + "\"}");
+
+        if (! analyticalProjectModel.contains(analyticalProject, DCTerms.creator, authenticatedUser))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER + "\"}");
+
+        // delete all project's E13
+
+        analyticalProjectModel.listObjectsOfProperty(analyticalProject, CIDOCCRM.P9_consists_of).
+                forEach(e13 -> {
+                    Model e13Model = e13Service.getModelByE13((Resource) e13);
+                    RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+                    try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+                        logger.info("Deleting analytical project's e13 {}", ((Resource) e13).getURI());
+                        conn.update(sherlock.makeDeleteQuery(e13Model));
+                    }
+                });
+        // Next line is vey important because sherlock.makeDeleteQuery() is doing a WHERE and would not find e13 triples.
+        analyticalProjectModel.removeAll(analyticalProject, CIDOCCRM.P9_consists_of, null);
+
+        // delete project and return it
+
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            logger.info("Deleting analytical project main data");
+            conn.update(sherlock.makeDeleteQuery(analyticalProjectModel));
+            return HttpResponse.ok(sherlock.modelToJson(analyticalProjectModel));
         }
 
     }
