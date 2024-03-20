@@ -6,6 +6,7 @@ import fr.cnrs.iremus.sherlock.pojo.analyticalProject.NewAnalyticalProject;
 import fr.cnrs.iremus.sherlock.service.AnalyticalProjectService;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
+import fr.cnrs.iremus.sherlock.service.SherlockServiceException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -128,25 +129,34 @@ public class AnalyticalProjectController {
 
         Model analyticalProjectModel = analyticalProjectService.getAnalyticalProject(analyticalProject);
 
-        if (! analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P2_has_type, m.createResource(e55analyticalProjectIri)))
+        if (!analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P2_has_type, m.createResource(e55analyticalProjectIri)))
             return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + RESOURCE_IS_NOT_AN_ANALYTICAL_PROJECT + "\"}");
 
-        if (! analyticalProjectModel.contains(analyticalProject, DCTerms.creator, authenticatedUser))
+        if (!analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P14_carried_out_by, authenticatedUser))
             return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER + "\"}");
 
-        // delete all project's E13
 
+        // todo: do transactional
+        // delete all project's E13
         analyticalProjectModel.listObjectsOfProperty(analyticalProject, CIDOCCRM.P9_consists_of).
                 forEach(e13 -> {
-                    Model e13Model = e13Service.getModelByE13((Resource) e13);
+                    logger.info("Deleting analytical project's e13 {}", ((Resource) e13).getURI());
+
+                    Model deletableModelForE13;
+                    try {
+                        deletableModelForE13 = e13Service.getDeletableModelForE13(e13.asResource());
+                    } catch (SherlockServiceException exception) {
+                        logger.warn("Could not delete e13 : {}", exception.getMessage());
+                        return;
+                    }
+
                     RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
                     try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-                        logger.info("Deleting analytical project's e13 {}", ((Resource) e13).getURI());
-                        conn.update(sherlock.makeDeleteQuery(e13Model));
+                        conn.update(sherlock.makeDeleteQuery(deletableModelForE13));
                     }
                 });
-        // Next line is vey important because sherlock.makeDeleteQuery() is doing a WHERE and would not find e13 triples.
-        analyticalProjectModel.removeAll(analyticalProject, CIDOCCRM.P9_consists_of, null);
+        // Reading again analytical project's metadata, because P9s...
+        analyticalProjectModel = analyticalProjectService.getAnalyticalProjectAndIncomingTriples(analyticalProject);
 
         // delete project and return it
 

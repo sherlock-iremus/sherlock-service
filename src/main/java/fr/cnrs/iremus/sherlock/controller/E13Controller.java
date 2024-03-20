@@ -5,8 +5,10 @@ import fr.cnrs.iremus.sherlock.common.ResourceType;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewP141;
+import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
 import fr.cnrs.iremus.sherlock.service.ResourceService;
+import fr.cnrs.iremus.sherlock.service.SherlockServiceException;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -42,11 +44,11 @@ import java.util.List;
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
     private static Logger logger = LoggerFactory.getLogger(E13Controller.class);
-    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the E28 first.";
+    public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 first.";
     public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
     public static final String E13_DELETE_INCOMING_TRIPLES = "This E13 has incoming triples. Delete them.";
     public static final String E13_DELETE_BELONGS_TO_ANOTHER_USER = "This E13 belongs to anybody else.";
-    public static final String E13_DELETE_P141_IS_NOT_E28 = "This E13's P141 is not a E28.";
+    public static final String E13_DELETE_IS_NOT_E13 = "This resource is not an E13";
 
     @Property(name = "jena")
     protected String jena;
@@ -56,6 +58,9 @@ public class E13Controller {
 
     @Inject
     E13Service e13Service;
+
+    @Inject
+    DateService dateService;
 
     @Inject
     ResourceService resourceService;
@@ -95,6 +100,7 @@ public class E13Controller {
         String p141 = sherlock.resolvePrefix(body.getP141_type() == ResourceType.NEW_RESOURCE ? sherlock.makeIri() : body.getP141());
         String documentContext = sherlock.resolvePrefix(body.getDocument_context());
         String analyticalProject = sherlock.resolvePrefix(body.getAnalytical_project());
+        String now = dateService.getNow();
         ResourceType p141Type = body.getP141_type();
 
         // UPDATE QUERY
@@ -109,14 +115,14 @@ public class E13Controller {
                 m.createResource(documentContext),
                 m.createResource(analyticalProject),
                 m,
-                authentication
+                authentication,
+                now
         );
 
         if (body.getP141_type() == ResourceType.NEW_RESOURCE) {
             NewP141 newP141 = body.getNew_p141();
             Resource p141Resource = m.createResource(p141);
-
-            resourceService.insertResourceCommonTriples(p141Resource, authentication, m);
+            resourceService.insertResourceCommonTriples(p141Resource, authentication, m, now);
             for (String rdfType : newP141.getRdf_type())
                 m.add(p141Resource, RDF.type, m.createResource(sherlock.resolvePrefix(rdfType)));
             for (String p2Type : newP141.getP2_type()) {
@@ -151,35 +157,23 @@ public class E13Controller {
         Resource authenticatedUser = m.getResource(sherlock.makeIri(authenticatedUserUuid));
         Resource e13 = m.getResource(sherlock.makeIri(e13Uuid));
 
+        Model modelToDelete;
+        try {
+            modelToDelete = e13Service.getDeletableModelForE13(e13);
+        } catch (SherlockServiceException e) {
+            return e.getHttpResponse();
+        }
+
+        if (e13Service.hasE13IncomingTriples(modelToDelete, e13))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_INCOMING_TRIPLES + "\"}");
+
+        if (! e13Service.isE13Creator(modelToDelete, e13, authenticatedUser))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_BELONGS_TO_ANOTHER_USER + "\"}");
+
+
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-            Model currentModel = e13Service.getModelByE13(e13);
-            Model modelToDelete;
 
-            if (!currentModel.containsResource(e13))
-                return HttpResponse.notFound("{\"message\": \"" + E13_DELETE_DOES_NOT_EXIST + "\"}");
-
-            if (e13Service.hasE13IncomingTriples(currentModel, e13))
-                return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_INCOMING_TRIPLES + "\"}");
-
-            // This algorithm is specified here: https://miro.com/app/board/uXjVO1vwG0U=/?moveToWidget=3458764570720281878&cot=14
-            if (e13Service.isP177aP67(currentModel, e13)) {
-                if (e13Service.isP141aE28(currentModel, e13)) {
-                    if (e13Service.hasP141NoIncomingTriple(currentModel, e13)) {
-                        modelToDelete = currentModel;
-                    } else {
-                        return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}");
-                    }
-                } else {
-                    return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_P141_IS_NOT_E28 + "\"}");
-                }
-            } else {
-                if (e13Service.isE13Creator(currentModel, e13, authenticatedUser)) {
-                    modelToDelete = e13Service.getModelByE13WithoutP141Triples(e13);
-                } else {
-                    return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_BELONGS_TO_ANOTHER_USER + "\"}");
-                }
-            }
             conn.update(sherlock.makeDeleteQuery(modelToDelete));
 
             return HttpResponse.ok(sherlock.modelToJson(modelToDelete));

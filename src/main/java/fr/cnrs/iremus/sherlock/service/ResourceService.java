@@ -30,11 +30,16 @@ public class ResourceService {
     @Inject
     DateService dateService;
 
+    public void insertResourceCommonTriples(Resource resource, Authentication authentication, Model m, String now) {
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+        Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
+        insertResourceCommonTriples(resource, authenticatedUser, m, now);
+    }
+
     public void insertResourceCommonTriples(Resource resource, Authentication authentication, Model m) {
         String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
         insertResourceCommonTriples(resource, authenticatedUser, m);
-
     }
 
     public void insertResourceCommonTriples(Resource resource, Resource user, Model m) {
@@ -42,6 +47,14 @@ public class ResourceService {
             resource = m.createResource(sherlock.makeIri());
         }
         m.add(resource, DCTerms.created, dateService.getNow());
+        m.add(resource, DCTerms.creator, user);
+    }
+
+    public void insertResourceCommonTriples(Resource resource, Resource user, Model m, String date) {
+        if (resource == null) {
+            resource = m.createResource(sherlock.makeIri());
+        }
+        m.add(resource, DCTerms.created, date);
         m.add(resource, DCTerms.creator, user);
     }
 
