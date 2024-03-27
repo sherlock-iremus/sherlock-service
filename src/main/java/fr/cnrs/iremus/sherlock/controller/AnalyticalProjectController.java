@@ -36,6 +36,8 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static fr.cnrs.iremus.sherlock.controller.E13Controller.E13_DELETE_PLEASE_ENTITIES_FIRST;
+
 @Controller("/api/analytical-project")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Tag(name = "4. Structural")
@@ -141,8 +143,13 @@ public class AnalyticalProjectController {
                             try {
                                 deletableModelForE13 = e13Service.getDeletableModelForE13(e13.asResource());
                             } catch (SherlockServiceException exception) {
-                                logger.warn("Could not delete e13 : {}", exception.getMessage());
-                                return;
+                                // Bypass the generic e13 deletion exception because we are doing a batch delete on analytical project
+                                if (! exception.getReason().equals(E13_DELETE_PLEASE_ENTITIES_FIRST)) {
+                                    logger.warn("Could not delete e13 : {}", exception.getHttpResponse().body());
+                                    return;
+                                } else {
+                                    deletableModelForE13 = exception.getModel();
+                                }
                             }
 
                             conn.update(sherlock.makeDeleteQuery(deletableModelForE13));
