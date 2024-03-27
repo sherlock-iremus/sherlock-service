@@ -24,13 +24,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import org.apache.jena.arq.querybuilder.ConstructBuilder;
-import org.apache.jena.arq.querybuilder.WhereBuilder;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
@@ -38,8 +35,6 @@ import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @Controller("/api/analytical-project")
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -136,36 +131,29 @@ public class AnalyticalProjectController {
             return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER + "\"}");
 
 
-        // todo: do transactional
-        // delete all project's E13
-        analyticalProjectModel.listObjectsOfProperty(analyticalProject, CIDOCCRM.P9_consists_of).
-                forEach(e13 -> {
-                    logger.info("Deleting analytical project's e13 {}", ((Resource) e13).getURI());
+        try (RDFConnection conn = RDFConnectionFuseki.connect(jena)) {
+            conn.executeWrite(() -> {
+                analyticalProjectModel.listObjectsOfProperty(analyticalProject, CIDOCCRM.P9_consists_of).
+                        forEach(e13 -> {
+                            logger.info("Deleting analytical project's e13 {}", ((Resource) e13).getURI());
 
-                    Model deletableModelForE13;
-                    try {
-                        deletableModelForE13 = e13Service.getDeletableModelForE13(e13.asResource());
-                    } catch (SherlockServiceException exception) {
-                        logger.warn("Could not delete e13 : {}", exception.getMessage());
-                        return;
-                    }
+                            Model deletableModelForE13;
+                            try {
+                                deletableModelForE13 = e13Service.getDeletableModelForE13(e13.asResource());
+                            } catch (SherlockServiceException exception) {
+                                logger.warn("Could not delete e13 : {}", exception.getMessage());
+                                return;
+                            }
 
-                    RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
-                    try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-                        conn.update(sherlock.makeDeleteQuery(deletableModelForE13));
-                    }
-                });
-        // Reading again analytical project's metadata, because P9s...
-        analyticalProjectModel = analyticalProjectService.getAnalyticalProjectAndIncomingTriples(analyticalProject);
+                            conn.update(sherlock.makeDeleteQuery(deletableModelForE13));
 
-        // delete project and return it
+                        });
 
-        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
-        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
-            logger.info("Deleting analytical project main data");
-            conn.update(sherlock.makeDeleteQuery(analyticalProjectModel));
-            return HttpResponse.ok(sherlock.modelToJson(analyticalProjectModel));
+                logger.info("Deleting analytical project main data");
+                // Reading again analytical project's metadata, because P9s...
+                conn.update(sherlock.makeDeleteQuery(analyticalProjectService.getAnalyticalProjectAndIncomingTriples(analyticalProject)));
+            });
         }
-
+        return HttpResponse.ok(sherlock.modelToJson(analyticalProjectModel));
     }
 }

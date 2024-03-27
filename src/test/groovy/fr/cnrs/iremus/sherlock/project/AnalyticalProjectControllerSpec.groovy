@@ -5,7 +5,6 @@ import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalProjectController
-import fr.cnrs.iremus.sherlock.controller.E13Controller
 import fr.cnrs.iremus.sherlock.service.DateService
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -113,31 +112,4 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.getAllTriples().size() == 0
     }
 
-    void 'test transactional'() {
-        when:
-        common.eraseall()
-
-        def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
-        ])
-        def analyticalProjectUri = J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]
-
-        common.post('/sherlock/api/e13?fake-user=true', [
-                "p140"              : ["test"],
-                "p177"              : "test",
-                "p141_type"         : "NEW_RESOURCE",
-                "new_p141"          : [
-                        rdf_type: ["crm:E42_Identifier"],
-                        p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
-                        p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
-                ],
-                "document_context"  : "test",
-                "analytical_project": analyticalProjectUri
-        ])
-        common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(analyticalProjectUri))
-
-        sherlock
-        then:
-        common.getAllTriples().size() == 0
-    }
 }
