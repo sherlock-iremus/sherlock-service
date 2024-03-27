@@ -142,9 +142,9 @@ public class E13Service {
     }
 
     public boolean isP141LinkedToE13(Model currentModel, Resource e13) {
-        Resource p141 = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).next().asResource();
+        RDFNode p141 = currentModel.listObjectsOfProperty(e13, CIDOCCRM.P141_assigned).next();
         Literal e13CreationDate = currentModel.listObjectsOfProperty(e13, DCTerms.created).next().asLiteral();
-        return currentModel.contains(p141, DCTerms.created, e13CreationDate);
+        return p141.isResource() && currentModel.contains(p141.asResource(), DCTerms.created, e13CreationDate);
     }
 
     public Model getDeletableModelForE13(Resource e13) throws SherlockServiceException {
