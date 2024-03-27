@@ -5,6 +5,7 @@ import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalProjectController
+import fr.cnrs.iremus.sherlock.controller.E13Controller
 import fr.cnrs.iremus.sherlock.service.DateService
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -112,4 +113,36 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.getAllTriples().size() == 0
     }
 
+    void 'test deleting analytical project with an E13 with P141 having incoming triples works'() {
+        when:
+        common.eraseall()
+
+        def response = common.post('/sherlock/api/analytical-project', [
+                label: 'Mon projet'
+        ])
+        def analyticalProjectUri = J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]
+
+        def e13Response = common.post('/sherlock/api/e13', [
+                "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
+                "p177"              : CIDOCCRM.P67_refers_to.URI,
+                "p141_type"         : "NEW_RESOURCE",
+                "new_p141"          : [
+                        rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
+                        p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
+                        p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
+                ],
+                "document_context"  : "http://data-iremus.huma-num.fr/id/ma-partition",
+                "analytical_project": analyticalProjectUri
+        ])
+
+        def e28Iri = J.getOneByType(e13Response, CIDOCCRM.E28_Conceptual_Object)["@id"] as String
+        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e28Iri))
+
+        common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(analyticalProjectUri))
+
+
+        then:
+        common.getAllTriples().size() == 0
+
+    }
 }

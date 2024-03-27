@@ -161,7 +161,7 @@ public class E13Service {
             if (hasP141NoIncomingTriple(currentModel, e13)) {
                 return currentModel;
             } else {
-                throw new SherlockServiceException(HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}"));
+                throw new SherlockServiceException(E13_DELETE_PLEASE_ENTITIES_FIRST, currentModel, HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_PLEASE_ENTITIES_FIRST + "\"}"));
             }
         } else {
             return getModelByE13WithoutP141Triples(e13);
