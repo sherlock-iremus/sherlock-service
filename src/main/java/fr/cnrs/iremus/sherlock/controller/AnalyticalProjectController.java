@@ -24,9 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFuseki;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
@@ -149,6 +147,14 @@ public class AnalyticalProjectController {
                                     return;
                                 } else {
                                     deletableModelForE13 = exception.getModel();
+
+                                    // Remove triples with P141 as object not to delete it.
+                                    RDFNode p141 = deletableModelForE13.listObjectsOfProperty(CIDOCCRM.P141_assigned).next();
+                                    for (Statement statement: deletableModelForE13.listStatements(null, null, p141).toList()) {
+                                        if (!(statement.getSubject().equals(e13))) {
+                                            deletableModelForE13.remove(statement);
+                                        }
+                                    }
                                 }
                             }
 

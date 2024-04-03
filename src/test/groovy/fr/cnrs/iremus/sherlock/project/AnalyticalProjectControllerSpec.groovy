@@ -5,7 +5,6 @@ import fr.cnrs.iremus.sherlock.J
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM
 import fr.cnrs.iremus.sherlock.common.Sherlock
 import fr.cnrs.iremus.sherlock.controller.AnalyticalProjectController
-import fr.cnrs.iremus.sherlock.controller.E13Controller
 import fr.cnrs.iremus.sherlock.service.DateService
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.client.exceptions.HttpClientResponseException
@@ -136,13 +135,13 @@ class AnalyticalProjectControllerSpec extends Specification {
         ])
 
         def e28Iri = J.getOneByType(e13Response, CIDOCCRM.E28_Conceptual_Object)["@id"] as String
-        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e28Iri))
+        common.addTripleToDataset(common.createResource("http://data-iremus.huma-num.fr/id/s"), common.createProperty("http://data-iremus.huma-num.fr/id/p"), common.createResource(e28Iri))
 
         common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(analyticalProjectUri))
 
 
         then:
-        common.getAllTriples().size() == 0
+        common.getAllTriples().size() == 1
 
     }
 }

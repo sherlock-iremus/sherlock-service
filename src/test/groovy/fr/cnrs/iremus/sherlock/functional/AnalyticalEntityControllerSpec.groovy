@@ -171,12 +171,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 p177              : 'crm:P2_has_type',
                 p141              : simpleCadenceTypeIri
         ])
-        def model = common.getAllTriples()
-
         common.delete("/sherlock/api/e13/${e13AnalyticalEntityCreation.toString().split("/").last()}?propagate=true")
-
-
-        def modelAfterDelete = common.getAllTriples()
 
         then:
 
