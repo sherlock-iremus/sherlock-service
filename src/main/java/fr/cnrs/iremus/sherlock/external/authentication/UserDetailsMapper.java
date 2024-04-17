@@ -13,7 +13,7 @@ import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -38,17 +38,21 @@ public class UserDetailsMapper implements OauthAuthenticationMapper {
 
             logger.info("[ORCID API] Received token");
             logger.info("[ORCID API] /GET user ");
-            Publisher<OrcidUser> response = orcidApiClient.get("bearer " + tokenResponse.getAccessToken());
-            OrcidUser user = Flux.from(response).blockFirst();
-            logger.info("[ORCID API] Received user's identity");
-            String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user));
-            logger.info("[DATA] created or retrieved user");
-            return Publishers.just(AuthenticationResponse.success(
-                    user.getSub(),
-                    Map.ofEntries(
-                            Map.entry("orcid", user.getSub()),
-                            Map.entry("uuid", userUuid)
-                    )));
+
+
+
+            Publisher<OrcidUser> userPublisher = orcidApiClient.get("bearer " + tokenResponse.getAccessToken());
+            return Mono.from(userPublisher).flatMap(user -> {
+                logger.info("[ORCID API] Received user's identity");
+                String userUuid = sherlock.getUuidFromSherlockUri(userService.createUserIfNotExists(user));
+                logger.info("[DATA] created or retrieved user");
+                return Mono.just(AuthenticationResponse.success(
+                        user.getSub(),
+                        Map.ofEntries(
+                                Map.entry("orcid", user.getSub()),
+                                Map.entry("uuid", userUuid)
+                        )));
+            });
         } catch (Exception exception) {
             return Publishers.just(AuthenticationResponse.failure(exception.getMessage()));
         }
