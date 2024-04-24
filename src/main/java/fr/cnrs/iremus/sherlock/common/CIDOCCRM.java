@@ -24,6 +24,7 @@ public class CIDOCCRM {
     public static final Resource E90_Symbolic_Object = m_model.createResource(NS + "E90_Symbolic_Object");
     public static final Property P1_is_identified_by = m_model.createProperty(NS + "P1_is_identified_by");
     public static final Property P2_has_type = m_model.createProperty(NS + "P2_has_type");
+    public static final Property P3_has_note = m_model.createProperty(NS + "P3_has_note");
     public static final Property P4_has_time_span = m_model.createProperty(NS + "P4_has_time-span");
     public static final Property P9_consists_of = m_model.createProperty(NS + "P9_consists_of");
     public static final Property P14_carried_out_by = m_model.createProperty(NS + "P14_carried_out_by");
