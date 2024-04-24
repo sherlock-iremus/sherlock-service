@@ -1,5 +1,6 @@
 package fr.cnrs.iremus.sherlock.common;
 
+import fr.cnrs.iremus.sherlock.pojo.analyticalProject.PrivacyTypeUuidValidator;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13P141Validator;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserColorValidator;
@@ -35,6 +36,10 @@ public class ValidatorFactory {
         return (value, annotationMetadata, context) -> value == null || validatorService.isHexColorCode(value);
     }
 
+    @Singleton
+    ConstraintValidator<PrivacyTypeUuidValidator, String> privacyTypeUuuidValidator() {
+        return (value, annotationMetadata, context) -> value == null || validatorService.isPrivacyTypeUuid(value);
+    }
     @Singleton
     ConstraintValidator<NewE13P141Validator, NewE13> newE13P141Validator() {
         return (value, annotationMetadata, context) -> {

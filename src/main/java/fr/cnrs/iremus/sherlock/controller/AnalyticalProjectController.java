@@ -3,6 +3,7 @@ package fr.cnrs.iremus.sherlock.controller;
 import fr.cnrs.iremus.sherlock.common.CIDOCCRM;
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.pojo.analyticalProject.NewAnalyticalProject;
+import fr.cnrs.iremus.sherlock.pojo.analyticalProject.UpdateAnalyticalProject;
 import fr.cnrs.iremus.sherlock.service.AnalyticalProjectService;
 import fr.cnrs.iremus.sherlock.service.DateService;
 import fr.cnrs.iremus.sherlock.service.E13Service;
@@ -43,6 +44,7 @@ public class AnalyticalProjectController {
     private static Logger logger = LoggerFactory.getLogger(AnalyticalProjectController.class);
     public final static String e55analyticalProjectIri = "http://data-iremus.huma-num.fr/id/21816195-6708-4bbd-a758-ee354bb84900";
     public final static String e55draftIri = "http://data-iremus.huma-num.fr/id/cabe46bf-23d4-4392-aa20-b3eb21ad7dfd";
+    public final static String e55publishedIri = "http://data-iremus.huma-num.fr/id/54a5cf00-a46a-4435-b893-6eda0cdc5462";
     public final static String ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER = "This analytical project belongs to somebody else. Ask them do to deletion themself";
     public final static String RESOURCE_IS_NOT_AN_ANALYTICAL_PROJECT = "This resource is not an analytical project";
     @Property(name = "jena")
@@ -102,6 +104,46 @@ public class AnalyticalProjectController {
         // query and return updated dataset
 
         return HttpResponse.created(sherlock.modelToJson(analyticalProjectService.getAnalyticalProject(analyticalProject)));
+    }
+
+    @ApiResponse(responseCode = "200", description = "updated analytical entity's model")
+    @Patch("/{analyticalProjectUuid}") // 572423c3-5019-47be-b845-6b96fbddc754
+    @Produces(MediaType.APPLICATION_JSON)
+    public MutableHttpResponse<String> update(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UpdateAnalyticalProject.class), examples = {@ExampleObject(value = """
+            {
+                "description": "la description de mon projet analytique"
+            }
+            """)})}) @Valid @Body UpdateAnalyticalProject body, @PathVariable String analyticalProjectUuid, Authentication authentication) {
+        logger.info("Updating analytical project with uuid '%s' for user %s".formatted(analyticalProjectUuid, authentication.getAttributes().get("uuid")));
+        // context
+
+        String authenticatedUserUuid = (String) authentication.getAttributes().get("uuid");
+
+        // resources
+
+        Model m = ModelFactory.createDefaultModel();
+        Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
+        Resource analyticalProject = m.createResource(sherlock.makeIri(analyticalProjectUuid));
+
+        // tests on data integrity
+
+        Model analyticalProjectModel = analyticalProjectService.getAnalyticalProject(analyticalProject);
+
+        if (!analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P2_has_type, m.createResource(e55analyticalProjectIri)))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + RESOURCE_IS_NOT_AN_ANALYTICAL_PROJECT + "\"}");
+
+        if (!analyticalProjectModel.contains(analyticalProject, CIDOCCRM.P14_carried_out_by, authenticatedUser))
+            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + ANALYTICAL_PROJECT_BELONGS_TO_ANOTHER_USER + "\"}");
+
+        return HttpResponse.ok(sherlock.modelToJson(
+                analyticalProjectService.updateAnalyticalProject(
+                        body.getLabel(),
+                        body.getDescription(),
+                        body.getColor(),
+                        body.getPrivacyTypeUuid(),
+                        analyticalProjectModel,
+                        analyticalProject
+                )));
     }
 
     @ApiResponse(responseCode = "200", description = "model containing every triple deleted")

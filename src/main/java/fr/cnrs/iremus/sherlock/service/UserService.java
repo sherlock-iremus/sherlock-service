@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Singleton
 public class UserService {
     private final String e55EmojiUuid = "04242f64-fbb3-4b5b-bb2e-3ddd59eeea18";
-    private final String e55HexColorUuid = "5f1bb74f-6ea0-4073-8b68-086f98454f1c";
+    public static final String e55HexColorUuid = "5f1bb74f-6ea0-4073-8b68-086f98454f1c";
     private final String e55OrcidNameUuid = "73ea8d74-3526-4f6a-8830-dd369795650d";
     private final String e55OrcidUuid = "d7ef2583-ff31-4913-9ed3-bc3a1c664b21";
     private final String[] userHexColors = new String[]{"5C2493", "470883", "33085C", "8E438D", "681B67", "DC6C7E", "CD4557", "9E303E", "F2AB84", "D58256", "B56439", "F2AB84", "FAE4AD", "EDCA77", "C49C44", "A1E6BB", "7DC597", "5AA373", "70B2B8", "3C8892", "2E6C74", "7B7B92", "515270", "3C3D53", "656183"};
