@@ -28,7 +28,9 @@ public class ValidatorFactory {
 
     @Singleton
     ConstraintValidator<UserEmojiValidator, String> userEmojiValidator() {
-        return (value, annotationMetadata, context) -> value == null || validatorService.isUnicodePattern(value);
+        return (value, annotationMetadata, context) -> value == null ||
+                ((value.length() ==1 || value.length() == 2 ) && value.codePoints()
+                        .allMatch(c -> validatorService.isUnicodePattern(String.valueOf((char) c))));
     }
 
     @Singleton
