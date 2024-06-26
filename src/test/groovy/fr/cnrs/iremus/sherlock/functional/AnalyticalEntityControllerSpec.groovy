@@ -35,6 +35,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 ],
                 document_context: 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
+                "contribution_graph": "tonalities-contributions",
                 p141_type: 'NEW_RESOURCE',
                 p177: 'crm:P67_refers_to',
                 new_p141 : [
@@ -48,6 +49,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 p140: [e28Iri],
                 document_context: 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
+                "contribution_graph": "tonalities-contributions",
                 p141_type: 'URI',
                 p177: 'crm:P2_has_type',
                 p141: simpleCadenceTypeIri
@@ -103,6 +105,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                                      'http://data-iremus.huma-num.fr/id/note-2',
                                      'http://data-iremus.huma-num.fr/id/note-3'
                 ],
+                "contribution_graph": "tonalities-contributions",
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
                 p141_type         : 'NEW_RESOURCE',
@@ -119,6 +122,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 p140              : [e28Iri],
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
+                "contribution_graph": "tonalities-contributions",
                 p141_type         : 'URI',
                 p177              : 'crm:P2_has_type',
                 p141              : simpleCadenceTypeIri
@@ -153,6 +157,7 @@ class AnalyticalEntityControllerSpec extends Specification {
                 ],
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
+                "contribution_graph": "tonalities-contributions",
                 p141_type         : 'NEW_RESOURCE',
                 p177              : 'crm:P67_refers_to',
                 new_p141          : [
@@ -165,6 +170,7 @@ class AnalyticalEntityControllerSpec extends Specification {
 
         common.post('/sherlock/api/e13', [
                 p140              : [e28Iri],
+                "contribution_graph": "tonalities-contributions",
                 document_context  : 'http://data-iremus.huma-num.fr/id/ma-partition',
                 analytical_project: 'http://data-iremus.huma-num.fr/id/mon-projet-analytique',
                 p141_type         : 'URI',

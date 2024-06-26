@@ -8,7 +8,6 @@ import io.micronaut.http.client.annotation.Client
 import io.micronaut.rxjava3.http.client.Rx3HttpClient
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import org.apache.jena.rdf.model.Model
 import spock.lang.Specification
 
 @MicronautTest()
@@ -29,12 +28,14 @@ class AnalyticalProjectControllerUpdateSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
         def oldTriples = common.getAllTriples()
         def resource = response.find { item -> item["@type"][0] == CIDOCCRM.E7_Activity.URI }
         common.patch('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(resource["@id"]), [
-                label: 'Mon projet modifié'
+                label: 'Mon projet modifié',
+                "contribution_graph": "tonalities-contributions",
         ])
         then:
 
@@ -48,12 +49,14 @@ class AnalyticalProjectControllerUpdateSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
         def resource = response.find { item -> item["@type"][0] == CIDOCCRM.E7_Activity.URI }
         common.patch('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(resource["@id"]), [
                 label: 'Mon projet modifié',
                 description: 'Ma description',
+                "contribution_graph": "tonalities-contributions",
                 color: 'FFFFFF',
                 privacyTypeUuid: sherlock.getUuidFromSherlockUri(AnalyticalProjectController.e55publishedIri)
         ])
@@ -71,13 +74,15 @@ class AnalyticalProjectControllerUpdateSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
         def resource = response.find { item -> item["@type"][0] == CIDOCCRM.E7_Activity.URI }
         common.patch('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(resource["@id"]), [
                 label: 'Mon projet modifié',
                 description: 'Ma description',
                 color: 'FFFFFF',
+                "contribution_graph": "tonalities-contributions",
                 privacyTypeUuid: sherlock.getUuidFromSherlockUri(AnalyticalProjectController.e55publishedIri)
         ])
         common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(resource["@id"]))

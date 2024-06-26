@@ -79,6 +79,8 @@ netty:
   http:
     client:
       event-loop-group: other
+graphs:
+  contributions: ${CONTRIBUTION_GRAPHS:sherlock,tonalities-contributions}
 jena: "${FUSEKI:`http://localhost:3030`}/${DATASET:`iremus`}"
 datasources:
   default:

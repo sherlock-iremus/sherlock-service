@@ -39,6 +39,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141"              : "http://data-iremus.huma-num/id/mon-commentaire",
+                "contribution_graph": "tonalities-contributions",
                 "p141_type"         : "URI",
                 "document_context"  : "http://data-iremus.huma-num/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num/id/mon-projet-analytique"
@@ -46,7 +47,7 @@ class E13DeletionControllerSpec extends Specification {
 
         def e13Iri = J.getOneByType(postResponse, CIDOCCRM.E13_Attribute_Assignment)["@id"] as String
         def e13uuid = e13Iri.split("/").last()
-        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e13Iri))
+        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e13Iri), common.tonalitiesGraph )
         common.delete("/sherlock/api/e13/${e13uuid}")
 
         then:
@@ -63,6 +64,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P67_refers_to.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -74,7 +76,7 @@ class E13DeletionControllerSpec extends Specification {
         def e13Iri = J.getOneByType(postResponse, CIDOCCRM.E13_Attribute_Assignment)["@id"] as String
         def e13uuid = e13Iri.split("/").last()
         def e28Iri = J.getOneByType(postResponse, CIDOCCRM.E28_Conceptual_Object)["@id"] as String
-        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e28Iri))
+        common.addTripleToDataset(common.createResource("s"), common.createProperty("p"), common.createResource(e28Iri), common.tonalitiesGraph)
         common.delete("/sherlock/api/e13/${e13uuid}")
 
         then:
@@ -91,6 +93,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P67_refers_to.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -118,6 +121,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P1_is_identified_by.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -144,6 +148,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P1_is_identified_by.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -173,6 +178,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P67_refers_to.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],
@@ -202,6 +208,7 @@ class E13DeletionControllerSpec extends Specification {
                 "p177"              : CIDOCCRM.P67_refers_to.URI,
                 "p141"              : p141Uri,
                 "p141_type"         : "URI",
+                "contribution_graph": "tonalities-contributions",
                 "document_context"  : "http://data-iremus.huma-num.fr/id/ma-partition",
                 "analytical_project": "http://data-iremus.huma-num.fr/id/mon-projet-analytique"
         ])

@@ -39,7 +39,8 @@ class VisualItemAnnotationSpec extends Specification {
                 "p141"              : religionE55Iri,
                 "p141_type"         : "URI",
                 "document_context"  : estampeE36Iri,
-                "analytical_project": analyticalProjectIri
+                "analytical_project": analyticalProjectIri,
+                "contribution_graph": "tonalities-contributions"
         ])
 
         def model = common.getAllTriples()
@@ -85,6 +86,7 @@ class VisualItemAnnotationSpec extends Specification {
                 "p141"              : louisXIVE21Iri,
                 "p141_type"         : "URI",
                 "document_context"  : estampeE36Iri,
+                "contribution_graph": "tonalities-contributions",
                 "analytical_project": analyticalProjectIri
         ])
 
@@ -97,6 +99,7 @@ class VisualItemAnnotationSpec extends Specification {
                         p190: iiifFragmentURL
                 ],
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "document_context"  : estampeE36Iri,
                 "analytical_project": analyticalProjectIri
         ])

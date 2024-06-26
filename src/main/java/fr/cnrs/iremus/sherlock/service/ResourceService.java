@@ -65,7 +65,7 @@ public class ResourceService {
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             SelectBuilder sb = new SelectBuilder()
                     .addVar("?type")
-                    .addGraph(sherlock.getGraph(), new WhereBuilder().addWhere(
+                    .addGraph("?g", new WhereBuilder().addWhere(
                             resource, RDF.type, "?type"
                     ));
             Query q = sb.build();

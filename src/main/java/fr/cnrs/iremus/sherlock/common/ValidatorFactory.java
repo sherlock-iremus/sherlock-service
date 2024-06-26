@@ -3,10 +3,7 @@ package fr.cnrs.iremus.sherlock.common;
 import fr.cnrs.iremus.sherlock.pojo.analyticalProject.PrivacyTypeUuidValidator;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13;
 import fr.cnrs.iremus.sherlock.pojo.e13.NewE13P141Validator;
-import fr.cnrs.iremus.sherlock.pojo.user.config.UserColorValidator;
-import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfigEdit;
-import fr.cnrs.iremus.sherlock.pojo.user.config.UserConfigValidator;
-import fr.cnrs.iremus.sherlock.pojo.user.config.UserEmojiValidator;
+import fr.cnrs.iremus.sherlock.pojo.user.config.*;
 import fr.cnrs.iremus.sherlock.service.ValidatorService;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.validation.validator.constraints.ConstraintValidator;
@@ -36,6 +33,11 @@ public class ValidatorFactory {
     @Singleton
     ConstraintValidator<UserColorValidator, String> userColorValidator() {
         return (value, annotationMetadata, context) -> value == null || validatorService.isHexColorCode(value);
+    }
+
+    @Singleton
+    ConstraintValidator<ContributionGraphValidator, String> contributionGraphValidator() {
+        return (value, annotationMetadata, context) -> value == null || validatorService.isAContributionGraph(value);
     }
 
     @Singleton

@@ -37,7 +37,7 @@ public class AnalyticalProjectService {
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct(analyticalProject, "?e7_p", "?e7_o")
                     .addConstruct("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
-                    .addGraph(sherlock.getGraph(), new WhereBuilder()
+                    .addGraph("?g", new WhereBuilder()
                             .addWhere(analyticalProject, "?e7_p", "?e7_o")
                             .addWhere(analyticalProject, "?e7_p_time_span", "?e7_o_time_span")
                             .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_span)
@@ -59,7 +59,7 @@ public class AnalyticalProjectService {
                     .addConstruct("?e7_s", "?e7_p_i", analyticalProject)
                     .addConstruct("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
                     .addConstruct("?e41", "?e41_p", "?e41_o")
-                    .addGraph(sherlock.getGraph(), new WhereBuilder()
+                    .addGraph("?g", new WhereBuilder()
                             .addWhere(analyticalProject, "?e7_p", "?e7_o")
                             .addWhere(analyticalProject, "?e7_p_time_span", "?e7_o_time_span")
                             .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_span)
@@ -83,7 +83,7 @@ public class AnalyticalProjectService {
 
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct("?e41", CIDOCCRM.P190_has_symbolic_content, "?color")
-                    .addGraph(sherlock.getGraph(), new WhereBuilder()
+                    .addGraph("?g", new WhereBuilder()
                             .addWhere(analyticalProject, CIDOCCRM.P1_is_identified_by, "?e41")
                             .addWhere("?e41", CIDOCCRM.P2_has_type, m.createResource(sherlock.makeIri(e55HexColorUuid)))
                             .addWhere("?e41", CIDOCCRM.P190_has_symbolic_content, "?color")
@@ -95,7 +95,7 @@ public class AnalyticalProjectService {
 
     }
 
-    public Model updateAnalyticalProject(String label, String description, String color, String privacyTypeUuid, Model analyticalProjectModel, Resource analyticalProject) {
+    public Model updateAnalyticalProject(String label, String description, String color, String privacyTypeUuid, String contributionGraph, Model analyticalProjectModel, Resource analyticalProject) {
         Model modelToAdd = ModelFactory.createDefaultModel();
         try (RDFConnection conn = RDFConnectionFuseki.connect(jena)) {
             conn.executeWrite(() -> {
@@ -150,7 +150,7 @@ public class AnalyticalProjectService {
                 }
 
                 conn.update(sherlock.makeDeleteQuery(modelToDelete));
-                conn.update(sherlock.makeUpdateQuery(modelToAdd));
+                conn.update(sherlock.makeUpdateQuery(modelToAdd, sherlock.makeGraph(contributionGraph)));
             });
         }
         return modelToAdd;

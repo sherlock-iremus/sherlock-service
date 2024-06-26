@@ -34,6 +34,7 @@ class Common {
     @Property(name = "jena")
     protected String jena
 
+    public static final String tonalitiesGraph = "http://data-iremus.huma-num.fr/graph/tonalities-contributions"
     @Deprecated
     String getAccessToken(client) {
         UsernamePasswordCredentials creds = new UsernamePasswordCredentials('sherlock', 'kcolrehs')
@@ -115,6 +116,9 @@ class Common {
             try {
                 conn.delete(sherlock.getUserGraph().toString())
             } catch (Exception e) {}
+            try {
+                conn.delete(tonalitiesGraph)
+            } catch (Exception e) {}
         } catch (HttpException e) {}
     }
 
@@ -124,6 +128,16 @@ class Common {
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
             conn.load(sherlock.getGraph().toString(), m)
+        } catch (HttpException e) {
+        }
+    }
+
+    void addTripleToDataset(Resource s, org.apache.jena.rdf.model.Property p, RDFNode o, String graph) {
+        Model m = ModelFactory.createDefaultModel()
+        m.add(s, p, o)
+        RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination('http://localhost:3030/test')
+        try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
+            conn.load(graph, m)
         } catch (HttpException e) {
         }
     }

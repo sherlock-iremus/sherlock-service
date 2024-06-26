@@ -63,7 +63,8 @@ public class AnalyticalProjectController {
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> create(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = NewAnalyticalProject.class), examples = {@ExampleObject(value = """
             {
-                "label": "mon projet analytique"
+                "label": "mon projet analytique",
+                "contribution_graph": "tonalities-contributions"
             }
             """)})}) @Valid @Body NewAnalyticalProject body, Authentication authentication) throws ParseException {
         logger.info("Creating analytical project with name '%s' for user %s".formatted(body.getLabel(), authentication.getAttributes().get("uuid")));
@@ -79,6 +80,7 @@ public class AnalyticalProjectController {
         Resource authenticatedUser = m.createResource(sherlock.makeIri(authenticatedUserUuid));
         Resource analyticalProject = m.createResource(sherlock.makeIri());
         Resource timeSpan = m.createResource(sherlock.makeIri());
+        Resource contributionGraph = sherlock.makeGraph(body.getContribution_graph());
 
         // triples
 
@@ -94,7 +96,7 @@ public class AnalyticalProjectController {
 
         // update dataset
 
-        String updateWithModel = sherlock.makeUpdateQuery(m);
+        String updateWithModel = sherlock.makeUpdateQuery(m, contributionGraph);
 
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {
@@ -111,7 +113,8 @@ public class AnalyticalProjectController {
     @Produces(MediaType.APPLICATION_JSON)
     public MutableHttpResponse<String> update(@RequestBody(content = {@Content(mediaType = "application/json", schema = @Schema(implementation = UpdateAnalyticalProject.class), examples = {@ExampleObject(value = """
             {
-                "description": "la description de mon projet analytique"
+                "description": "la description de mon projet analytique",
+                "contribution_graph": "tonalities-contributions"
             }
             """)})}) @Valid @Body UpdateAnalyticalProject body, @PathVariable String analyticalProjectUuid, Authentication authentication) {
         logger.info("Updating analytical project with uuid '%s' for user %s".formatted(analyticalProjectUuid, authentication.getAttributes().get("uuid")));
@@ -141,6 +144,7 @@ public class AnalyticalProjectController {
                         body.getDescription(),
                         body.getColor(),
                         body.getPrivacyTypeUuid(),
+                        body.getContribution_graph(),
                         analyticalProjectModel,
                         analyticalProject
                 )));

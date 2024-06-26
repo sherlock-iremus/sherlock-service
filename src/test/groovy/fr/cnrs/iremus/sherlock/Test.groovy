@@ -21,7 +21,7 @@ class Test extends Specification {
         def response = common.post('/sherlock/api/e13',
                 [
                         "p140"              : ["http://data-iremus.huma-num/id/e36-estampe"],
-
+                        "contribution_graph": "tonalities-contributions",
                         "p177"              : "http://data-iremus.huma-num/id/titre-sur-l-image",
                         "p141"              : "Et Nostris Prævalet Alis. Iam Supra Sublimia",
                         "p141_type"         : "LITERAL",

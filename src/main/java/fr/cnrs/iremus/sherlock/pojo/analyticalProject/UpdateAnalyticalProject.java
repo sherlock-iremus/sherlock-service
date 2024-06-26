@@ -1,8 +1,10 @@
 package fr.cnrs.iremus.sherlock.pojo.analyticalProject;
 
+import fr.cnrs.iremus.sherlock.pojo.user.config.ContributionGraphValidator;
 import fr.cnrs.iremus.sherlock.pojo.user.config.UserColorValidator;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
+import jakarta.validation.constraints.NotBlank;
 
 @Introspected
 @Serdeable
@@ -13,6 +15,10 @@ public class UpdateAnalyticalProject {
     private String color;
     @PrivacyTypeUuidValidator
     private String privacyTypeUuid;
+
+    @ContributionGraphValidator
+    @NotBlank
+    private String contribution_graph;
 
     public String getLabel() {
         return label;
@@ -44,5 +50,13 @@ public class UpdateAnalyticalProject {
 
     public void setPrivacyTypeUuid(String privacyTypeUuid) {
         this.privacyTypeUuid = privacyTypeUuid;
+    }
+
+    public String getContribution_graph() {
+        return contribution_graph;
+    }
+
+    public void setContribution_graph(String contribution_graph) {
+        this.contribution_graph = contribution_graph;
     }
 }

@@ -67,7 +67,7 @@ public class E13Service {
                     .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, e13)
                     .addConstruct("?p141", "?p141_p", "?p141_o")
                     .addConstruct("?p141_s", "?p141_p_i", "?p141")
-                    .addGraph(sherlock.getGraph(),
+                    .addGraph("?g",
                             new WhereBuilder()
                                     .addWhere(e13, "?e13_p", "?e13_o")
                                     .addWhere("?e13_s", "?e13_p_i", e13)
@@ -105,7 +105,7 @@ public class E13Service {
             ConstructBuilder cb = new ConstructBuilder()
                     .addConstruct(e13, "?e13_p", "?e13_o")
                     .addConstruct("?e13_s", "?e13_p_i", e13)
-                    .addGraph(sherlock.getGraph(),
+                    .addGraph("?g",
                             new WhereBuilder()
                                     .addWhere(e13, "?e13_p", "?e13_o")
                                     .addWhere("?e13_s", "?e13_p_i", e13)
@@ -125,7 +125,7 @@ public class E13Service {
                     .addConstruct("?e13_s", "?e13_p_i", e13)
                     .addConstruct("?analytical_project", CIDOCCRM.P9_consists_of, e13)
                     .addConstruct("?p141", "?p141_p", "?p141_o")
-                    .addGraph(sherlock.getGraph(),
+                    .addGraph("?g",
                             new WhereBuilder()
                                     .addWhere(e13, "?e13_p", "?e13_o")
                                     .addWhere("?e13_s", "?e13_p_i", e13)

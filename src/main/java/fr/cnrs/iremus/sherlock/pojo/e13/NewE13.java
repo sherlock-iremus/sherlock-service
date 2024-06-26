@@ -1,6 +1,8 @@
 package fr.cnrs.iremus.sherlock.pojo.e13;
 
 import fr.cnrs.iremus.sherlock.common.ResourceType;
+import fr.cnrs.iremus.sherlock.pojo.user.config.ContributionGraphValidator;
+import fr.cnrs.iremus.sherlock.pojo.user.config.UserColorValidator;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.validation.Valid;
@@ -23,6 +25,9 @@ public class NewE13 {
     private NewP141 new_p141;
     @NotBlank
     private String document_context;
+    @ContributionGraphValidator
+    @NotBlank
+    private String contribution_graph;
     @NotBlank
     private String analytical_project;
     @NotNull
@@ -82,5 +87,13 @@ public class NewE13 {
 
     public void setNew_p141(NewP141 new_p141) {
         this.new_p141 = new_p141;
+    }
+
+    public String getContribution_graph() {
+        return contribution_graph;
+    }
+
+    public void setContribution_graph(String contribution_graph) {
+        this.contribution_graph = contribution_graph;
     }
 }

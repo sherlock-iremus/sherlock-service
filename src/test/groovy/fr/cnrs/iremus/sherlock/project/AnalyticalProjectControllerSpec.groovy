@@ -34,7 +34,8 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
 
         then:
@@ -59,7 +60,8 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions"
         ])
 
         common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]))
@@ -74,7 +76,8 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project?fake-user=true', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
 
         common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]))
@@ -90,7 +93,8 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions"
         ])
         def analyticalProjectUri = J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]
 
@@ -104,6 +108,7 @@ class AnalyticalProjectControllerSpec extends Specification {
                         p190    : "https://ceres.huma-num.fr/iiif/3/mercure-galant-estampes--1677-09_224/600,100,300,60/max/0/default.jpg"
                 ],
                 "document_context"  : "test",
+                "contribution_graph": "tonalities-contributions",
                 "analytical_project": analyticalProjectUri
         ])
         common.delete('/sherlock/api/analytical-project/' + sherlock.getUuidFromSherlockUri(analyticalProjectUri))
@@ -117,7 +122,8 @@ class AnalyticalProjectControllerSpec extends Specification {
         common.eraseall()
 
         def response = common.post('/sherlock/api/analytical-project', [
-                label: 'Mon projet'
+                label: 'Mon projet',
+                "contribution_graph": "tonalities-contributions",
         ])
         def analyticalProjectUri = J.getOneByType(response, CIDOCCRM.E7_Activity)["@id"]
 
@@ -125,6 +131,7 @@ class AnalyticalProjectControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num.fr/id/e13-assignant-le-type-cadence"],
                 "p177"              : CIDOCCRM.P67_refers_to.URI,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [CIDOCCRM.E28_Conceptual_Object.URI],
                         p2_type : ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"],

@@ -32,6 +32,7 @@ class ComplexE13ControllerSpec extends Specification {
                 "p140"              : [annotatedResourceIri],
                 "p177"              : annotationProperty,
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: ["crm:E42_Identifier"],
                         p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
@@ -65,6 +66,7 @@ class ComplexE13ControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141_type"         : "URI",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: ["crm:E42_Identifier"],
                         p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],
@@ -89,6 +91,7 @@ class ComplexE13ControllerSpec extends Specification {
                 "p140"              : ["http://data-iremus.huma-num/id/e13-assignant-le-type-cadence"],
                 "p177"              : "http://data-iremus.huma-num/id/commentaire-sur-entite-analytique",
                 "p141_type"         : "NEW_RESOURCE",
+                "contribution_graph": "tonalities-contributions",
                 "new_p141"          : [
                         rdf_type: [],
                         p2_type : ["http://data-iremus.huma-num/id/identifiant-iiif", "http://data-iremus.huma-num/id/element-visuel"],

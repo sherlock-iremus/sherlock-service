@@ -36,6 +36,7 @@ class SimpleE13ControllerSpec extends Specification {
                 "p177"              : annotationProperty,
                 "p141"              : annotationValue,
                 "p141_type"         : "LITERAL",
+                "contribution_graph": "tonalities-contributions",
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
         ])
@@ -74,6 +75,7 @@ class SimpleE13ControllerSpec extends Specification {
                 "p177"              : annotationProperty,
                 "p141"              : annotationValue,
                 "p141_type"         : "URI",
+                "contribution_graph": "tonalities-contributions",
                 "document_context"  : documentContext,
                 "analytical_project": analyticalProject
         ])

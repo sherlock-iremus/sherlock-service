@@ -43,6 +43,8 @@ import java.util.List;
 @Tag(name = "3. Annotations")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 public class E13Controller {
+    @Property(name = "graphs.contributions")
+    private List<String> contributionGraphs;
     private static Logger logger = LoggerFactory.getLogger(E13Controller.class);
     public static final String E13_DELETE_PLEASE_ENTITIES_FIRST = "Please delete entities which depends on the P141 first.";
     public static final String E13_DELETE_DOES_NOT_EXIST = "This E13 does not exist.";
@@ -74,6 +76,7 @@ public class E13Controller {
                         "p177": "http://data-iremus.huma-num.fr/id/commentaire-sur-entite-analytique",
                         "p141": "Ce n'est pas une cadence.",
                         "p141_type": "LITERAL",
+                        "contribution_graph": "tonalities-contributions",
                         "document_context": "http://data-iremus.huma-num.fr/id/ma-partition",
                         "analytical_project": "http://data-iremus.huma-num.fr/id/mon-projet-analytique"
                     }
@@ -81,6 +84,7 @@ public class E13Controller {
                                             {
                                     "p140": ["http://data-iremus.huma-num.fr/id/mon-fragment-d-estampe"],
                                     "p177": "crm:P1_is_identified_by",
+                                    "contribution_graph": "tonalities-contributions",
                                     "new_p141": {
                                         "rdf_type": ["crm:E42_Identifier"],
                                         "p2_type": ["http://data-iremus.huma-num.fr/id/identifiant-iiif", "http://data-iremus.huma-num.fr/id/element-visuel"]
@@ -101,6 +105,7 @@ public class E13Controller {
         String documentContext = sherlock.resolvePrefix(body.getDocument_context());
         String analyticalProject = sherlock.resolvePrefix(body.getAnalytical_project());
         String now = dateService.getNow();
+        Resource contributionGraph = sherlock.makeGraph(body.getContribution_graph());
         ResourceType p141Type = body.getP141_type();
 
         // UPDATE QUERY
@@ -133,7 +138,7 @@ public class E13Controller {
             }
         }
 
-        String updateWithModel = sherlock.makeUpdateQuery(m);
+        String updateWithModel = sherlock.makeUpdateQuery(m, contributionGraph);
 
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
         try (RDFConnectionFuseki conn = (RDFConnectionFuseki) builder.build()) {

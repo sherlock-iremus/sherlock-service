@@ -2,15 +2,18 @@ package fr.cnrs.iremus.sherlock.service;
 
 import fr.cnrs.iremus.sherlock.common.Sherlock;
 import fr.cnrs.iremus.sherlock.controller.AnalyticalProjectController;
+import io.micronaut.context.annotation.Property;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Singleton
 public class ValidatorService {
-
+    @Property(name = "graphs.contributions")
+    private List<String> contributionGraphs;
     private final Pattern hexColorPattern = Pattern.compile("^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
     private final Pattern unicodePattern = Pattern.compile("^.$");
     private Matcher matcher;
@@ -31,5 +34,9 @@ public class ValidatorService {
     public boolean isPrivacyTypeUuid(String value) {
         return value.equals(sherlock.getUuidFromSherlockUri(AnalyticalProjectController.e55draftIri))
         || value.equals(sherlock.getUuidFromSherlockUri(AnalyticalProjectController.e55publishedIri));
+    }
+
+    public boolean isAContributionGraph(String value) {
+        return contributionGraphs.contains(value);
     }
 }

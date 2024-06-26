@@ -29,6 +29,10 @@ public class Sherlock {
         return m_model.createResource("http://data-iremus.huma-num.fr/graph/sherlock");
     }
 
+    public Resource makeGraph(String graph) {
+        return m_model.createResource("http://data-iremus.huma-num.fr/graph/" + graph);
+    }
+
     public Resource getUserGraph() {
         return m_model.createResource("http://data-iremus.huma-num.fr/graph/users");
     }
@@ -54,7 +58,7 @@ public class Sherlock {
     }
 
     public String makeDeleteQuery(Model m) {
-        return "DELETE WHERE { GRAPH <" + this.getGraph() + "> {" + this.modelToString(m) + "}}";
+        return "DELETE WHERE { GRAPH ?g {" + this.modelToString(m) + "}}";
     }
 
     public String makeDeleteQuery(Model m, Resource graph) {
