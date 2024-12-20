@@ -367,16 +367,16 @@ public class Mei {
                     public String value;
                 }
 
-                public RespStmt getRespStmt() {
+                public List<TitleStmt.RespStmt> getRespStmt() {
                     return respStmt;
                 }
 
-                public void setRespStmt(RespStmt respStmt) {
+                public void setRespStmt(List<TitleStmt.RespStmt> respStmt) {
                     this.respStmt = respStmt;
                 }
 
                 @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-                public RespStmt respStmt;
+                public List<TitleStmt.RespStmt> respStmt;
 
                 @Serdeable
                 @Introspected
@@ -498,16 +498,16 @@ public class Mei {
             @Introspected
             @XmlAccessorType(XmlAccessType.FIELD)
             public static class PubStmt {
-                public TitleStmt.RespStmt getRespStmt() {
+                public List<TitleStmt.RespStmt> getRespStmt() {
                     return respStmt;
                 }
 
-                public void setRespStmt(TitleStmt.RespStmt respStmt) {
+                public void setRespStmt(List<TitleStmt.RespStmt> respStmt) {
                     this.respStmt = respStmt;
                 }
 
                 @XmlElement(namespace = "http://www.music-encoding.org/ns/mei")
-                public TitleStmt.RespStmt respStmt;
+                public List<TitleStmt.RespStmt> respStmt;
 
                 public Date getDate() {
                     return date;

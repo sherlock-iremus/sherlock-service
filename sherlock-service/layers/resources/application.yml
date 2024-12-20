@@ -67,10 +67,20 @@ micronaut:
       swagger-ui:
         paths: classpath:META-INF/swagger/views/swagger-ui
         mapping: /swagger-ui/**
+# https://github.com/micronaut-projects/micronaut-core/issues/8113
 netty:
+  event-loops:
+    other:
+      num-threads: 10
+      prefer-native-transport: true
   default:
     allocator:
       max-order: 3
+  http:
+    client:
+      event-loop-group: other
+graphs:
+  contributions: ${CONTRIBUTION_GRAPHS:sherlock,tonalities-contributions}
 jena: "${FUSEKI:`http://localhost:3030`}/${DATASET:`iremus`}"
 datasources:
   default:

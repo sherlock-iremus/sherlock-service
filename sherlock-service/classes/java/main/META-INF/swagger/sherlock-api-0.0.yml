@@ -47,10 +47,57 @@ paths:
               example:
                 value:
                   label: mon projet analytique
+                  contribution_graph: tonalities-contributions
         required: true
       responses:
         "200":
           description: new analytical entity's model
+          content:
+            application/json:
+              schema:
+                type: string
+  /sherlock/api/analytical-project/{analyticalProjectUuid}:
+    delete:
+      tags:
+      - 4. Structural
+      operationId: delete
+      parameters:
+      - name: analyticalProjectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: model containing every triple deleted
+          content:
+            application/json:
+              schema:
+                type: string
+    patch:
+      tags:
+      - 4. Structural
+      operationId: update
+      parameters:
+      - name: analyticalProjectUuid
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAnalyticalProject'
+            examples:
+              example:
+                value:
+                  description: la description de mon projet analytique
+                  contribution_graph: tonalities-contributions
+        required: true
+      responses:
+        "200":
+          description: updated analytical entity's model
           content:
             application/json:
               schema:
@@ -73,6 +120,7 @@ paths:
                   p177: http://data-iremus.huma-num.fr/id/commentaire-sur-entite-analytique
                   p141: Ce n'est pas une cadence.
                   p141_type: LITERAL
+                  contribution_graph: tonalities-contributions
                   document_context: http://data-iremus.huma-num.fr/id/ma-partition
                   analytical_project: http://data-iremus.huma-num.fr/id/mon-projet-analytique
               E13 and new resource as P141:
@@ -80,6 +128,7 @@ paths:
                   p140:
                   - http://data-iremus.huma-num.fr/id/mon-fragment-d-estampe
                   p177: crm:P1_is_identified_by
+                  contribution_graph: tonalities-contributions
                   new_p141:
                     rdf_type:
                     - crm:E42_Identifier
@@ -104,7 +153,7 @@ paths:
       externalDocs:
         description: Workflow Miro
         url: https://miro.com/app/board/uXjVO1vwG0U=/?moveToWidget=3458764570720281878&cot=14
-      operationId: delete
+      operationId: delete_1
       parameters:
       - name: e13Uuid
         in: path
@@ -113,7 +162,7 @@ paths:
           type: string
       responses:
         "200":
-          description: delete 200 response
+          description: delete_1 200 response
           content:
             application/json:
               schema:
@@ -147,7 +196,7 @@ paths:
     delete:
       tags:
       - 3. Annotations
-      operationId: delete_1
+      operationId: delete_2
       parameters:
       - name: e90Uuid
         in: path
@@ -156,7 +205,7 @@ paths:
           type: string
       responses:
         "200":
-          description: delete_1 200 response
+          description: delete_2 200 response
           content:
             application/json:
               schema:
@@ -337,7 +386,9 @@ components:
       type: object
       properties:
         respStmt:
-          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
         date:
           $ref: '#/components/schemas/Mei.MeiHead.FileDesc.PubStmt.Date'
         availability:
@@ -376,7 +427,9 @@ components:
           items:
             $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.Title'
         respStmt:
-          $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
+          type: array
+          items:
+            $ref: '#/components/schemas/Mei.MeiHead.FileDesc.TitleStmt.RespStmt'
         composer:
           type: string
     Mei.MeiHead.FileDesc.TitleStmt.RespStmt:
@@ -453,15 +506,20 @@ components:
           $ref: '#/components/schemas/Mei.MeiHead.Work'
     NewAnalyticalProject:
       required:
+      - contribution_graph
       - label
       type: object
       properties:
         label:
           minLength: 1
           type: string
+        contribution_graph:
+          minLength: 1
+          type: string
     NewE13:
       required:
       - analytical_project
+      - contribution_graph
       - document_context
       - p140
       - p141_type
@@ -488,6 +546,9 @@ components:
           type: string
         new_p141:
           $ref: '#/components/schemas/NewP141'
+        contribution_graph:
+          minLength: 1
+          type: string
     NewE90Fragment:
       required:
       - p2_type
@@ -526,6 +587,22 @@ components:
       - URI
       - LITERAL
       - NEW_RESOURCE
+    UpdateAnalyticalProject:
+      required:
+      - contribution_graph
+      type: object
+      properties:
+        label:
+          type: string
+        description:
+          type: string
+        color:
+          type: string
+        privacyTypeUuid:
+          type: string
+        contribution_graph:
+          minLength: 1
+          type: string
     UserConfig:
       required:
       - hexColor

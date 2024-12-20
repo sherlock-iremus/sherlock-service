@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 
 public class LRMOO {
-    public static final String NS = "http://www.cidoc-crm.org/lrmoo/";
+    public static final String NS = "http://iflastandards.info/ns/lrm/lrmoo/";
     private static final Model model = ModelFactory.createDefaultModel();
 
     public static final Resource F1_Work = model.createResource(NS + "F1_Work");
