@@ -91,7 +91,7 @@ public class AnalyticalProjectController {
         m.add(analyticalProject, CIDOCCRM.P1_is_identified_by, body.getLabel());
         m.add(analyticalProject, CIDOCCRM.P4_has_time_span, timeSpan);
         m.add(analyticalProject, Sherlock.has_privacy_type, m.createResource(e55draftIri));
-        m.add(timeSpan, RDF.type, CIDOCCRM.E52_Time_span);
+        m.add(timeSpan, RDF.type, CIDOCCRM.E52_Time_Span);
         m.add(timeSpan, CIDOCCRM.P82a_begin_of_the_begin, now);
 
         // update dataset

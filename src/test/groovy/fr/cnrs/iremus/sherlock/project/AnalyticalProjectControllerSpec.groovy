@@ -42,7 +42,7 @@ class AnalyticalProjectControllerSpec extends Specification {
         response
 
         def resource = response.find { item -> item["@type"][0] == CIDOCCRM.E7_Activity.URI }
-        def timeSpan = response.find { item -> item["@type"][0] == CIDOCCRM.E52_Time_span.URI }
+        def timeSpan = response.find { item -> item["@type"][0] == CIDOCCRM.E52_Time_Span.URI }
 
         resource["@type"][0] == CIDOCCRM.E7_Activity.URI
         resource[CIDOCCRM.P1_is_identified_by.URI]["@value"][0] == 'Mon projet'
@@ -51,7 +51,7 @@ class AnalyticalProjectControllerSpec extends Specification {
         resource[CIDOCCRM.P14_carried_out_by.URI][0]["@id"] == sherlock.makeIri("4b15a57d-8cae-43c5-8096-187b58d29327")
         resource[CIDOCCRM.P4_has_time_span.URI][0]["@id"] == timeSpan["@id"]
 
-        timeSpan["@type"][0] == CIDOCCRM.E52_Time_span.URI
+        timeSpan["@type"][0] == CIDOCCRM.E52_Time_Span.URI
         dateService.isValidISODateTime(timeSpan[CIDOCCRM.P82a_begin_of_the_begin.URI][0]["@value"])
     }
 

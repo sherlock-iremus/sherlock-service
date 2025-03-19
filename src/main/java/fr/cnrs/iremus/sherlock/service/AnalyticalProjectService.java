@@ -40,7 +40,7 @@ public class AnalyticalProjectService {
                     .addGraph("?g", new WhereBuilder()
                             .addWhere(analyticalProject, "?e7_p", "?e7_o")
                             .addWhere(analyticalProject, "?e7_p_time_span", "?e7_o_time_span")
-                            .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_span)
+                            .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_Span)
                             .addWhere("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
                     );
             Query q = cb.build();
@@ -62,7 +62,7 @@ public class AnalyticalProjectService {
                     .addGraph("?g", new WhereBuilder()
                             .addWhere(analyticalProject, "?e7_p", "?e7_o")
                             .addWhere(analyticalProject, "?e7_p_time_span", "?e7_o_time_span")
-                            .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_span)
+                            .addWhere("?e7_o_time_span", RDF.type, CIDOCCRM.E52_Time_Span)
                             .addWhere("?e7_o_time_span", "?e7_o_p", "?e7_o_o")
                             .addOptional(new WhereBuilder()
                                     .addWhere(analyticalProject, CIDOCCRM.P1_is_identified_by, "?e41")

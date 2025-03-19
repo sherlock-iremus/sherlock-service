@@ -19,7 +19,7 @@ public class CIDOCCRM {
     public static final Resource E36_Visual_Item = m_model.createResource(NS + "E36_Visual_Item");
     public static final Resource E41_Appellation = m_model.createResource(NS + "E41_Appellation");
     public static final Resource E42_Identifier = m_model.createResource(NS + "E42_Identifier");
-    public static final Resource E52_Time_span = m_model.createResource(NS + "E52_Time-span");
+    public static final Resource E52_Time_Span = m_model.createResource(NS + "E52_Time-Span");
     public static final Resource E55_Type = m_model.createResource(NS + "E55_Type");
     public static final Resource E90_Symbolic_Object = m_model.createResource(NS + "E90_Symbolic_Object");
     public static final Property P1_is_identified_by = m_model.createProperty(NS + "P1_is_identified_by");
