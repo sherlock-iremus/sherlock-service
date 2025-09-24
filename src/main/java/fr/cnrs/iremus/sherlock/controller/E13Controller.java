@@ -172,8 +172,8 @@ public class E13Controller {
         if (e13Service.hasE13IncomingTriples(modelToDelete, e13))
             return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_INCOMING_TRIPLES + "\"}");
 
-        if (! e13Service.isE13Creator(modelToDelete, e13, authenticatedUser))
-            return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_BELONGS_TO_ANOTHER_USER + "\"}");
+        // if (! e13Service.isE13Creator(modelToDelete, e13, authenticatedUser))
+        //    return HttpResponse.status(HttpStatus.FORBIDDEN).body("{\"message\": \"" + E13_DELETE_BELONGS_TO_ANOTHER_USER + "\"}");
 
 
         RDFConnectionRemoteBuilder builder = RDFConnectionFuseki.create().destination(jena);
